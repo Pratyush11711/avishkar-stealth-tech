@@ -1,0 +1,231 @@
+---
+// src/pages/[slug].astro
+import Base from '../layouts/Base.astro';
+import { PAGES, NAMES, H2S, type PageData } from '../data/pages';
+
+export function getStaticPaths() {
+  return PAGES.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: PageData;
+}
+
+const { page } = Astro.props;
+
+const site = 'https://stealthtech.agency';
+const pageUrl = `${site}/${page.slug}`;
+
+const graph: any[] = [
+  {
+    "@type": "WebPage",
+    "@id": `${pageUrl}#page`,
+    "url": pageUrl,
+    "name": page.title,
+    "description": page.desc,
+    "isPartOf": { "@id": `${site}/#site` },
+    "inLanguage": "en"
+  },
+  {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${site}/` },
+      { "@type": "ListItem", "position": 2, "name": page.crumb.replace(/&amp;/g, '&'), "item": pageUrl }
+    ]
+  }
+];
+
+if (page.kind !== 'legal') {
+  graph.push({
+    "@type": "Service",
+    "name": page.crumb.replace(/&amp;/g, '&'),
+    "serviceType": (NAMES[page.slug] || page.crumb).replace(/&amp;/g, '&'),
+    "description": page.desc,
+    "provider": {
+      "@type": "ProfessionalService",
+      "@id": `${site}/#org`,
+      "name": "Stealth Tech",
+      "url": `${site}/`
+    },
+    "areaServed": "Worldwide"
+  });
+
+  if (page.faq && page.faq.length > 0) {
+    graph.push({
+      "@type": "FAQPage",
+      "mainEntity": page.faq.map((item) => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.a
+        }
+      }))
+    });
+  }
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": graph
+};
+
+const [h_what, h_how, h_faq] = H2S[page.slug] || ['', '', ''];
+---
+<Base
+  title={page.title}
+  desc={page.desc}
+  canonical={`/${page.slug}`}
+  ogTitle={page.title}
+  ogDesc={page.desc}
+  ogUrl={`/${page.slug}`}
+  isLanding={false}
+  jsonLd={jsonLd}
+>
+  <!-- ============ TOP BAR ============ -->
+  <header class="top" id="top">
+   <a class="brand" href="/" aria-label="Stealth Tech home">
+    <svg class="brand-mark" aria-hidden="true"><use href="#logo"/></svg>
+    <span class="brand-word">Stealth Tech</span>
+   </a>
+   <div class="top-r">
+    <button class="theme-t" type="button" data-theme-toggle aria-label="Switch to dark theme">
+     <svg class="ico-sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="ico-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+    </button>
+    <a class="btn btn--sm" href="#book" data-book data-pulse><span class="btn-t">Book a call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+   </div>
+  </header>
+
+  {page.kind === 'legal' ? (
+    <main id="main" class="ip">
+      <section class="ip-legal" id="hero">
+        <div class="ip-top rv">
+          <a class="ip-back" href="/" data-goback><svg aria-hidden="true"><use href="#i-arrow"/></svg>Back</a>
+          <nav class="ip-crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span><Fragment set:html={page.crumb} /></span></nav>
+        </div>
+        <p class="eyebrow rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span data-scramble>Legal</span></p>
+        <h1 class="ip-h1 rv" set:html={page.h1} />
+        <p class="upd rv">Last updated 20 October 2026</p>
+        <div class="rv" set:html={page.body} />
+      </section>
+    </main>
+  ) : (
+    <main id="main" class="ip">
+      <section class="ip-hero" id="hero" aria-labelledby="ipTitle">
+        <div>
+          <div class="ip-top rv">
+            <a class="ip-back" href="/" data-goback><svg aria-hidden="true"><use href="#i-arrow"/></svg>Back</a>
+            <nav class="ip-crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span><Fragment set:html={page.crumb} /></span></nav>
+          </div>
+          <p class="eyebrow rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span data-scramble set:html={page.eyebrow} /></p>
+          <h1 class="ip-h1 rv" id="ipTitle" set:html={page.h1} />
+          <p class="lead rv" set:html={page.lead} />
+          <div class="ip-act rv">
+            <a class="btn" href="#book" data-book data-pulse><span class="btn-t">Book a free strategy call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+            <a class="btn2" href="/#services"><span data-brick>See all services</span></a>
+          </div>
+        </div>
+        {page.photo ? (
+          <figure class="ip-photo rv">
+            <img
+              src={`/assets/img/${page.photo.name}-1672.webp`}
+              srcset={`/assets/img/${page.photo.name}-900.webp 900w, /assets/img/${page.photo.name}-1280.webp 1280w, /assets/img/${page.photo.name}-1672.webp 1672w`}
+              sizes="(max-width: 900px) 100vw, 520px"
+              alt={page.photo.alt}
+              width="1672"
+              height="941"
+              decoding="async"
+              fetchpriority="high"
+            />
+            <figcaption><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span><Fragment set:html={page.photo.caption} /></span></figcaption>
+          </figure>
+        ) : page.card ? (
+          <div class="ip-card rv">
+            <p class="ip-card-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span><Fragment set:html={page.card.title} /></span></p>
+            <ul>
+              {page.card.items.map((item) => (
+                <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><Fragment set:html={item} /></span></li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </section>
+
+      <section class="ip-sec" aria-labelledby="ipWhat">
+        <div class="ip-sec-h">
+          <div>
+            <p class="eyebrow rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>What we do</span></p>
+            <h2 class="h2 h2--sm" id="ipWhat" data-scramble>{h_what}</h2>
+          </div>
+          <p class="lead rv">One senior team owns the work from the first call to launch day and beyond.</p>
+        </div>
+        <div class="ip-tiles">
+          {page.tiles?.map(([t, d], i) => (
+            <article class="ip-tile rv">
+              <b>0{i + 1}</b>
+              <h3 set:html={t} />
+              <p set:html={d} />
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="ip-sec" aria-labelledby="ipHow">
+        <div class="ip-sec-h">
+          <div>
+            <p class="eyebrow rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>How it works</span></p>
+            <h2 class="h2 h2--sm" id="ipHow" data-scramble>{h_how}</h2>
+          </div>
+          <p class="lead rv">You always know what is happening, and what it costs.</p>
+        </div>
+        <ol class="ip-steps">
+          {page.steps?.map(([t, d], i) => (
+            <li class="ip-step rv">
+              <span>0{i + 1}</span>
+              <h3 set:html={t} />
+              <p set:html={d} />
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {page.faq && page.faq.length > 0 && (
+        <section class="ip-sec" aria-labelledby="ipFaq">
+          <div class="ip-sec-h">
+            <div>
+              <p class="eyebrow rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Honest answers</span></p>
+              <h2 class="h2 h2--sm" id="ipFaq" data-scramble>{h_faq}</h2>
+            </div>
+          </div>
+          <div class="ip-faq">
+            {page.faq.map(({ q, a }) => (
+              <details class="rv">
+                <summary set:html={q} />
+                <p set:html={a} />
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {page.related && page.related.length > 0 && (
+        <section class="ip-sec" aria-labelledby="ipRel">
+          <div class="ip-sec-h">
+            <div>
+              <p class="eyebrow rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Keep exploring</span></p>
+              <h2 class="h2 h2--sm" id="ipRel">Related services</h2>
+            </div>
+          </div>
+          <div class="ip-rel rv">
+            {page.related.map((relSlug) => (
+              <a href={`/${relSlug}`}><Fragment set:html={NAMES[relSlug] || relSlug} /><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
+  )}
+</Base>

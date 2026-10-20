@@ -1,0 +1,97 @@
+/* ============================================================
+   Stealth Tech — page.css
+   Layout for the inner pages (services, industries, legal) and the 404 page.
+   Loaded AFTER main.css: all tokens, buttons, nav, dock, footer, cursor and effects come from the landing page.
+   ============================================================ */
+.ip{position:relative;z-index:1}
+.ip-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:clamp(30px,5vw,84px);align-items:center;max-width:var(--maxw);margin:0 auto;padding:clamp(118px,17vh,170px) var(--pad) clamp(60px,10vh,110px)}
+.ip-top{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px;margin-bottom:26px}
+.ip-back{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:999px;border:1px solid var(--line2);font-size:13px;font-weight:500;color:var(--ink);transition:border-color .3s,color .3s}
+.ip-back svg{width:16px;height:16px;transform:rotate(180deg);transition:transform .45s var(--e)}
+.ip-back:hover{border-color:var(--acc);color:var(--acc)}
+.ip-back:hover svg{transform:rotate(180deg) translateX(3px)}
+.ip-crumbs{display:flex;flex-wrap:wrap;gap:8px;font-size:12.5px;color:var(--mut2)}
+.ip-crumbs a{transition:color .3s}
+.ip-crumbs a:hover{color:var(--acc)}
+
+.ip-h1{font-weight:300;font-size:clamp(40px,5.4vw,82px);line-height:1.02;letter-spacing:-.05em;margin-top:18px}
+.ip-h1 .acc-w{display:inline}
+.ip-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px;margin-top:34px}
+.ip-card{position:relative;border-radius:var(--rad);background:var(--surface);border:1px solid var(--line);box-shadow:var(--card-sh);padding:clamp(22px,2.6vw,36px);overflow:hidden}
+.ip-card::before{content:"";position:absolute;right:-20%;top:-50%;width:80%;height:120%;background:radial-gradient(closest-side,var(--glow2),transparent);pointer-events:none}
+.ip-card-k{position:relative;display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.ip-card ul{position:relative;margin-top:16px}
+.ip-card li{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start;padding:14px 0;border-top:1px solid var(--line);font-size:15px}
+.ip-card li:first-child{border-top:0}
+.ip-card li svg{width:20px;height:20px;color:var(--acc);margin-top:2px}
+.ip-photo{position:relative;margin:0;width:100%;aspect-ratio:4/3.5;border-radius:var(--rad);overflow:hidden;box-shadow:var(--card-sh);border:1px solid var(--line)}
+.ip-photo img{width:100%;height:100%;object-fit:cover}
+.ip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(3,10,6,.7))}
+.ip-photo figcaption{position:absolute;z-index:1;left:18px;right:18px;bottom:16px;display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#EEF3EF}
+.ip-photo figcaption .mol-i{--mol-l:rgba(238,243,239,.6);--mol-a:#3DF58F}
+
+.ip-sec{position:relative;max-width:var(--maxw);margin:0 auto;padding:clamp(64px,11vh,120px) var(--pad);border-top:1px solid var(--line)}
+.ip-sec-h{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:24px 60px;align-items:end;margin-bottom:clamp(30px,4.5vw,54px)}
+.ip-sec-h .lead{margin-top:0;justify-self:end}
+.ip-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.ip-tile{position:relative;border-radius:var(--rad);background:var(--surface);border:1px solid var(--line);padding:clamp(24px,2.6vw,34px);overflow:hidden;transition:transform .6s var(--e),border-color .4s,box-shadow .6s var(--e)}
+.ip-tile::after{content:"";position:absolute;right:-30%;bottom:-60%;width:70%;height:120%;background:radial-gradient(closest-side,var(--glow2),transparent);opacity:0;transition:opacity .6s var(--e);pointer-events:none}
+.ip-tile:hover{transform:translateY(-4px);border-color:var(--line2);box-shadow:var(--card-sh)}
+.ip-tile:hover::after{opacity:1}
+.ip-tile b{display:block;font-weight:500;font-size:11.5px;letter-spacing:.2em;color:var(--acc)}
+.ip-tile h3{font-weight:400;font-size:clamp(19px,1.7vw,23px);letter-spacing:-.025em;margin-top:16px}
+.ip-tile p{color:var(--mut);font-size:15px;margin-top:8px;max-width:42ch}
+.ip-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 34px}
+.ip-step{position:relative;padding-top:28px;border-top:1px solid var(--line2)}
+.ip-step::before{content:"";position:absolute;left:0;top:-1px;width:48px;height:2px;background:var(--acc)}
+.ip-step span{display:block;font-weight:300;font-size:clamp(46px,4.6vw,68px);line-height:1;letter-spacing:-.05em;color:var(--ink)}
+.ip-step h3{font-weight:400;font-size:19px;letter-spacing:-.02em;margin-top:18px}
+.ip-step p{color:var(--mut);font-size:15px;margin-top:6px}
+.ip-faq{max-width:900px;counter-reset:q}
+.ip-faq details{border-top:1px solid var(--line)}
+.ip-faq details:last-child{border-bottom:1px solid var(--line)}
+.ip-faq summary{counter-increment:q;list-style:none;display:grid;grid-template-columns:40px 1fr 20px;align-items:center;gap:10px;padding:20px 0;font-size:clamp(15.5px,1.25vw,18px);cursor:pointer;transition:color .3s,padding .4s var(--e)}
+.ip-faq summary::-webkit-details-marker{display:none}
+.ip-faq summary::before{content:counter(q,decimal-leading-zero);font-size:11.5px;letter-spacing:.12em;color:var(--mut2)}
+.ip-faq summary::after{content:"";width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);justify-self:end;opacity:.45;transition:transform .45s var(--e),opacity .3s}
+.ip-faq details[open] summary{color:var(--acc)}
+.ip-faq details[open] summary::after{transform:rotate(-135deg);opacity:1}
+.ip-faq summary:hover{color:var(--acc);padding-left:6px}
+.ip-faq details p{color:var(--mut);padding:0 0 22px 50px;max-width:72ch}
+.ip-rel{display:flex;flex-wrap:wrap;gap:10px}
+.ip-rel a{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 18px;border-radius:999px;border:1px solid var(--line2);font-size:14px;font-weight:500;transition:border-color .3s,color .3s,background .3s}
+.ip-rel a svg{width:15px;height:15px;transition:transform .45s var(--e)}
+.ip-rel a:hover{border-color:var(--acc);color:var(--acc)}
+.ip-rel a:hover svg{transform:translateX(3px)}
+
+/* legal */
+.ip-legal{max-width:820px;margin:0 auto;padding:clamp(118px,17vh,170px) var(--pad) clamp(60px,10vh,110px)}
+.ip-legal .upd{color:var(--mut2);font-size:13px;margin-top:12px}
+.ip-legal h2{font-weight:400;font-size:21px;letter-spacing:-.02em;margin-top:40px}
+.ip-legal p,.ip-legal li{color:var(--mut);margin-top:10px}
+.ip-legal li{position:relative;padding-left:26px}
+.ip-legal li svg{position:absolute;left:0;top:5px;width:15px;height:15px;color:var(--acc)}
+.ip-legal b{color:var(--ink);font-weight:500}
+
+/* footer molecule on inner pages sits below the CTA like on the landing page (styles come from molecule.css) */
+
+@media (max-width:900px){
+ .ip-hero{grid-template-columns:1fr;padding-top:clamp(96px,13vh,120px)}
+ .ip-sec-h{grid-template-columns:1fr}
+ .ip-sec-h .lead{justify-self:start}
+ .ip-tiles,.ip-steps{grid-template-columns:1fr}
+ .ip-faq details p{padding-left:0}
+ .ip-act .btn{width:100%;justify-content:space-between}
+}
+
+/* legal pages: summary card and storage table */
+.lg-sum{margin:6px 0 34px;padding:clamp(18px,2.4vw,28px);border-radius:var(--rad);background:var(--surface);border:1px solid var(--line);box-shadow:var(--card-sh)}
+.lg-k{font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
+.ip-legal .lg-sum li{color:var(--ink)}
+.lg-tw{margin-top:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;border:1px solid var(--line)}
+.lg-t{width:100%;min-width:620px;border-collapse:collapse;font-size:13.5px}
+.lg-t th,.lg-t td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+.lg-t th{font-weight:500;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);background:var(--surface2)}
+.lg-t td{color:var(--mut)}
+.lg-t td b{color:var(--ink);font-weight:500}
+.lg-t tr:last-child td{border-bottom:0}

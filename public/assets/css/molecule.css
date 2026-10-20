@@ -1,0 +1,29 @@
+/* Stealth Tech: the molecule (hero, footer, 404). Engine: assets/js/molecule.js */
+.mol-stage{position:relative;z-index:3;min-height:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* the canvas is taller than its stage so waves, pulls, the shadow and rising particles never get clipped */
+.mol-gl{position:absolute;left:0;top:-24%;width:100%;height:148%;opacity:0;-webkit-transition:opacity .4s var(--e);transition:opacity .4s var(--e);touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.mol-stage.is-on .mol-gl{opacity:1}
+/* no hand or grab cursor: the site's own cursor everywhere (cursor.css shows its green 'clickable' arrow over the molecule) */
+/* sizes per place */
+.mol-stage--foot{z-index:1;height:clamp(200px,23vw,340px);margin:0 0 clamp(24px,3.4vw,48px)}
+.mol-stage--404{width:100%;height:clamp(120px,16vw,210px)}
+/* plain picture: without WebGL, on devices without a graphics chip, or with reduced motion; it breathes with CSS */
+.mol-still,.mol-noscript{position:absolute;left:50%;top:50%;width:min(80%,1240px);max-height:96%;object-fit:contain;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);pointer-events:none}
+.mol-stage--foot .mol-still,.mol-stage--foot .mol-noscript{width:min(74%,1100px)}
+.mol-stage--404 .mol-still,.mol-stage--404 .mol-noscript{width:min(62%,900px)}
+.mol-still{display:none}
+.mol-stage.is-still .mol-gl{display:none}
+.mol-stage.is-still .mol-still{display:block;-webkit-animation:molBreath 6s ease-in-out infinite;animation:molBreath 6s ease-in-out infinite}
+.mol-stage.is-still::after{content:"";position:absolute;left:50%;bottom:2%;width:62%;height:18%;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:radial-gradient(closest-side,var(--mol-pool),transparent);pointer-events:none;z-index:-1}
+[data-theme="dark"]{--mol-pool:rgba(61,245,143,.16)}
+[data-theme="light"]{--mol-pool:rgba(11,61,38,.16)}
+@-webkit-keyframes molBreath{0%,100%{-webkit-transform:translate(-50%,-50%) scale(1,1);transform:translate(-50%,-50%) scale(1,1)}50%{-webkit-transform:translate(-50%,-51.5%) scale(1.02,.99);transform:translate(-50%,-51.5%) scale(1.02,.99)}}
+@keyframes molBreath{0%,100%{transform:translate(-50%,-50%) scale(1,1)}50%{transform:translate(-50%,-51.5%) scale(1.02,.99)}}
+@media (prefers-reduced-motion:reduce){.mol-stage.is-still .mol-still{-webkit-animation:none;animation:none}}
+@media (max-width:900px){
+ .mol-stage--hero{height:clamp(150px,40vw,330px)}
+ .mol-gl{top:-30%;height:160%}
+ .mol-still,.mol-noscript,.mol-stage--foot .mol-still,.mol-stage--404 .mol-still{width:96%}
+ .mol-stage--foot{height:clamp(140px,38vw,280px);margin:0 0 28px}
+ .mol-stage--404{height:clamp(110px,30vw,200px)}
+}

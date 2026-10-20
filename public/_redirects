@@ -1,0 +1,10 @@
+# Netlify: the project's notes, sources and tools travel with the site folder but are never served
+/_source/*            /404.html  404!
+/tools/*              /404.html  404!
+/analytics/*          /404.html  404!
+/README.md            /404.html  404!
+/PROJECT-CONTEXT.md   /404.html  404!
+/ASTRO-MIGRATION.md   /404.html  404!
+/CURSOR-ASTRO-PROMPT.md /404.html 404!
+/NETLIFY-DEPLOY.md    /404.html  404!
+/vercel.json          /404.html  404!

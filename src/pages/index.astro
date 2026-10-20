@@ -1,0 +1,474 @@
+---
+// src/pages/index.astro
+import Base from '../layouts/Base.astro';
+import { FAQ_ITEMS } from '../data/faq';
+
+const site = 'https://stealthtech.agency';
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${site}/#org`,
+      "name": "Stealth Tech",
+      "url": `${site}/`,
+      "logo": `${site}/assets/icons/icon-512.png`,
+      "image": `${site}/assets/og/stealth-tech-og-light.jpg`,
+      "description": "Design and development partner for peptide, RUO, hemp, botanical and kanna brands: brand identity, compliance-focused websites and stores, processor-ready checkout and back office systems, with SEO, email and paid social as add-ons.",
+      "slogan": "The quiet force behind peptide brands.",
+      "areaServed": "Worldwide",
+      "priceRange": "$$$",
+      "email": "arpit@avishkarai.com",
+      "knowsAbout": [
+        "Peptide website design","Peptide brand design","WooCommerce development for RUO brands","Vial label design","Peptide marketing","RUO peptide marketing","Research peptide ecommerce","Peptide SEO","High-risk payment processing","Compliance-focused copywriting","Meta and TikTok ads for regulated products","Hemp marketing","Botanical extract marketing","Kanna marketing","Telehealth marketing","Email and SMS retention"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [
+          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Brand identity and launch for peptide and RUO brands"}},
+          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Compliance-focused websites and stores"}},
+          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Processor-ready checkout and high-risk payment guidance"}},
+          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Back office: wholesale, affiliates, subscriptions, portals"}},
+          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Marketing add-ons: SEO, email, SMS and paid social"}}
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site}/#site`,
+      "url": `${site}/`,
+      "name": "Stealth Tech",
+      "inLanguage": "en",
+      "publisher": {"@id": `${site}/#org`}
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${site}/#page`,
+      "url": `${site}/`,
+      "name": "Peptide Brand Design and Development | Stealth Tech",
+      "description": "Peptide brand design and development for RUO, hemp and kanna brands: compliant websites, processor-ready checkout and marketing add-ons.",
+      "isPartOf": {"@id": `${site}/#site`},
+      "about": {"@id": `${site}/#org`},
+      "primaryImageOfPage": `${site}/assets/og/stealth-tech-og-light.jpg`
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": FAQ_ITEMS.map((item) => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.a
+        }
+      }))
+    }
+  ]
+};
+---
+<Base
+  title="Peptide Brand Design and Development | Stealth Tech"
+  desc="Peptide brand design and development for RUO, hemp and kanna brands: compliant websites, processor-ready checkout and marketing add-ons. Book a free strategy call."
+  canonical="/"
+  ogTitle="Peptide Brand Design and Development | Stealth Tech"
+  ogDesc="Brands that look legit, stores that stay live and checkouts that get approved. One senior team for peptide and RUO brands."
+  isLanding={true}
+  jsonLd={jsonLd}
+>
+
+<!-- ============ SPLASH ============ -->
+<div class="splash" id="splash" aria-hidden="true">
+ <div class="sp-stage">
+  <svg class="sp-logo" viewBox="-6 -6 489 285">
+   <defs><filter id="spGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter></defs>
+   <path class="sp-p" pathLength="1" d="M236.544 0.0403394C249.05 -0.497377 260.694 4.37541 270.018 12.5768C276.25 18.0608 281.242 25.4681 286.282 32.0362L314.078 68.7832L342.181 105.577C345.282 109.583 348.383 113.495 351.371 117.6C352.779 119.532 354.482 121.169 355.942 123.19C354.359 126.261 352.789 127.623 350.445 129.954C340.614 139.733 329.251 136.037 317.036 138.512C310.261 139.435 306.253 142.238 300.329 145.226C293.78 148.532 289.066 155.67 281.64 156.369C280.384 156.489 276.949 154.835 276.114 153.951C271.449 149.017 267.454 143.31 263.278 137.953C251.769 125.563 242.854 111.04 229.869 99.3793C209.246 80.8567 188.805 81.499 163.931 88.5868C155.327 90.9616 146.917 93.9879 138.772 97.6392C140.094 95.379 142.743 92.5304 144.43 90.3459L160.554 69.8269L188.992 33.5393C202.731 16.1433 212.291 1.87621 236.544 0.0403394Z"/>
+   <path class="sp-p" pathLength="1" d="M164.47 103.962C181.172 103.557 203.239 111.363 213.12 125.453C199.471 125.582 189.546 129.787 179.494 138.878C172.142 145.524 167.925 153.692 161.762 161.316C140.411 187.719 119.658 214.647 97.3591 240.267C82.854 257.004 72.1851 269.176 48.727 272.064C35.7632 272.491 22.5388 271.954 9.55364 272.187C6.76244 272.236 3.53647 272.323 0.865042 271.546C-1.93911 269.157 2.83333 265.068 4.43773 263.074L12.9988 252.413L41.4437 217.917L87.5591 162.695C98.2166 149.888 109.38 136.607 120.362 124.137C130.87 112.206 148.696 104.677 164.47 103.962Z"/>
+   <path class="sp-p" pathLength="1" d="M383.301 157.492C385.441 159.011 400.701 178.483 403.508 181.924C422.139 205.197 441.158 228.153 460.556 250.788C465.244 256.166 469.834 261.656 474.774 266.794C476.076 268.144 476.564 269.817 475.561 271.546C471.906 272.533 455.668 272.158 450.74 272.158H402.411C389.983 272.096 377.305 272.336 364.971 272.145C350.3 271.918 335.415 264.43 325.023 254.288C320.157 249.542 314.945 243.187 310.154 238.169C316.386 239.804 322.854 240.332 329.27 239.727C351.106 237.787 370.034 220.672 374.22 199.053C377.697 181.096 370.073 173.384 383.301 157.492Z"/>
+   <path class="sp-glow" filter="url(#spGlow)" d="M403.854 79.3453C409.672 79.3984 415.24 80.5803 419.999 84.1113C425.732 88.3317 429.539 94.6713 430.569 101.716C432.76 117.463 420.319 131.505 404.826 131.533C401.883 131.669 398.111 131.261 395.263 131.668C378.503 134.058 354.816 158.745 357.487 176.379C359.432 189.25 360.895 199.024 352.291 210.536C345.46 219.678 336.561 223.754 325.408 225.398C321.209 226.004 316.79 224.654 312.721 223.65C294.226 218.917 293.511 205.152 280.979 194.864C273.799 188.972 253.022 182.879 243.385 182.76C240.163 182.724 236.962 183.255 233.925 184.33C225.631 187.285 225.923 191.203 214.029 192.731C198.669 194.327 184.98 184.09 182.951 168.535C180.951 153.187 192.281 138.878 207.702 137.237C219.099 135.853 230.27 141.662 236.023 151.504C238.318 155.948 239.393 160.966 242.938 164.699C246.848 168.817 250.934 171.403 256.444 173.028C266.959 176.126 282.617 180.562 292.044 172.303C297.956 166.415 303.084 160.38 311.002 157.243C320.465 153.494 328.49 155.573 338.144 155.113C340.08 155.022 344.974 153.851 346.697 152.844C358.953 145.696 371.352 133.265 376.389 119.813C379.921 108.12 375.272 99.1857 385.114 88.0824C390.53 81.9711 395.845 80.0361 403.854 79.3453Z"/>
+   <path class="sp-p sp-mol" pathLength="1" d="M403.854 79.3453C409.672 79.3984 415.24 80.5803 419.999 84.1113C425.732 88.3317 429.539 94.6713 430.569 101.716C432.76 117.463 420.319 131.505 404.826 131.533C401.883 131.669 398.111 131.261 395.263 131.668C378.503 134.058 354.816 158.745 357.487 176.379C359.432 189.25 360.895 199.024 352.291 210.536C345.46 219.678 336.561 223.754 325.408 225.398C321.209 226.004 316.79 224.654 312.721 223.65C294.226 218.917 293.511 205.152 280.979 194.864C273.799 188.972 253.022 182.879 243.385 182.76C240.163 182.724 236.962 183.255 233.925 184.33C225.631 187.285 225.923 191.203 214.029 192.731C198.669 194.327 184.98 184.09 182.951 168.535C180.951 153.187 192.281 138.878 207.702 137.237C219.099 135.853 230.27 141.662 236.023 151.504C238.318 155.948 239.393 160.966 242.938 164.699C246.848 168.817 250.934 171.403 256.444 173.028C266.959 176.126 282.617 180.562 292.044 172.303C297.956 166.415 303.084 160.38 311.002 157.243C320.465 153.494 328.49 155.573 338.144 155.113C340.08 155.022 344.974 153.851 346.697 152.844C358.953 145.696 371.352 133.265 376.389 119.813C379.921 108.12 375.272 99.1857 385.114 88.0824C390.53 81.9711 395.845 80.0361 403.854 79.3453Z"/>
+  </svg>
+  <p class="sp-word" data-txt="STEALTH TECH AGENCY">STEALTH TECH AGENCY</p>
+ </div>
+ <p class="sp-count" id="spCount"><span>000</span></p>
+ <canvas class="sp-shards" id="spShards"></canvas>
+</div>
+
+<!-- ============ TOP BAR ============ -->
+<header class="top" id="top">
+ <a class="brand" href="#main" aria-label="Stealth Tech home">
+  <svg class="brand-mark" aria-hidden="true"><use href="#logo"/></svg>
+  <span class="brand-word">Stealth Tech</span>
+ </a>
+ <div class="top-r">
+  <button class="theme-t" type="button" data-theme-toggle aria-label="Switch to dark theme">
+   <svg class="ico-sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="ico-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+  </button>
+  <a class="btn btn--sm" href="#book" data-book data-pulse><span class="btn-t">Book a call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+ </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero" aria-labelledby="heroTitle">
+ <div class="hero-head">
+  <h1 class="hero-h" id="heroTitle">
+   <span class="eyebrow hero-eb hero-rv"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span data-scramble>Peptide brand design and development studio</span></span>
+   <span class="hl"><span class="hl-i">The quiet force behind</span></span>
+   <span class="hl"><span class="hl-i"><span class="acc-w">peptide</span> brands.</span></span>
+  </h1>
+ </div>
+
+ <!-- the molecule: the chain picture brought to life by assets/js/molecule.js (WebGL); the plain picture is the fallback -->
+ <div class="mol-stage mol-stage--hero" id="molStage" data-mol="hero">
+  <canvas class="mol-gl" role="img" aria-label="A peptide chain with the Stealth Tech logo at its centre"></canvas>
+  <img class="mol-still" data-src="/assets/img/chain-1100.webp" data-srcset="/assets/img/chain-760.webp 760w, /assets/img/chain-1100.webp 1100w, /assets/img/chain-1800.webp 1800w" sizes="(max-width: 900px) 96vw, 80vw" alt="" width="1100" height="349" decoding="async" draggable="false">
+  <noscript><img class="mol-noscript" src="/assets/img/chain-1100.webp" alt="" width="1100" height="349" loading="lazy"></noscript>
+ </div>
+
+ <div class="hero-foot">
+  <div class="hero-l hero-rv">
+   <p class="mol-hint"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span><span class="hint-desk">Click for a wave. Click three times to stretch it. Drag to pull it.</span><span class="hint-touch">Tap for a wave. Tap three times to stretch it. Drag to pull it.</span></span></p>
+  </div>
+  <div class="hero-r hero-rv">
+   <p class="hero-sub">Brands that look legit. Stores that stay live. Checkouts that get approved.</p>
+   <div class="hero-cta">
+    <a class="btn" href="#book" data-book data-pulse><span class="btn-t">Book a free strategy call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+    <a class="btn2" href="#process"><span data-brick>See how we build</span></a>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<section class="trust" id="trust" aria-label="Clients and proof">
+ <div class="wrap">
+  <div class="trust-card rv">
+   <div class="trust-top">
+    <p class="trust-t">The studio behind brands other developers turned away.</p>
+    <p class="trust-s">Peptide suppliers, RUO labs and wellness founders trust us with the builds that get other stores shut down.</p>
+   </div>
+   <div class="marquee" aria-label="Client logos">
+    <div class="marquee-track">
+     <span class="logo-it"><img src="/assets/logos/frontier-biomed.webp" alt="Frontier Biomed" height="30" decoding="async" fetchpriority="low"></span>
+     <span class="logo-it"><img src="/assets/logos/hols.webp" alt="HOLS" height="26" decoding="async" fetchpriority="low"></span>
+     <span class="logo-it"><img src="/assets/logos/medivance.webp" alt="Medivance" height="28" decoding="async" fetchpriority="low"></span>
+     <span class="logo-it"><img src="/assets/logos/pba-mark.webp" alt="" height="34" decoding="async" fetchpriority="low"><span class="logo-cap">Peptide Broker Academy</span></span>
+     <span class="logo-it" aria-hidden="true"><img src="/assets/logos/frontier-biomed.webp" alt="" height="30" decoding="async" fetchpriority="low"></span>
+     <span class="logo-it" aria-hidden="true"><img src="/assets/logos/hols.webp" alt="" height="26" decoding="async" fetchpriority="low"></span>
+     <span class="logo-it" aria-hidden="true"><img src="/assets/logos/medivance.webp" alt="" height="28" decoding="async" fetchpriority="low"></span>
+     <span class="logo-it" aria-hidden="true"><img src="/assets/logos/pba-mark.webp" alt="" height="34" decoding="async" fetchpriority="low"><span class="logo-cap">Peptide Broker Academy</span></span>
+    </div>
+   </div>
+   <dl class="trust-stats">
+    <div><dt>Peptide-first</dt><dd>Our primary specialty, not a side category</dd></div>
+    <div><dt>48-hour plan</dt><dd>Written scope and fixed price after one call</dd></div>
+    <div><dt>100% yours</dt><dd>Every domain, store and line of code in your name</dd></div>
+   </dl>
+  </div>
+ </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="pb" id="problem" aria-label="The problem">
+ <div class="pb-stage">
+  <div class="pb-bg" aria-hidden="true"></div>
+  <div class="pb-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pb-panel" aria-hidden="true"></div>
+  <p class="pb-intro" id="pbIntro">Most developers hear the word <span class="pb-hl">"peptide"</span> and quietly back away.</p>
+  <p class="pb-track" aria-label="Store looks like a scam. Processor declined. Site shut down."><span>Store looks like a scam.</span> <span>Processor declined.</span> <span>Site shut down.</span></p>
+  <div class="pb-endwrap">
+  <figure class="pb-img"><img src="/assets/img/problem-vials-1100.webp" srcset="/assets/img/problem-vials-700.webp 700w, /assets/img/problem-vials-1100.webp 1100w" sizes="(max-width:700px) 60vw, 460px" alt="Gloved hand holding two unlabeled research peptide vials" width="1100" height="1375" loading="lazy" decoding="async"></figure>
+  <div class="pb-end">
+   <p class="eyebrow eyebrow--ink"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>The fix</span></p>
+   <h2 class="pb-h">Three walls. One senior team that has built past every one of them.</h2>
+   <p class="pb-p">Brands that read as legit. Stores on platforms that allow you. Checkouts processors approve. Same team from the first call to launch day.</p>
+   <a class="btn btn--ink" href="#book" data-book data-pulse><span class="btn-t">Talk to a specialist</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+  </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ INDUSTRIES ============ -->
+<section class="ind" id="industries" aria-label="Industries we serve">
+ <div class="ind-stage">
+  <div class="ind-layers">
+   <div class="ind-slide is-base" data-s="0"><div class="ind-c"><img src="/assets/img/ind-peptides-1672.webp" srcset="/assets/img/ind-peptides-900.webp 900w, /assets/img/ind-peptides-1280.webp 1280w, /assets/img/ind-peptides-1672.webp 1672w" sizes="100vw" alt="Scientist working with research peptide vials in a lab" width="1672" height="941" loading="lazy" decoding="async"></div></div>
+   <div class="ind-slide" data-s="1">
+    <div class="ind-c ind-c1"><img src="/assets/img/ind-botanicals-1672.webp" srcset="/assets/img/ind-botanicals-900.webp 900w, /assets/img/ind-botanicals-1280.webp 1280w, /assets/img/ind-botanicals-1672.webp 1672w" sizes="100vw" alt="Hemp and botanical extract dropper bottles with dried herbs" width="1672" height="941" loading="lazy" decoding="async"></div>
+    <div class="ind-c ind-c2"><img src="/assets/img/ind-botanicals-1672.webp" srcset="/assets/img/ind-botanicals-900.webp 900w, /assets/img/ind-botanicals-1280.webp 1280w, /assets/img/ind-botanicals-1672.webp 1672w" sizes="100vw" alt="" width="1672" height="941" loading="lazy" decoding="async"></div>
+    <div class="ind-c ind-c3"><img src="/assets/img/ind-botanicals-1672.webp" srcset="/assets/img/ind-botanicals-900.webp 900w, /assets/img/ind-botanicals-1280.webp 1280w, /assets/img/ind-botanicals-1672.webp 1672w" sizes="100vw" alt="" width="1672" height="941" loading="lazy" decoding="async"></div>
+   </div>
+   <div class="ind-slide" data-s="2">
+    <div class="ind-c ind-c1"><img src="/assets/img/ind-kanna-1672.webp" srcset="/assets/img/ind-kanna-900.webp 900w, /assets/img/ind-kanna-1280.webp 1280w, /assets/img/ind-kanna-1672.webp 1672w" sizes="100vw" alt="Kanna (Sceletium tortuosum) plant and ground kanna powder" width="1672" height="941" loading="lazy" decoding="async"></div>
+    <div class="ind-c ind-c2"><img src="/assets/img/ind-kanna-1672.webp" srcset="/assets/img/ind-kanna-900.webp 900w, /assets/img/ind-kanna-1280.webp 1280w, /assets/img/ind-kanna-1672.webp 1672w" sizes="100vw" alt="" width="1672" height="941" loading="lazy" decoding="async"></div>
+    <div class="ind-c ind-c3"><img src="/assets/img/ind-kanna-1672.webp" srcset="/assets/img/ind-kanna-900.webp 900w, /assets/img/ind-kanna-1280.webp 1280w, /assets/img/ind-kanna-1672.webp 1672w" sizes="100vw" alt="" width="1672" height="941" loading="lazy" decoding="async"></div>
+   </div>
+  </div>
+  <div class="ind-shade" aria-hidden="true"></div>
+  <div class="ind-rings" aria-hidden="true"><i class="r1"></i><i class="r2"></i></div>
+  <div class="ind-head">
+   <p class="eyebrow eyebrow--on"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Your industry. Our focus.</span></p>
+   <div class="ind-nav">
+    <button type="button" class="ind-arr" data-dir="-1" aria-label="Previous industry"><svg><use href="#i-left"/></svg></button>
+    <p class="ind-count"><span id="indNum">01</span> / 03</p>
+    <button type="button" class="ind-arr ind-arr--r" data-dir="1" aria-label="Next industry"><svg><use href="#i-left"/></svg></button>
+   </div>
+  </div>
+  <div class="ind-texts">
+   <div class="ind-t" data-t="0"><h3 class="ind-name" aria-label="Peptides">PEPTIDES</h3><p class="ind-sub">Research · RUO</p></div>
+   <div class="ind-t" data-t="1"><h3 class="ind-name" aria-label="Botanicals">BOTANICALS</h3><p class="ind-sub">Hemp · Botanical extracts</p></div>
+   <div class="ind-t" data-t="2"><h3 class="ind-name" aria-label="Kanna">KANNA</h3><p class="ind-sub">Kanna · Clinics &amp; telehealth</p></div>
+  </div>
+  <div class="ind-foot">
+   <div class="ind-desc">
+    <p data-d="0">Our primary specialty. Peptide brands and websites for RUO: identity, compliant stores, processor-ready checkout and back office, from first launch to scale.</p>
+    <p data-d="1">Hemp and botanical extract brands: identity and compliance-focused stores, then SEO and email that keep revenue off rented platforms.</p>
+    <p data-d="2">Kanna branding, compliant sites and growth. Clinics and telehealth get focused support: websites, booking flows, patient portals and content.</p>
+   </div>
+   <a class="btn2 btn2--on" href="#book" data-book><span data-brick>Plan my build</span></a>
+  </div>
+  <div class="ind-bar" aria-hidden="true"><i></i></div>
+ </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="svc" id="services" aria-labelledby="svcTitle">
+ <div class="wrap svc-intro">
+  <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Services</span></p>
+  <h2 class="h2" id="svcTitle" data-scramble>Five things we build for brands like yours.</h2>
+  <p class="lead rv">Brand identity, compliant websites, processor-ready checkout and back office, with marketing on top when you are ready. Start with the one thing that is stuck, or hand us the whole launch.</p>
+ </div>
+ <div class="svc-pin" id="svcPin">
+  <div class="svc-stage">
+   <div class="svc-side">
+    <div class="svc-nums" role="tablist" aria-label="Services">
+     <button type="button" class="is-on" data-go="0" aria-label="Brand and launch">01</button>
+     <button type="button" data-go="1" aria-label="Websites and stores">02</button>
+     <button type="button" data-go="2" aria-label="Checkout and payments">03</button>
+     <button type="button" data-go="3" aria-label="Back office">04</button>
+     <button type="button" data-go="4" aria-label="Marketing add-ons">05</button>
+    </div>
+    <div class="svc-texts">
+     <div class="svc-tx is-on" data-i="0"><h3>Brand &amp; launch</h3><p>Your name, logo, vial labels and store, designed together by one team. A brand buyers trust before they read a word.</p><p class="svc-del">Identity <span>/</span> Labels <span>/</span> Packaging <span>/</span> Launch</p><a class="svc-more" href="/peptide-brand-launch">More on brand launches<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+     <div class="svc-tx" data-i="1"><h3>Websites &amp; stores</h3><p>Compliance-first peptide websites that still sell. Built on platforms that allow you, with a COA on every product and a checkout reviewed line by line.</p><p class="svc-del">Design &amp; copy <span>/</span> Product pages <span>/</span> COA library <span>/</span> Checkout</p><a class="svc-more" href="/peptide-websites">More on peptide websites<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+     <div class="svc-tx" data-i="2"><h3>Checkout &amp; payments</h3><p>Processor-ready checkout without the guesswork: policies, application packs and a backup gateway tested before launch, so payouts keep landing every week.</p><p class="svc-del">Provider match <span>/</span> Applications <span>/</span> Backup gateway</p><a class="svc-more" href="/high-risk-payments">More on high-risk payments<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+     <div class="svc-tx" data-i="3"><h3>Back office</h3><p>Wholesale pricing, affiliate tracking, subscriptions and admin portals built into the store from day one, not bolted on with plugins later.</p><p class="svc-del">Wholesale <span>/</span> Affiliates <span>/</span> Subscriptions <span>/</span> Portals</p><a class="svc-more" href="/peptide-platforms">More on peptide platforms<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+     <div class="svc-tx" data-i="4"><h3>Marketing add-ons</h3><p>When the store is ready for traffic: peptide SEO, email and SMS, and Meta and TikTok ads built around current policy, added on top of the build.</p><p class="svc-del">SEO <span>/</span> Email &amp; SMS <span>/</span> Paid social</p><a class="svc-more" href="/peptide-marketing">More on peptide marketing<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    </div>
+    <div class="svc-prog" id="svcProg" aria-hidden="true"><i class="is-on"></i><i></i><i></i><i></i><i></i></div>
+   </div>
+
+   <div class="svc-deck" aria-hidden="true">
+    <!-- 1 brand & launch -->
+    <div class="sc sc-launch" data-c="0">
+     <div class="sc-top"><span>Launch</span></div>
+     <p class="ck-confirm cx-pal"><span class="cx-sw" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Name, identity, labels and packaging copy</span></p>
+     <svg class="ck-route cx-svg" viewBox="0 0 320 140" aria-hidden="true">
+      <g class="cx-logo" transform="translate(112 8) scale(.2)"><path class="cx-lp" pathLength="1" d="M236.544 0.0403394C249.05 -0.497377 260.694 4.37541 270.018 12.5768C276.25 18.0608 281.242 25.4681 286.282 32.0362L314.078 68.7832L342.181 105.577C345.282 109.583 348.383 113.495 351.371 117.6C352.779 119.532 354.482 121.169 355.942 123.19C354.359 126.261 352.789 127.623 350.445 129.954C340.614 139.733 329.251 136.037 317.036 138.512C310.261 139.435 306.253 142.238 300.329 145.226C293.78 148.532 289.066 155.67 281.64 156.369C280.384 156.489 276.949 154.835 276.114 153.951C271.449 149.017 267.454 143.31 263.278 137.953C251.769 125.563 242.854 111.04 229.869 99.3793C209.246 80.8567 188.805 81.499 163.931 88.5868C155.327 90.9616 146.917 93.9879 138.772 97.6392C140.094 95.379 142.743 92.5304 144.43 90.3459L160.554 69.8269L188.992 33.5393C202.731 16.1433 212.291 1.87621 236.544 0.0403394Z"/><path class="cx-lp" pathLength="1" d="M164.47 103.962C181.172 103.557 203.239 111.363 213.12 125.453C199.471 125.582 189.546 129.787 179.494 138.878C172.142 145.524 167.925 153.692 161.762 161.316C140.411 187.719 119.658 214.647 97.3591 240.267C82.854 257.004 72.1851 269.176 48.727 272.064C35.7632 272.491 22.5388 271.954 9.55364 272.187C6.76244 272.236 3.53647 272.323 0.865042 271.546C-1.93911 269.157 2.83333 265.068 4.43773 263.074L12.9988 252.413L41.4437 217.917L87.5591 162.695C98.2166 149.888 109.38 136.607 120.362 124.137C130.87 112.206 148.696 104.677 164.47 103.962Z"/><path class="cx-lp" pathLength="1" d="M383.301 157.492C385.441 159.011 400.701 178.483 403.508 181.924C422.139 205.197 441.158 228.153 460.556 250.788C465.244 256.166 469.834 261.656 474.774 266.794C476.076 268.144 476.564 269.817 475.561 271.546C471.906 272.533 455.668 272.158 450.74 272.158H402.411C389.983 272.096 377.305 272.336 364.971 272.145C350.3 271.918 335.415 264.43 325.023 254.288C320.157 249.542 314.945 243.187 310.154 238.169C316.386 239.804 322.854 240.332 329.27 239.727C351.106 237.787 370.034 220.672 374.22 199.053C377.697 181.096 370.073 173.384 383.301 157.492Z"/><path class="cx-lp cx-lm" pathLength="1" d="M403.854 79.3453C409.672 79.3984 415.24 80.5803 419.999 84.1113C425.732 88.3317 429.539 94.6713 430.569 101.716C432.76 117.463 420.319 131.505 404.826 131.533C401.883 131.669 398.111 131.261 395.263 131.668C378.503 134.058 354.816 158.745 357.487 176.379C359.432 189.25 360.895 199.024 352.291 210.536C345.46 219.678 336.561 223.754 325.408 225.398C321.209 226.004 316.79 224.654 312.721 223.65C294.226 218.917 293.511 205.152 280.979 194.864C273.799 188.972 253.022 182.879 243.385 182.76C240.163 182.724 236.962 183.255 233.925 184.33C225.631 187.285 225.923 191.203 214.029 192.731C198.669 194.327 184.98 184.09 182.951 168.535C180.951 153.187 192.281 138.878 207.702 137.237C219.099 135.853 230.27 141.662 236.023 151.504C238.318 155.948 239.393 160.966 242.938 164.699C246.848 168.817 250.934 171.403 256.444 173.028C266.959 176.126 282.617 180.562 292.044 172.303C297.956 166.415 303.084 160.38 311.002 157.243C320.465 153.494 328.49 155.573 338.144 155.113C340.08 155.022 344.974 153.851 346.697 152.844C358.953 145.696 371.352 133.265 376.389 119.813C379.921 108.12 375.272 99.1857 385.114 88.0824C390.53 81.9711 395.845 80.0361 403.854 79.3453Z"/></g>
+      <path class="ck-line" pathLength="1" d="M34 100 H286"/>
+      <path class="cx-run cx-r1" pathLength="1" d="M34 100 H118"/><path class="cx-run cx-r2" pathLength="1" d="M118 100 H202"/><path class="cx-run cx-r3" pathLength="1" d="M202 100 H286"/>
+      <polygon class="ck-node cx-n cx-n0" points="34.0,91.0 26.2,95.5 26.2,104.5 34.0,109.0 41.8,104.5 41.8,95.5"/><polygon class="ck-node cx-n cx-n1" points="118.0,91.0 110.2,95.5 110.2,104.5 118.0,109.0 125.8,104.5 125.8,95.5"/><polygon class="ck-node cx-n cx-n2" points="202.0,91.0 194.2,95.5 194.2,104.5 202.0,109.0 209.8,104.5 209.8,95.5"/><polygon class="ck-node cx-n cx-n3 cx-pop" points="286.0,89.0 276.5,94.5 276.5,105.5 286.0,111.0 295.5,105.5 295.5,94.5"/>
+      <text x="34" y="129" text-anchor="middle">Name</text><text x="118" y="129" text-anchor="middle">Labels</text><text x="202" y="129" text-anchor="middle">Store</text><text x="286" y="129" text-anchor="middle">Live</text>
+     </svg>
+     <div class="ck-out"><span>From first call to launch</span><b><i>6 weeks</i></b></div>
+    </div>
+    <!-- 2 websites & stores -->
+    <div class="sc sc-store" data-c="1">
+     <div class="sc-top"><span>Store</span></div>
+     <div class="cx-store">
+      <div class="cx-pg"><div class="cx-img"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg></div><b class="sk w80"></b><b class="sk w50"></b><span class="cx-price">$89.00</span></div>
+      <ul class="cx-checks"><li class="cx-c1"><i class="ck-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.2 4.2L19 7"/></svg></i><span>Research-use label</span></li><li class="cx-c2"><i class="ck-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.2 4.2L19 7"/></svg></i><span>COA on the page</span></li><li class="cx-c3"><i class="ck-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.2 4.2L19 7"/></svg></i><span>No health claims</span></li><li class="cx-c4"><i class="ck-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.2 4.2L19 7"/></svg></i><span>Policies in place</span></li></ul>
+     </div>
+     <div class="ck-out"><span>Store status</span><b><i>Live</i></b></div>
+    </div>
+    <!-- 3 checkout: research-use confirmation, a declined gateway, the order re-routed, payout settles -->
+    <div class="sc sc-pay" data-c="2">
+     <div class="sc-top"><span>Checkout</span></div>
+     <p class="ck-confirm"><i class="ck-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.2 4.2L19 7"/></svg></i><span>I confirm this order is for research use only.</span></p>
+     <svg class="ck-route" viewBox="0 0 320 140" aria-hidden="true">
+      <path class="ck-line ck-a" pathLength="1" d="M28 70 C 80 70 90 32 150 32"/>
+      <path class="ck-line ck-b" pathLength="1" d="M28 70 C 80 70 90 108 150 108 C 212 108 232 70 292 70"/>
+      <path class="ck-run ck-run-a" pathLength="1" d="M28 70 C 80 70 90 32 150 32"/>
+      <path class="ck-run ck-run-b" pathLength="1" d="M28 70 C 80 70 90 108 150 108 C 212 108 232 70 292 70"/>
+      <polygon class="ck-node ck-n0" points="28.0,59.0 37.5,64.5 37.5,75.5 28.0,81.0 18.5,75.5 18.5,64.5"/>
+      <polygon class="ck-node ck-na" points="150.0,21.0 159.5,26.5 159.5,37.5 150.0,43.0 140.5,37.5 140.5,26.5"/>
+      <path class="ck-x" d="M145.5 27.5l9 9M154.5 27.5l-9 9"/>
+      <polygon class="ck-node ck-nb" points="150.0,97.0 159.5,102.5 159.5,113.5 150.0,119.0 140.5,113.5 140.5,102.5"/>
+      <polygon class="ck-node ck-n1" points="292.0,57.0 303.3,63.5 303.3,76.5 292.0,83.0 280.7,76.5 280.7,63.5"/>
+      <text x="28" y="100" text-anchor="middle">Store</text><text x="150" y="11" text-anchor="middle">Gateway A</text><text x="150" y="137" text-anchor="middle">Gateway B</text><text x="292" y="102" text-anchor="middle">Payout</text>
+     </svg>
+     <div class="ck-out"><span>Settled this week</span><b><i>$12,480</i></b></div>
+    </div>
+    <!-- 4 back office -->
+    <div class="sc sc-ops" data-c="3">
+     <div class="sc-top"><span>Operations</span></div>
+     <p class="ck-confirm"><i class="cx-ping" aria-hidden="true"></i><span>New wholesale order: 24 units</span></p>
+     <svg class="ck-route cx-svg" viewBox="0 0 320 140" aria-hidden="true">
+      <path class="ck-line" pathLength="1" d="M40 70 C 100 70 110 24 172 24"/><path class="ck-line" pathLength="1" d="M40 70 H172"/><path class="ck-line" pathLength="1" d="M40 70 C 100 70 110 116 172 116"/>
+      <path class="cx-run cx-r1" pathLength="1" d="M40 70 C 100 70 110 24 172 24"/><path class="cx-run cx-r2" pathLength="1" d="M40 70 H172"/><path class="cx-run cx-r3" pathLength="1" d="M40 70 C 100 70 110 116 172 116"/>
+      <polygon class="ck-node cx-n cx-n0" points="40.0,59.0 30.5,64.5 30.5,75.5 40.0,81.0 49.5,75.5 49.5,64.5"/>
+      <polygon class="ck-node cx-n cx-n1" points="172.0,15.0 164.2,19.5 164.2,28.5 172.0,33.0 179.8,28.5 179.8,19.5"/><polygon class="ck-node cx-n cx-n2" points="172.0,61.0 164.2,65.5 164.2,74.5 172.0,79.0 179.8,74.5 179.8,65.5"/><polygon class="ck-node cx-n cx-n3" points="172.0,107.0 164.2,111.5 164.2,120.5 172.0,125.0 179.8,120.5 179.8,111.5"/>
+      <text x="190" y="28" class="cx-tl">Tier price applied</text><text x="190" y="74" class="cx-tl">Affiliate paid</text><text x="190" y="120" class="cx-tl">Reorder scheduled</text>
+     </svg>
+     <div class="ck-out"><span>Every order, payout, renewal</span><b><i>One admin</i></b></div>
+    </div>
+    <!-- 5 marketing add-ons -->
+    <div class="sc sc-seo" data-c="4">
+     <div class="sc-top"><span>Growth</span></div>
+     <p class="ck-confirm cx-q"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>research peptides usa</span><b class="cx-rank"><i>#18</i><i>#3</i></b></p>
+     <svg class="ck-route cx-svg" viewBox="0 0 320 140" aria-hidden="true">
+      <defs><linearGradient id="cxArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".22"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
+      <path class="ck-line" pathLength="1" d="M16 30 H304"/><path class="ck-line" pathLength="1" d="M16 72 H304"/><path class="ck-line" pathLength="1" d="M16 114 H304"/>
+      <path class="cx-area" d="M16 116 C 60 113 82 106 112 98 S 168 80 200 68 S 262 32 304 20 V128 H16 Z" fill="url(#cxArea)"/>
+      <path class="cx-run cx-curve" pathLength="1" d="M16 116 C 60 113 82 106 112 98 S 168 80 200 68 S 262 32 304 20"/>
+      <polygon class="ck-node cx-n cx-n1" points="112.0,91.0 105.9,94.5 105.9,101.5 112.0,105.0 118.1,101.5 118.1,94.5"/><polygon class="ck-node cx-n cx-n2" points="200.0,61.0 193.9,64.5 193.9,71.5 200.0,75.0 206.1,71.5 206.1,64.5"/><polygon class="ck-node cx-n cx-n3 cx-pop" points="304.0,11.0 296.2,15.5 296.2,24.5 304.0,29.0 311.8,24.5 311.8,15.5"/>
+      <text x="112" y="122" text-anchor="middle">Search</text><text x="200" y="92" text-anchor="middle">Email</text><text x="290" y="15" text-anchor="end">Paid social</text>
+     </svg>
+     <div class="ck-out"><span>Every month</span><b><i>One clear report</i></b></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="wrap svc-cta rv">
+  <p>Not sure where to start? We will tell you on the first call.</p>
+  <a class="btn" href="#book" data-book data-pulse><span class="btn-t">Find my starting point</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+ </div>
+</section>
+
+<!-- ============ 3D FORMS ============ -->
+<section class="forms" id="forms" aria-label="Why founders switch">
+ <div class="forms-stage">
+  <canvas class="forms-gl" id="formsGl" aria-hidden="true"></canvas>
+  <div class="forms-fallback" aria-hidden="true"><svg viewBox="0 0 477 273"><use href="#logo"/></svg></div>
+  <div class="forms-ui">
+   <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Why founders switch to us</span></p>
+   <div class="forms-steps">
+    <div class="fs" data-f="0"><p class="fs-n">01 / Launch</p><h3>Zero to live in weeks.</h3><p>Brand, store, checkout and back office built in parallel, not passed between four vendors.</p></div>
+    <div class="fs" data-f="1"><p class="fs-n">02 / Compliance</p><h3>Written to pass review.</h3><p>Claims, copy, product pages and checkout built for processor review and RUO language before anything goes live.</p></div>
+    <div class="fs" data-f="2"><p class="fs-n">03 / Experience</p><h3>Stores that feel expensive.</h3><p>Premium design, fast pages and a checkout reviewed line by line, so trust survives the first click.</p></div>
+    <div class="fs" data-f="3"><p class="fs-n">04 / Peptide-native</p><h3>We only work in categories like yours.</h3><p>That focus is the advantage. We already know where every wall is, and how to get over it.</p></div>
+   </div>
+   <div class="forms-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </div>
+  <p class="forms-hint" aria-hidden="true">Drag to rotate</p>
+ </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="proc" id="process" aria-label="How we work">
+ <div class="proc-stage">
+  <div class="proc-haze" aria-hidden="true"></div>
+  <div class="proc-head">
+   <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>How we work</span></p>
+   <h2 class="h2 h2--sm" data-scramble>Every step in writing.</h2>
+   <p class="proc-lead">From first call to a live store in five steps. You always know what is happening, and what it costs.</p>
+  </div>
+  <div class="proc-rail" aria-hidden="true">
+   <div class="proc-ruler" id="procRuler"></div>
+   <svg class="proc-curve" viewBox="0 0 60 600" preserveAspectRatio="none"><path d="M40 0 L40 220 C40 260 8 270 8 300 C8 330 40 340 40 380 L40 600"/></svg>
+   <span class="proc-knob"><svg><use href="#i-chev"/></svg></span>
+  </div>
+  <div class="proc-main">
+   <p class="proc-day">Day</p>
+   <div class="odo" id="odo" aria-hidden="true"></div>
+   <div class="proc-steps">
+    <div class="ps" data-p="0"><h3>Strategy call</h3><p>30 minutes on video. You tell us what is blocked. We tell you honestly whether we can fix it.</p></div>
+    <div class="ps" data-p="1"><h3>Audit &amp; fixed-price plan</h3><p>A written plan for brand, site, checkout and back office, with scope, timeline and one fixed price. Yours to keep, even if you do not hire us.</p></div>
+    <div class="ps" data-p="2"><h3>Build in parallel</h3><p>Brand, store, checkout and back office move together. Weekly demos, no surprises, no reveal at the end.</p></div>
+    <div class="ps" data-p="3"><h3>Launch, verified</h3><p>Go live with checkout tested end to end, COAs linked to every product and tracking in place.</p></div>
+    <div class="ps" data-p="4"><h3>Scale what works</h3><p>Add SEO, email and ads when you are ready. Plain-English monthly reports and a roadmap for the next quarter.</p></div>
+   </div>
+   <a class="btn2" href="#book" data-book><span data-brick>Start with Day 00</span></a>
+  </div>
+ </div>
+</section>
+
+<!-- ============ FLUENCY ============ -->
+<section class="flu" id="fluency" aria-labelledby="fluTitle">
+ <div class="wrap flu-grid">
+  <div class="flu-l">
+   <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Category fluency</span></p>
+   <h2 class="h2" id="fluTitle" data-scramble>Copy that passes review and still sells.</h2>
+   <p class="lead rv">The difference between a store that gets shut down and one that grows is often a single sentence. Drag the line and see how we rewrite it.</p>
+   <div class="flu-tabs" role="tablist" aria-label="Examples">
+    <button role="tab" aria-selected="true" data-ex="0">Product page</button>
+    <button role="tab" aria-selected="false" data-ex="1">Checkout</button>
+    <button role="tab" aria-selected="false" data-ex="2">Homepage</button>
+   </div>
+   <ul class="flu-points rv">
+    <li><b>Policy-first copy.</b> Written for reviewers and buyers at the same time.</li>
+    <li><b>RUO-correct language.</b> No implied use, no health claims, no grey areas.</li>
+    <li><b>Still converts.</b> Specific, confident and built around proof.</li>
+   </ul>
+  </div>
+  <div class="flu-r">
+   <div class="cmp" id="cmp" style="--p:50%">
+    <div class="cmp-side cmp-bad"><p class="cmp-tag">Gets flagged</p><p class="cmp-text" data-bad>Heal faster and recover like an athlete with our BPC-157.</p><p class="cmp-why" data-badwhy>Health claims on an RUO product page are the fastest way to lose a processor.</p></div>
+    <div class="cmp-side cmp-good"><p class="cmp-tag">What we ship</p><p class="cmp-text" data-good>BPC-157, lyophilized, for research use only. Third-party tested, COA for this lot linked below.</p><p class="cmp-why" data-goodwhy>Verifiable, specific and written for the buyer who actually purchases RUO.</p></div>
+    <button class="cmp-handle" type="button" aria-label="Drag to compare" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><span><svg viewBox="0 0 24 24"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ CLIENT VOICES ============ -->
+<section class="tm" id="voices" aria-labelledby="tmTitle">
+ <div class="wrap">
+  <div class="tm-head">
+   <div>
+    <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Client voices</span></p>
+    <h2 class="h2" id="tmTitle" data-scramble>Trust, earned weekly.</h2>
+   </div>
+   <p class="lead rv">Outcomes from founders in categories most developers avoid.</p>
+  </div>
+  <div class="tm-grid" id="tmGrid">
+   <div class="tm-goo" aria-hidden="true"><i class="tm-shape"></i><i class="tm-ball"></i></div>
+   <article class="tm-card" id="tmCard" aria-live="polite">
+    <p class="tm-k"><span id="tmK">Weeks</span> <small id="tmU"></small></p>
+    <p class="tm-l" id="tmL">to a live store</p>
+    <blockquote class="tm-q" id="tmQ">"Three developers went quiet the moment they heard RUO. These guys built the brand, the store and the checkout, and we were taking orders within weeks."</blockquote>
+    <div class="tm-a"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><p><b id="tmA">Founder</b><span id="tmR">RUO peptide brand</span></p></div>
+   </article>
+   <div class="tm-side">
+    <ol class="tm-list" id="tmList">
+     <li><button type="button" class="tm-row is-on" data-i="0" data-k="Weeks" data-u="" data-l="to a live store" data-q="Three developers went quiet the moment they heard RUO. These guys built the brand, the store and the checkout, and we were taking orders within weeks." data-a="Founder" data-r="RUO peptide brand"><span class="tm-n">01</span><span class="tm-who">Founder, RUO peptide brand</span><span class="tm-res">Weeks to launch</span><i class="tm-bar"></i></button></li>
+     <li><button type="button" class="tm-row" data-i="1" data-k="Days" data-u="" data-l="to processor approval" data-q="Our first store was on Shopify and got shut down. The rebuild went in with a clean application and a new processor approved us within days." data-a="Operator" data-r="Peptide store"><span class="tm-n">02</span><span class="tm-who">Operator, Peptide store</span><span class="tm-res">Days to approval</span><i class="tm-bar"></i></button></li>
+     <li><button type="button" class="tm-row" data-i="2" data-k="0" data-u="plugins" data-l="for wholesale and affiliates" data-q="Wholesale pricing, affiliate payouts and subscriptions all live inside one admin. We stopped paying for apps that kept breaking." data-a="Head of Ops" data-r="Research supplier"><span class="tm-n">03</span><span class="tm-who">Head of Ops, Research supplier</span><span class="tm-res">0 plugins</span><i class="tm-bar"></i></button></li>
+     <li><button type="button" class="tm-row" data-i="3" data-k="1st" data-u="impression" data-l="buyers trust" data-q="Buyers used to ask if we were legit. Now they ask when the next batch drops. The labels and COA pages did that." data-a="Founder" data-r="Peptide brand"><span class="tm-n">04</span><span class="tm-who">Founder, Peptide brand</span><span class="tm-res">1st impression</span><i class="tm-bar"></i></button></li>
+     <li><button type="button" class="tm-row" data-i="4" data-k="⅓" data-u="revenue" data-l="from email" data-q="We added email once the store was converting. It went from an afterthought to the channel we check first every Monday." data-a="Operator" data-r="Kanna brand"><span class="tm-n">05</span><span class="tm-who">Operator, Kanna brand</span><span class="tm-res">⅓ revenue</span><i class="tm-bar"></i></button></li>
+    </ol>
+    <div class="tm-nav"><button type="button" class="tm-arr" data-d="-1" aria-label="Previous review"><svg><use href="#i-left"/></svg></button><button type="button" class="tm-arr tm-arr--r" data-d="1" aria-label="Next review"><svg><use href="#i-left"/></svg></button></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq" id="faq" aria-labelledby="faqTitle">
+ <div class="wrap faq-grid">
+  <div class="faq-l">
+   <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Honest answers</span></p>
+   <h2 class="h2" id="faqTitle" data-scramble>Asked at 2 AM. Answered straight.</h2>
+   <ol class="faq-q" id="faqQ">
+    {FAQ_ITEMS.map((item, i) => (
+      <li><button type="button" data-q={i}>{item.q}</button><p class="faq-a">{item.a}</p></li>
+    ))}
+   </ol>
+  </div>
+  <div class="chat" aria-live="polite">
+   <div class="chat-h">
+    <span class="chat-av"><svg aria-hidden="true"><use href="#logo"/></svg></span>
+    <div><p class="chat-n">Stealth Tech team</p><p class="chat-s">Most asked questions</p></div>
+   </div>
+   <div class="chat-body" id="chatBody"><p class="msg msg--in">Builds, payments, platforms, pricing. Pick a question and get a straight answer.</p></div>
+   <div class="chat-f">
+    <p>Still have a question?</p>
+    <a class="btn btn--sm" href="#book" data-book><span class="btn-t">Ask a human</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+   </div>
+  </div>
+ </div>
+</section>
+</main>
+
+</Base>
