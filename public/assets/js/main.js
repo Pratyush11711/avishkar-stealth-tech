@@ -203,38 +203,21 @@
   $$('.btn2').forEach(function (a) { var t = a.textContent.replace(/\s+/g, ' ').trim(); if (t && !a.getAttribute('aria-label')) a.setAttribute('aria-label', t); });
   $$('[data-brick], .btn-t').forEach(splitBricks);
   // turn 3D on just before a label flips and off once it has flipped back
-  $$('.btn2, .lk').forEach(function (h) {
+  $$('.btn, .btn2, .lk').forEach(function (h) {
     if (!h.querySelector('.bk')) return;
     var off = 0;
     function on() { clearTimeout(off); h.classList.add('is-3d'); }
-    function later() { clearTimeout(off); off = setTimeout(function () { if (!h.matches(':hover') && doc.activeElement !== h) h.classList.remove('is-3d'); }, 900); }
+    function later() { clearTimeout(off); off = setTimeout(function () { if (!h.matches(':hover') && doc.activeElement !== h && !h.classList.contains('is-flow')) h.classList.remove('is-3d'); }, 900); }
     ['pointerenter', 'focus', 'touchstart'].forEach(function (ev) { h.addEventListener(ev, on, { passive: true }); });
     ['pointerleave', 'blur', 'touchend'].forEach(function (ev) { h.addEventListener(ev, later, { passive: true }); });
     h._3d = { on: on, later: later };
   });
 
   /* =====================================================
-     BUTTONS: the fill grows from the pointer, same as the hero reference
+     BUTTONS: the fill slides up while the letters twist
      ===================================================== */
-  function ctaOrigin(b, x, y) {
-    var w = b.offsetWidth || b.getBoundingClientRect().width, h = b.offsetHeight || b.getBoundingClientRect().height;
-    var radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y));
-    b.style.setProperty('--cta-x', x + 'px');
-    b.style.setProperty('--cta-y', y + 'px');
-    b.style.setProperty('--cta-diameter', (radius * 2 + 4) + 'px');
-  }
   $$('.btn').forEach(function (b) {
-    b.addEventListener('pointerenter', function (e) {
-      var box = b.getBoundingClientRect();
-      ctaOrigin(b, e.clientX - box.left, e.clientY - box.top);
-    });
     b.addEventListener('pointerleave', function () { b.classList.remove('is-flow'); });
-    b.addEventListener('focus', function () {
-      if (!b.matches(':focus-visible')) return;
-      b.style.setProperty('--cta-x', '50%');
-      b.style.setProperty('--cta-y', '50%');
-      b.style.setProperty('--cta-diameter', (Math.hypot(b.offsetWidth, b.offsetHeight) + 4) + 'px');
-    });
     b.addEventListener('blur', function () { b.classList.remove('is-flow'); });
   });
   // a short haptic tick on touch devices that support it (Android Chrome; iOS Safari has no vibration API)
@@ -247,11 +230,12 @@
       var r = b.getBoundingClientRect();
       if (r.bottom < 0 || r.top > vh || !r.width || b.matches(':hover')) return;
       setTimeout(function () {
-        b.style.setProperty('--cta-x', '50%'); b.style.setProperty('--cta-y', '50%');
-        b.style.setProperty('--cta-diameter', (Math.hypot(b.offsetWidth, b.offsetHeight) + 4) + 'px');
         if (b.matches(':hover') || doc.activeElement === b) return;
-        b.classList.add('is-flow');
-        setTimeout(function () { b.classList.remove('is-flow'); }, 900);
+        b.classList.add('is-3d', 'is-flow');
+        setTimeout(function () {
+          b.classList.remove('is-flow');
+          setTimeout(function () { if (!b.matches(':hover') && doc.activeElement !== b) b.classList.remove('is-3d'); }, 900);
+        }, 1000);
       }, n++ * 220);
     });
   }, 6500);

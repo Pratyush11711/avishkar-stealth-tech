@@ -79,11 +79,12 @@ main,.foot{position:relative;z-index:1}
 /* logo marks (CSS vars flow into <use>) */
 .brand-mark,.dock-logo svg,.chat-av svg{--lg-a:var(--ink);--lg-m:var(--acc)}
 
-/* ---------- buttons: pointer-origin fill, arrow turns 45deg ---------- */
-.btn{--h:56px;position:relative;display:inline-flex;align-items:center;gap:16px;height:var(--h);padding:0 7px 0 26px;border-radius:999px;background:var(--btn-bg);color:var(--btn-fg);font-weight:500;font-size:14.5px;letter-spacing:.005em;white-space:nowrap;isolation:isolate;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;border:0;transition:transform .4s var(--spring)}
+/* ---------- buttons: fill slides up, letters twist, arrow turns 45deg ---------- */
+.btn{--h:56px;position:relative;display:inline-flex;align-items:center;gap:16px;height:var(--h);padding:0 7px 0 26px;border-radius:999px;background:var(--btn-bg);color:var(--btn-fg);font-weight:500;font-size:14.5px;letter-spacing:.005em;white-space:nowrap;isolation:isolate;cursor:pointer;-webkit-tap-highlight-color:transparent;border:0;transition:transform .4s var(--spring)}
 .btn:active{transform:scale(.97)}
-.btn::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:var(--cta-x,50%);top:var(--cta-y,50%);width:var(--cta-diameter,600px);height:var(--cta-diameter,600px);border-radius:50%;background:var(--btn-bg2);transform:translate(-50%,-50%) scale(0);transition:transform .55s cubic-bezier(.2,.7,.25,1);will-change:transform}
-.btn:hover::before,.btn:focus-visible::before,.btn.is-flow::before{transform:translate(-50%,-50%) scale(1)}
+/* the rising fill is clipped on the pseudo itself so the button can stay overflow:visible and the letter cubes keep their 3D */
+.btn::before{content:"";position:absolute;z-index:-1;pointer-events:none;inset:0;border-radius:inherit;background:var(--btn-bg2);-webkit-clip-path:inset(100% 0 0 0);clip-path:inset(100% 0 0 0);transition:clip-path .55s var(--e),-webkit-clip-path .55s var(--e)}
+.btn:hover::before,.btn:focus-visible::before,.btn.is-flow::before{-webkit-clip-path:inset(0);clip-path:inset(0)}
 .btn-t{position:relative;display:inline-flex;perspective:300px}
 .btn-i{position:relative;display:grid;place-items:center;width:calc(var(--h) - 14px);height:calc(var(--h) - 14px);border-radius:50%;background:var(--btn-ic);color:var(--btn-icfg);overflow:hidden;transition:transform .25s ease,background .25s ease}
 .btn-i svg{width:18px;height:18px}
@@ -101,7 +102,7 @@ main,.foot{position:relative;z-index:1}
 .is-3d .bk{-webkit-transform-style:preserve-3d;transform-style:preserve-3d}
 .is-3d .bk>span{-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .is-3d .bk>span+span{visibility:visible;transform:rotateX(90deg)}
-.btn2:hover .bk,.btn2:focus-visible .bk,.lk:hover .bk,.lk:focus-visible .bk{transform:rotateX(-90deg)}
+.btn:hover .bk,.btn:focus-visible .bk,.btn.is-flow .bk,.btn2:hover .bk,.btn2:focus-visible .bk,.lk:hover .bk,.lk:focus-visible .bk{transform:rotateX(-90deg)}
 .btn .bk>span+span{color:var(--btn-fg2)}
 .btn2{position:relative;display:inline-flex;align-items:center;height:48px;padding:0 2px;font-weight:500;font-size:14.5px;color:var(--ink);perspective:400px}
 .btn2::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--line2)}
@@ -590,7 +591,7 @@ main,.foot{position:relative;z-index:1}
 .dock-ic{width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;color:#EEF3EF}
 .dock .theme-t{border:0}
 .dock .theme-t:hover{background:rgba(255,255,255,.09)}
-/* the dock's Book a call uses the same pointer fill as the other CTAs (always neon: the dock is dark in both themes) */
+/* the dock's Book a call uses the same slide-up fill and letter twist as the other CTAs (always neon: the dock is dark in both themes) */
 .btn--dock{--h:46px;--btn-bg:#3DF58F;--btn-fg:#03140A;--btn-bg2:#EEF3EF;--btn-fg2:#03140A;--btn-ic:#03140A;--btn-icfg:#3DF58F;font-size:13.5px;padding:0 5px 0 20px;gap:12px}
 
 /* ============ COOKIE ============ */
