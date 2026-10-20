@@ -24,4 +24,9 @@ export default defineConfig({
   trailingSlash: 'never',
   compressHTML: false,
   integrations: [swStamp],
+  vite: {
+    preview: {
+      allowedHosts: ['stealthtech.agency', 'www.stealthtech.agency'],
+    },
+  },
 });
