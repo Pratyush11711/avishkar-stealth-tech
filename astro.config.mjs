@@ -14,7 +14,10 @@ export default defineConfig({
   site: 'https://stealthtech.agency',
   output: 'static',
   build: {
-    format: 'file',
+    // directory layout so /peptide-brand-launch is a real folder with index.html.
+    // format: 'file' emitted peptide-brand-launch.html, which the dev server
+    // opens but a static host answers with 404.
+    format: 'directory',
     inlineStylesheets: 'never',
     assets: '_astro',
   },

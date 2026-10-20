@@ -75,9 +75,13 @@ function put(req, res) { if (res && res.ok && res.type === 'basic') { var copy =
 function fromCache(req) {
   return caches.match(req, { ignoreSearch: true }).then(function (r) {
     if (r) return r;
-    // /peptide-seo and /peptide-seo.html are the same page
-    var u = new URL(req.url); if (!/\.html$/.test(u.pathname) && u.pathname !== '/') return caches.match(u.pathname.replace(/\/$/, '') + '.html');
-    return caches.match('index.html');
+    // /peptide-seo, /peptide-seo.html and /peptide-seo/index.html are the same page
+    var u = new URL(req.url);
+    if (/\.html$/.test(u.pathname) || u.pathname === '/') return caches.match('index.html');
+    var path = u.pathname.replace(/\/$/, '');
+    return caches.match(path + '/index.html').then(function (idx) {
+      return idx || caches.match(path + '.html');
+    });
   });
 }
 self.addEventListener('fetch', function (e) {

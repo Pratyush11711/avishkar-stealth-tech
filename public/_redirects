@@ -1,3 +1,17 @@
+# Old flat HTML addresses from the static site
+/peptide-marketing-agency.html   /peptide-marketing-agency   301
+/peptide-brand-launch.html       /peptide-brand-launch       301
+/peptide-websites.html           /peptide-websites           301
+/peptide-ads.html                /peptide-ads                301
+/high-risk-payments.html         /high-risk-payments         301
+/peptide-seo.html                /peptide-seo                301
+/hemp-marketing.html             /hemp-marketing             301
+/kanna-marketing.html            /kanna-marketing            301
+/peptide-platforms.html          /peptide-platforms          301
+/peptide-marketing.html          /peptide-marketing          301
+/privacy.html                    /privacy                    301
+/cookies.html                    /cookies                    301
+
 # Netlify: the project's notes, sources and tools travel with the site folder but are never served
 /_source/*            /404.html  404!
 /tools/*              /404.html  404!
