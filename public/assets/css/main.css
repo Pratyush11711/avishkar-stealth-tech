@@ -728,6 +728,10 @@ main,.foot{position:relative;z-index:1}
 }
 @media (max-width:900px){
  :root{--rad:22px}
+ /* the page itself scrolls; a bounce at a sticky scene was kicking the next section out from under the finger */
+ html,body{overscroll-behavior-y:none}
+ .pb-bubbles{display:none}
+ .pb-track{will-change:auto}
  .top{padding:16px var(--pad)}
  .top .btn{display:none}
  .brand-word{font-size:15px}

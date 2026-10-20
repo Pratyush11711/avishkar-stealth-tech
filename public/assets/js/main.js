@@ -16,6 +16,9 @@
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var MQ = window.matchMedia('(max-width: 900px)');
   var FINE = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // phones and tablets: the finger scrolls natively. A script must not steer the page while it is moving.
+  var TOUCH = !FINE || MQ.matches;
+  var SCRUB = TOUCH ? true : 0.6;
   var gsap = window.gsap, ST = window.ScrollTrigger;
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
   var lerp = function (a, b, t) { return a + (b - a) * t; };
@@ -99,7 +102,7 @@
   // Opera GX can cap CPU/RAM per tab (GX Control); script-driven smooth scrolling stutters under that cap,
   // so GX always gets the browser's own (compositor) scrolling
   var GX = false; try { GX = (navigator.userAgentData && navigator.userAgentData.brands || []).some(function (b) { return /Opera GX/i.test(b.brand); }); } catch (e) {}
-  if (!RM && !LITE && !GX && window.Lenis) {
+  if (!RM && !LITE && !GX && !TOUCH && window.Lenis) {
     lenis = new window.Lenis({ lerp: 0.09, smoothWheel: true, syncTouch: false, wheelMultiplier: 0.95 });
     lenis.on('scroll', ST.update);
     gsap.ticker.add(lenisRaf);
@@ -511,6 +514,9 @@
     var setClip = function () { var k = cp.k, v = k > 0.001 ? 'inset(' + (6 * k).toFixed(2) + '% ' + (4 * k).toFixed(2) + '% 0% ' + (4 * k).toFixed(2) + '% round ' + (40 * k).toFixed(1) + 'px)' : 'none'; stage.style.webkitClipPath = v; stage.style.clipPath = v; };
     gsap.fromTo(cp, { k: 1 }, { k: 0, ease: 'none', onUpdate: setClip, scrollTrigger: { trigger: sec, start: 'top 94%', end: 'top top', scrub: true } });
     setClip();
+    // the magnet finishes a half-shown scene on a mouse wheel. On a touch screen it fights the finger
+    // and the momentum, so the page jumps between sections. Touch scrolling stays with the finger.
+    if (TOUCH) return;
     var lastY = window.pageYOffset, dir = 0, busy = false, idle = 0;
     function check() {
       if (busy || body.classList.contains('is-locked') || magnetBusy) return;
@@ -524,7 +530,6 @@
     window.addEventListener('scroll', function () {
       var y = window.pageYOffset; if (y !== lastY) dir = y > lastY ? 1 : -1; lastY = y;
       if (busy) return;
-      // smooth scrolling (Lenis): react at once; native / touch scrolling: wait until the finger and the momentum have settled
       if (lenis) check(); else { clearTimeout(idle); idle = setTimeout(check, 90); }
     }, { passive: true });
   }
@@ -548,11 +553,11 @@
       } else { n.classList.add('pw'); words.push(n); }
     });
     var track = $('.pb-track', sec), panel = $('.pb-panel', sec), img = $('.pb-img', sec), end = $('.pb-end', sec);
-    var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top 85%', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true } });
+    var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top 85%', end: 'bottom bottom', scrub: SCRUB, invalidateOnRefresh: true } });
     gsap.set('.pb-bg', { opacity: 1 });
     tl.fromTo('.pb-bubbles', { opacity: 0 }, { opacity: 1, duration: 0.8 }, 0.5)
       .set(intro, { opacity: 1 }, 1.95)
-      .to(intro, { yPercent: -50, opacity: 0, filter: 'blur(8px)', duration: 0.7, ease: 'power1.in' }, 3.7)
+      .to(intro, TOUCH ? { yPercent: -50, opacity: 0, duration: 0.7, ease: 'power1.in' } : { yPercent: -50, opacity: 0, filter: 'blur(8px)', duration: 0.7, ease: 'power1.in' }, 3.7)
       // the moving line gets more scroll distance (and the section is taller) so it can be read while it passes
       .fromTo(track, { x: function () { return innerWidth; } }, { x: function () { return -track.scrollWidth - innerWidth * 0.05; }, duration: 5.6 }, 3.9)
       .fromTo(panel, { clipPath: 'inset(50% 50% 50% 50% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 3, ease: 'power2.inOut' }, 6.3)
@@ -560,9 +565,9 @@
       .fromTo(end, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, 9.7)
       .to({}, { duration: 1.4 }, 10.9);
     // the opening line plays by itself the moment the scene has filled the screen (no extra scrolling needed to read it)
-    gsap.set(words, { opacity: 0, y: 18, filter: 'blur(6px)' });
-    ST.create({ trigger: sec, start: 'top 6%', onEnter: function () { gsap.to(words, { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.06, duration: 0.6, ease: 'power2.out', overwrite: true }); },
-      onLeaveBack: function () { gsap.to(words, { opacity: 0, y: 18, filter: 'blur(6px)', duration: 0.3, overwrite: true }); } });
+    gsap.set(words, TOUCH ? { opacity: 0, y: 18 } : { opacity: 0, y: 18, filter: 'blur(6px)' });
+    ST.create({ trigger: sec, start: 'top 6%', onEnter: function () { gsap.to(words, TOUCH ? { opacity: 1, y: 0, stagger: 0.06, duration: 0.6, ease: 'power2.out', overwrite: true } : { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.06, duration: 0.6, ease: 'power2.out', overwrite: true }); },
+      onLeaveBack: function () { gsap.to(words, TOUCH ? { opacity: 0, y: 18, duration: 0.3, overwrite: true } : { opacity: 0, y: 18, filter: 'blur(6px)', duration: 0.3, overwrite: true }); } });
   }
 
   /* =====================================================
@@ -580,7 +585,7 @@
     var full = function () { return Math.hypot(stage.clientWidth, stage.clientHeight) / 2 + 10; };
     var circ = function (r) { return 'circle(' + r + 'px at 50% 50%)'; };
     var cur = -1;
-    var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true,
+    var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: SCRUB, invalidateOnRefresh: true,
       onUpdate: function (s) { var i = s.progress < 0.36 ? 0 : s.progress < 0.71 ? 1 : 2; if (i !== cur) { cur = i; num.textContent = '0' + (i + 1); } } } });
     tl.to({}, { duration: 1 }, 0);
     tl.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 7 }, 0);
@@ -627,11 +632,13 @@
       prog.forEach(function (b, k) { b.classList.toggle('is-on', k <= i); b.classList.toggle('is-cur', k === i); });
       var h = $('h3', txs[i]); if (h) scramble(h, 420);
     }
+    var deckH = 0, deckW = 0;
     function place() {
-      var mob = MQ.matches, H = deck.clientHeight, R = H * (mob ? 0.95 : 0.98), step = (mob ? 30 : 32) * Math.PI / 180;
+      if (!deckH) { deckH = deck.clientHeight; deckW = deck.clientWidth; }
+      var mob = MQ.matches, H = deckH, R = H * (mob ? 0.95 : 0.98), step = (mob ? 30 : 32) * Math.PI / 180;
       cards.forEach(function (c, i) {
         var o = i - p, a = Math.abs(o), th = o * step;
-        var x = mob ? Math.sin(th) * deck.clientWidth * 1.05 : R * (1 - Math.cos(th)), y = mob ? (1 - Math.cos(th)) * H * 0.55 : R * Math.sin(th);
+        var x = mob ? Math.sin(th) * deckW * 1.05 : R * (1 - Math.cos(th)), y = mob ? (1 - Math.cos(th)) * H * 0.55 : R * Math.sin(th);
         var sc = 1 - Math.min(a, 2) * 0.12, op = a <= 1 ? 1 - a * 0.45 : Math.max(0, 0.55 - (a - 1) * 0.9);
         c.style.transform = 'translate3d(' + x.toFixed(1) + 'px,calc(-50% + ' + y.toFixed(1) + 'px),0) rotate(' + (th * 180 / Math.PI * 0.42).toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
         c.style.opacity = op.toFixed(3); c.style.zIndex = String(20 - Math.round(a * 4));
@@ -645,9 +652,9 @@
     trig = ST.create({ trigger: pin, start: 'top top', end: 'bottom bottom', onUpdate: function (s) { pT = target(s.progress); } });
     gsap.ticker.add(function () {
       if (Math.abs(pT - p) < 0.0005) return;
-      p += (pT - p) * (RM ? 1 : 0.1); place(); setActive(Math.round(p));
+      p += (pT - p) * (RM || TOUCH ? 1 : 0.1); place(); setActive(Math.round(p));
     });
-    window.addEventListener('resize', place);
+    window.addEventListener('resize', function () { deckH = 0; place(); });
     place(); setActive(0);
     nums.forEach(function (b, i) { b.addEventListener('click', function () { scrollToY(trig.start + (trig.end - trig.start) * (i / (N - 1)), 1.2); }); });
   }
@@ -709,9 +716,10 @@
       var tk = doc.createElement('span'); tk.className = 'tk' + (m === 0 ? ' is-major' : ''); tk.textContent = m === 0 ? NAMES[i] : '';
       tk._pos = i + m / (MIN + 1); tk._step = m === 0 ? i : -1; ruler.appendChild(tk); ticks.push(tk);
     }
-    var cur = -1;
+    var cur = -1, rulerH = 0;
     function render(p) {
-      var H = ruler.clientHeight, gap = H * (MQ.matches ? 0.2 : 0.22), center = H / 2, pos = p * (DAYS.length - 1), depth = MQ.matches ? 22 : 30;
+      if (!rulerH) rulerH = ruler.clientHeight || 1;
+      var H = rulerH, gap = H * (MQ.matches ? 0.2 : 0.22), center = H / 2, pos = p * (DAYS.length - 1), depth = MQ.matches ? 22 : 30;
       for (var k = 0; k < ticks.length; k++) {
         var tk = ticks[k], y = center + (tk._pos - pos) * gap, dd = (y - center) / (H * 0.09), dx = -depth * Math.exp(-dd * dd);
         tk.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + (y - 10).toFixed(1) + 'px)';
@@ -721,7 +729,7 @@
       if (a !== cur) { cur = a; setOdo(DAYS[a]); steps.forEach(function (s, k) { s.classList.toggle('is-on', k === a); }); ticks.forEach(function (t) { t.classList.toggle('is-cur', t._step === a); }); }
     }
     render(0);
-    ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: function (s) { render(s.progress); }, onRefresh: function (s) { render(s.progress); } });
+    ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: function (s) { render(s.progress); }, onRefresh: function (s) { rulerH = 0; render(s.progress); } });
   }
 
   /* =====================================================
