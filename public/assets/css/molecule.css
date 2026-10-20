@@ -23,6 +23,8 @@
 @media (max-width:900px){
  .mol-stage--hero{height:clamp(150px,40vw,330px)}
  .mol-gl{top:-30%;height:160%}
+ /* the hero canvas used to hang over the headline; forming the logo then repainted that text every frame */
+ .mol-stage--hero .mol-gl{top:0;height:118%}
  .mol-still,.mol-noscript,.mol-stage--foot .mol-still,.mol-stage--404 .mol-still{width:96%}
  .mol-stage--foot{height:clamp(140px,38vw,280px);margin:0 0 28px}
  .mol-stage--404{height:clamp(110px,30vw,200px)}

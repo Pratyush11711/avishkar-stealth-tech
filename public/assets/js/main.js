@@ -147,7 +147,10 @@
     if (RM || LITE) { el.textContent = txt; return; }
     if (el._scr) cancelAnimationFrame(el._scr);
     var len = txt.length, d = dur || clamp(380 + len * 9, 450, 900), t0 = performance.now(), lastT = 0;
-    el.style.minHeight = el.offsetHeight + 'px';
+    /* lock the box: random glyphs are wider than the real line, and on a phone that was pushing the headline around */
+    el.style.width = el.offsetWidth + 'px';
+    el.style.height = el.offsetHeight + 'px';
+    el.style.overflow = 'hidden';
     var tick = function (now) {
       if (now - lastT < 32 && now - t0 < d) { el._scr = requestAnimationFrame(tick); return; }
       lastT = now;
@@ -158,7 +161,7 @@
         else { var g = GLYPHS[(Math.random() * GLYPHS.length) | 0]; if (p > reveal - 0.32 && !far) near += g; else far += g; }
       }
       el.innerHTML = esc2(a) + (near ? '<span class="scr-c">' + esc2(near) + '</span>' : '') + (far ? '<span class="scr-c" style="opacity:.25">' + esc2(far) + '</span>' : '');
-      if (p < 1) el._scr = requestAnimationFrame(tick); else { el.textContent = txt; el.style.minHeight = ''; el._scr = 0; }
+      if (p < 1) el._scr = requestAnimationFrame(tick); else { el.textContent = txt; el.style.width = ''; el.style.height = ''; el.style.overflow = ''; el._scr = 0; }
     };
     el._scr = requestAnimationFrame(tick);
   }

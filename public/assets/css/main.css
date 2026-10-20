@@ -730,7 +730,8 @@ main,.foot{position:relative;z-index:1}
  .top{padding:16px var(--pad)}
  .top .btn{display:none}
  .brand-word{font-size:15px}
- .hero{height:auto;min-height:100vh;min-height:100svh;padding-top:clamp(96px,13vh,130px);grid-template-rows:auto auto auto;align-content:start}
+ .hero{height:auto;min-height:100vh;min-height:100svh;padding-top:clamp(96px,13svh,130px);grid-template-rows:auto auto auto;align-content:start}
+ .hero-head{isolation:isolate;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
  .hero-h{font-size:clamp(40px,11.4vw,84px)}
  .hero-foot{flex-direction:column;align-items:stretch;gap:22px;margin-top:6px}
  .hero-r{order:1;width:auto;max-width:none;text-align:center;align-items:stretch}
@@ -891,11 +892,13 @@ html.no-gpu{--card-sh:0 1px 0 rgba(0,0,0,.25)}
 .no-gpu .proc-haze,.no-gpu .pb-bubbles{display:none}
 /* ---------- asset protection (deterrent): images, the molecule and canvases cannot be dragged, long-press saved or selected ---------- */
 img,canvas,svg image{-webkit-user-drag:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-/* hero on phones: balanced headline lines, one-line eyebrow where it fits */
+/* hero on phones: the line break is a real box, so the headline cannot reflow while the molecule logo forms */
+.hero-nl{display:inline}
 @media (max-width:900px){
- .hero-h .hl-i{text-wrap:balance}
+ .hero-h .hl-i,.hero-h .hero-eb span{text-wrap:wrap}
+ .hero-nl{display:block;height:0}
  .hero-h .hero-eb{font-size:10px;letter-spacing:.14em;gap:8px;padding:0 4px}
- .hero-h .hero-eb span{text-wrap:balance}
+ .hero-h .hero-eb [data-scramble]{display:inline-block;max-width:100%;vertical-align:top}
 }
 /* trust (2nd section): the card slides up into place, then its parts rise one after another (transform + opacity only) */
 .js .trust-card.rv{opacity:0;transform:translateY(64px) scale(.975)}
