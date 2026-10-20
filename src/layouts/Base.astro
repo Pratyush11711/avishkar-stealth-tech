@@ -38,6 +38,15 @@ const ogUrlAbs = (ogUrl || canonical).startsWith('http') ? (ogUrl || canonical) 
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
+<!-- Google tag (gtag.js) -->
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-MQP9BWN5ZZ"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-MQP9BWN5ZZ');
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
@@ -207,7 +216,7 @@ if (/^https?:$/.test(location.protocol)) document.write('<base href="/">');</scr
    <nav class="foot-cols" aria-label="Footer">
     <div><p class="foot-k">Services</p><a href="/peptide-brand-launch">Brand launches</a><a href="/peptide-websites">Websites &amp; stores</a><a href="/high-risk-payments">Checkout &amp; payments</a><a href="/peptide-platforms">Back office</a><a href="/peptide-marketing">Marketing add-ons</a></div>
     <div><p class="foot-k">Industries</p><a href="/peptide-marketing-agency">Peptide &amp; RUO</a><a href="/hemp-marketing">Hemp &amp; botanicals</a><a href="/kanna-marketing">Kanna</a><a href="/kanna-marketing">Clinics &amp; telehealth</a></div>
-    <div><p class="foot-k">Contact</p><a href="#book" data-book>Book a strategy call</a><a href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a></div>
+    <div><p class="foot-k">Contact</p><a href="#book" data-book>Book a strategy call</a><a href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a><a href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a></div>
    </nav>
   </div>
 
