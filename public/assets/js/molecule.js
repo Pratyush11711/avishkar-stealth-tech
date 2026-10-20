@@ -4,7 +4,7 @@
    - it breathes softly, a gentle accordion and vertical wave run through it, with a slow idle sway in perspective,
    - particles keep rising from the whole structure; a mint energy wave and a light sweep pass over it,
    - hover: a glow runs from the centre out to both ends,
-   - click: a smooth wave rolls from left to right; three quick clicks: the bonds stretch, then spring back and the units knock together,
+   - every 8 seconds a smooth wave rolls from left to right; one click: the bonds stretch, then spring back and the units knock together,
    - drag: the part you grab is pulled along and springs back,
    - a soft shadow under it follows every stretch and pull.
    No libraries. ES5. On file:// the picture comes from assets/js/chain-*.js (data URL) so WebGL may read it.
@@ -86,7 +86,7 @@
     ' float br=sin(uT*.95)*.008+sin(uT*.41+1.3)*.004;x*=1.+br;y*=1.-br*.6;',
     ' x+=sin(uv.x*9.4-uT*1.3)*uS.x*.0022*uAmp*(.3+.7*edge);',
     ' float wv=sin(uv.x*6.3-uT*1.1)*.55+sin(uv.x*2.9+uT*.78)*.45;y+=wv*uS.y*.024*uAmp*(.2+.8*edge);',
-    // three clicks: only the bonds stretch (k = where each column goes), then they spring back and the units knock together
+    // one click: only the bonds stretch (k = where each column goes), then they spring back and the units knock together
     ' x+=uStr*uS.x*(k-.5);y*=1.+min(uStr,0.)*.6;',
     // one click: a smooth wave rolls from left to right
     ' float p=-.25+uWave*.6,q=uv.x-p,fd=1.-smoothstep(1.7,2.5,uWave);',
@@ -219,7 +219,7 @@
     // while the page is scrolling, the molecule draws at half rate so every frame of the scroll stays smooth
     w.addEventListener('scroll', function () { scrollUntil = performance.now() + 180; }, { passive: true });
     var pmx = -9999, pmy = -9999, amp = 1, hot = false, hovA = 0, hovAt = 0, boost = 0;
-    var waveAt = -99, S = 0, Sv = 0, stretchAt = -99, clicks = [];
+    var waveAt = -99, S = 0, Sv = 0, stretchAt = -99, nextWave = 8;
     var down = false, dragging = false, sx0 = 0, sy0 = 0, grabU = 0.5, grabZ = 0, pX = 0, pY = 0, vX = 0, vY = 0;
     function now() { return (performance.now() - t0) / 1000; }
 
@@ -231,9 +231,11 @@
     }
     function step(dt) {
       var t = now();
+      // the one-click wave, on its own, every 8 seconds (hero, footer and 404 share this)
+      if (t >= nextWave) { waveAt = t; boost = Math.max(boost, 0.5); nextWave = t + 8; }
       amp += ((hot ? 1.25 : 1) - amp) * 0.05;
       hovA += ((hot ? 1 : 0) - hovA) * (hot ? 0.08 : 0.04); boost *= 0.95;
-      // three clicks: stretch for a moment, then a spring pulls the bonds back and the units knock together
+      // one click: stretch for a moment, then a spring pulls the bonds back and the units knock together
       var ts = t - stretchAt;
       if (ts >= 0 && ts < 0.32) { var e = ts / 0.32; S = 0.24 * (1 - Math.pow(1 - e, 3)); Sv = 0; }
       else { var a = -230 * S - 9 * Sv; Sv += a * dt; S += Sv * dt; if (S < -0.15) { S = -0.15; Sv = Math.abs(Sv) * 0.35; boost = 1; } if (Math.abs(S) < 0.0004 && Math.abs(Sv) < 0.002) { S = 0; Sv = 0; } }
@@ -302,7 +304,7 @@
     var rzT = 0; w.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(resize, 100); });
     cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); stop(); still(stage); });
 
-    /* pointer: hover glow, click wave, three clicks = stretch, drag = pull (the object itself never follows the mouse) */
+    /* pointer: hover glow, one click = stretch, drag = pull (the wave also plays by itself every 8 seconds) */
     function local(e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
     function inChain(x, y) { return Math.abs(x - CX) < IW * 0.52 && Math.abs(y - CY) < IH * 0.62; }
     w.addEventListener('pointermove', function (e) {
@@ -326,10 +328,8 @@
     w.addEventListener('pointerup', function () {
       if (!down) return; down = false;
       if (dragging) { dragging = false; stage.classList.remove('is-drag'); return; }
-      var t = now(); waveAt = t; boost = Math.max(boost, 0.5);
-      clicks.push(t); clicks = clicks.filter(function (c) { return t - c < 0.7; });
-      if (clicks.length >= 3) { clicks = []; stretchAt = t; boost = 1; }
-      try { if (navigator.vibrate) navigator.vibrate(clicks.length ? 10 : [12, 40, 24]); } catch (x) {}
+      var t = now(); stretchAt = t; boost = 1; nextWave = t + 8;
+      try { if (navigator.vibrate) navigator.vibrate([12, 40, 24]); } catch (x) {}
     });
     w.addEventListener('pointercancel', function () { down = false; dragging = false; stage.classList.remove('is-drag'); });
     cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
