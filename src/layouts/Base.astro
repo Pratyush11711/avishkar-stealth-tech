@@ -301,8 +301,8 @@ if (/^https?:$/.test(location.protocol)) document.write('<base href="/">');</scr
    <fieldset class="m-step" data-step="3">
     <legend class="m-h">Budget and location</legend>
     <div class="m-fields m-grid">
-     <label><span>Minimum budget (USD)</span><select name="budget_min" data-money required><option value="$2,500">$2,500</option><option value="$5,000" selected>$5,000</option><option value="$10,000">$10,000</option><option value="$15,000">$15,000</option><option value="$25,000">$25,000</option><option value="$50,000">$50,000</option><option value="$75,000">$75,000</option><option value="$100,000">$100,000</option></select></label>
-     <label><span>Maximum budget (USD)</span><select name="budget_max" data-money required><option value="$2,500">$2,500</option><option value="$5,000">$5,000</option><option value="$10,000">$10,000</option><option value="$15,000">$15,000</option><option value="$25,000" selected>$25,000</option><option value="$50,000">$50,000</option><option value="$75,000">$75,000</option><option value="$100,000">$100,000</option><option value="$150,000+">$150,000+</option></select></label>
+     <label><span>Minimum budget (USD)</span><input name="budget_min" data-money inputmode="numeric" autocomplete="off" placeholder="Type an amount" required></label>
+     <label><span>Maximum budget (USD)</span><input name="budget_max" data-money inputmode="numeric" autocomplete="off" placeholder="Type an amount" required></label>
      <label><span>Country</span><input name="country" data-suggest="stCountries" autocomplete="off" placeholder="Start typing" required></label>
      <label><span>State / region</span><input name="region" data-suggest="stRegions" autocomplete="off" placeholder="Optional"></label>
      <label class="m-wide"><span>When do you want to launch?</span><select name="timeline"><option>As soon as possible</option><option selected>In 1 to 3 months</option><option>In 3 to 6 months</option><option>Just exploring</option></select></label>

@@ -200,75 +200,39 @@
   $$('.btn2').forEach(function (a) { var t = a.textContent.replace(/\s+/g, ' ').trim(); if (t && !a.getAttribute('aria-label')) a.setAttribute('aria-label', t); });
   $$('[data-brick], .btn-t').forEach(splitBricks);
   // turn 3D on just before a label flips and off once it has flipped back
-  $$('.btn, .btn2, .lk').forEach(function (h) {
+  $$('.btn2, .lk').forEach(function (h) {
     if (!h.querySelector('.bk')) return;
     var off = 0;
     function on() { clearTimeout(off); h.classList.add('is-3d'); }
-    function later() { clearTimeout(off); off = setTimeout(function () { if (!h.matches(':hover') && !h.classList.contains('is-broken') && doc.activeElement !== h) h.classList.remove('is-3d'); }, 900); }
+    function later() { clearTimeout(off); off = setTimeout(function () { if (!h.matches(':hover') && doc.activeElement !== h) h.classList.remove('is-3d'); }, 900); }
     ['pointerenter', 'focus', 'touchstart'].forEach(function (ev) { h.addEventListener(ev, on, { passive: true }); });
     ['pointerleave', 'blur', 'touchend'].forEach(function (ev) { h.addEventListener(ev, later, { passive: true }); });
     h._3d = { on: on, later: later };
   });
 
   /* =====================================================
-     BUTTONS: the whole button shatters like glass, then the new button appears
+     BUTTONS: the fill grows from the pointer, same as the hero reference
      ===================================================== */
-  var NS = 'http://www.w3.org/2000/svg';
-  function buildGlass(b) {
-    if (b._gl) return;
-    var g = doc.createElement('span'); g.className = 'btn-gl'; g.setAttribute('aria-hidden', 'true');
-    var core = doc.createElement('i'); core.className = 'btn-core';
-    var crk = doc.createElement('span'); crk.className = 'btn-crk';
-    var cr = doc.createElementNS(NS, 'svg'); cr.setAttribute('viewBox', '0 0 100 100'); cr.setAttribute('preserveAspectRatio', 'none');
-    crk.appendChild(cr); g.appendChild(core); b.insertBefore(g, b.firstChild); b._gl = { g: g, cr: cr, crk: crk };
-    glassGeo(b, 0.35, 0.5);
-  }
-  function glassGeo(b, px, py) {
-    var G = b._gl, g = G.g, w = b.offsetWidth || 200, h = b.offsetHeight || 56;
-    var P = [px * 100, py * 100], B = [], per = [[0, 0], [100, 0], [100, 100], [0, 100]];
-    for (var e = 0; e < 4; e++) {
-      var a = per[e], c = per[(e + 1) % 4], n = e % 2 ? 1 : 3;
-      B.push(a);
-      for (var k = 1; k <= n; k++) { var t = (k + (Math.random() - 0.5) * 0.6) / (n + 1); B.push([a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t]); }
-    }
-    var M = B.map(function (q) { var f = 0.3 + Math.random() * 0.25; return [P[0] + (q[0] - P[0]) * f, P[1] + (q[1] - P[1]) * f]; });
-    // the shard elements are created once and only re-shaped on later hovers (no DOM churn under the mouse)
-    var frag = doc.createDocumentFragment(), lines = '', pool = G.sh || (G.sh = []), n = 0;
-    for (var i = 0; i < B.length; i++) {
-      var j = (i + 1) % B.length;
-      [{ pts: [P, M[i], M[j]], inner: true }, { pts: [M[i], B[i], B[j], M[j]], inner: false }].forEach(function (sh) {
-        var el = pool[n++];
-        if (!el) { el = doc.createElement('i'); el.className = 'sh'; el.appendChild(doc.createElement('b')); pool.push(el); frag.appendChild(el); }
-        el.style.setProperty('--cp', 'polygon(' + sh.pts.map(function (q) { return q[0].toFixed(2) + '% ' + q[1].toFixed(2) + '%'; }).join(',') + ')');
-        var cx = 0, cy = 0; sh.pts.forEach(function (q) { cx += q[0]; cy += q[1]; }); cx /= sh.pts.length; cy /= sh.pts.length;
-        var dx = (cx - P[0]) / 100 * w, dy = (cy - P[1]) / 100 * h, d = Math.hypot(dx, dy) || 1, k2 = (sh.inner ? 22 : 30) + Math.random() * 26;
-        el.style.setProperty('--tx', (dx / d * k2).toFixed(1) + 'px');
-        el.style.setProperty('--ty', (dy / d * k2 * 0.7 + 10 + Math.random() * 14).toFixed(1) + 'px');
-        el.style.setProperty('--r', ((Math.random() - 0.5) * 50).toFixed(1) + 'deg');
-        el.style.setProperty('--dl', Math.round(70 + Math.min(d, 140) * 0.5 + Math.random() * 50) + 'ms');
-      });
-      lines += '<line x1="' + P[0] + '" y1="' + P[1] + '" x2="' + B[i][0] + '" y2="' + B[i][1] + '"/><line x1="' + M[i][0] + '" y1="' + M[i][1] + '" x2="' + M[j][0] + '" y2="' + M[j][1] + '"/>';
-    }
-    if (frag.firstChild) { g.appendChild(frag); g.appendChild(G.crk); }
-    G.cr.innerHTML = lines;
-  }
-  function glass(b, on, e) {
-    if (RM) return;
-    if (on) {
-      if (b.classList.contains('is-broken')) return;
-      var r = b.getBoundingClientRect(), px = 0.3 + Math.random() * 0.4, py = 0.5;
-      if (e && e.clientX != null && r.width) { px = clamp((e.clientX - r.left) / r.width, 0.1, 0.9); py = clamp((e.clientY - r.top) / r.height, 0.25, 0.75); }
-      if (b._3d) b._3d.on();
-      glassGeo(b, px, py); void b.offsetWidth; b.classList.add('is-broken');
-    } else { b.classList.remove('is-broken'); if (b._3d) b._3d.later(); }
+  function ctaOrigin(b, x, y) {
+    var w = b.offsetWidth || b.getBoundingClientRect().width, h = b.offsetHeight || b.getBoundingClientRect().height;
+    var radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y));
+    b.style.setProperty('--cta-x', x + 'px');
+    b.style.setProperty('--cta-y', y + 'px');
+    b.style.setProperty('--cta-diameter', (radius * 2 + 4) + 'px');
   }
   $$('.btn').forEach(function (b) {
-    buildGlass(b);
-    b.addEventListener('mouseenter', function (e) { glass(b, true, e); });
-    b.addEventListener('mouseleave', function () { glass(b, false); });
-    b.addEventListener('focus', function () { glass(b, true); });
-    b.addEventListener('blur', function () { glass(b, false); });
-    b.addEventListener('touchstart', function (e) { glass(b, true, e.touches[0]); setTimeout(function () { glass(b, false); }, 700); }, { passive: true });
+    b.addEventListener('pointerenter', function (e) {
+      var box = b.getBoundingClientRect();
+      ctaOrigin(b, e.clientX - box.left, e.clientY - box.top);
+    });
+    b.addEventListener('pointerleave', function () { b.classList.remove('is-flow'); });
+    b.addEventListener('focus', function () {
+      if (!b.matches(':focus-visible')) return;
+      b.style.setProperty('--cta-x', '50%');
+      b.style.setProperty('--cta-y', '50%');
+      b.style.setProperty('--cta-diameter', (Math.hypot(b.offsetWidth, b.offsetHeight) + 4) + 'px');
+    });
+    b.addEventListener('blur', function () { b.classList.remove('is-flow'); });
   });
   // a short haptic tick on touch devices that support it (Android Chrome; iOS Safari has no vibration API)
   $$('.btn, .btn2, [data-book]').forEach(function (b) {
@@ -279,7 +243,13 @@
     $$('.btn[data-pulse]').forEach(function (b) {
       var r = b.getBoundingClientRect();
       if (r.bottom < 0 || r.top > vh || !r.width || b.matches(':hover')) return;
-      setTimeout(function () { glass(b, true); setTimeout(function () { if (!b.matches(':hover')) glass(b, false); }, 1100); }, n++ * 200);
+      setTimeout(function () {
+        b.style.setProperty('--cta-x', '50%'); b.style.setProperty('--cta-y', '50%');
+        b.style.setProperty('--cta-diameter', (Math.hypot(b.offsetWidth, b.offsetHeight) + 4) + 'px');
+        if (b.matches(':hover') || doc.activeElement === b) return;
+        b.classList.add('is-flow');
+        setTimeout(function () { b.classList.remove('is-flow'); }, 900);
+      }, n++ * 220);
     });
   }, 6500);
 
@@ -905,6 +875,8 @@
     function val(n) { var f = E[n]; if (!f) return ''; if (f.length && !f.tagName) { var out = []; Array.prototype.forEach.call(f, function (x) { if (x.checked) out.push(x.value); }); return out.join(', '); } return (f.value || '').trim(); }
     function data() {
       var d = {}; ['cat', 'stage', 'stuck', 'help', 'budget_min', 'budget_max', 'country', 'region', 'timeline', 'name', 'email', 'phone', 'site', 'notes'].forEach(function (k) { d[k] = val(k); });
+      if (d.budget_min) d.budget_min = '$' + d.budget_min.replace(/^\$/, '');
+      if (d.budget_max) d.budget_max = '$' + d.budget_max.replace(/^\$/, '');
       d.page = location.pathname; return d;
     }
     function brief(d) {
@@ -1083,56 +1055,17 @@
     }
     function moneyDigits(v) { return String(v == null ? '' : v).replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 8); }
     function moneyCommas(d) { return d.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-    function moneyShown(text) {
-      var raw = String(text || '').trim(), plus = /\+$/.test(raw);
-      var d = raw.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
-      return d ? moneyCommas(d) + (plus ? '+' : '') : '';
-    }
-    // budget: type any amount, or pick a preset. the dollar sign sits outside the field so it cannot be deleted
-    function moneySelect(sel, n) {
+    // budget: type the amount. the dollar sign sits outside the field so it cannot be deleted
+    function moneyField(inp) {
       var wrap = doc.createElement('div'); wrap.className = 'dd dd--money';
       var box = doc.createElement('div'); box.className = 'dd-money';
       var cur = doc.createElement('span'); cur.className = 'dd-cur'; cur.textContent = '$'; cur.setAttribute('aria-hidden', 'true');
-      var inp = doc.createElement('input'); inp.type = 'text'; inp.className = 'dd-amt'; inp.inputMode = 'numeric'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.placeholder = 'Type an amount';
-      var pop = doc.createElement('button'); pop.type = 'button'; pop.className = 'dd-pop'; pop.setAttribute('aria-label', 'Show amounts'); pop.setAttribute('aria-haspopup', 'listbox'); pop.setAttribute('aria-expanded', 'false'); pop.innerHTML = '<i class="dd-chev" aria-hidden="true"></i>';
-      var lab = sel.closest('label'), cap = lab && $('span', lab); if (cap) { cap.id = cap.id || 'ddl' + n; inp.setAttribute('aria-labelledby', cap.id); }
-      var list = doc.createElement('ul'); list.className = 'dd-list'; list.setAttribute('role', 'listbox'); list.hidden = true; list.id = 'ml' + n; list.tabIndex = -1;
-      inp.setAttribute('role', 'combobox'); inp.setAttribute('aria-autocomplete', 'list'); inp.setAttribute('aria-controls', list.id); inp.setAttribute('aria-expanded', 'false'); inp.setAttribute('aria-required', 'true');
-      Array.prototype.forEach.call(sel.options, function (o, k) { var li = doc.createElement('li'); li.setAttribute('role', 'option'); li.textContent = o.textContent; li.setAttribute('data-k', k); li.setAttribute('data-v', o.value); list.appendChild(li); });
-      var blank = doc.createElement('option'); blank.value = ''; blank.textContent = ''; sel.appendChild(blank);
-      var customOpt = null, act = 0;
-      function mark() { $$('[role=option]', list).forEach(function (li) { li.setAttribute('aria-selected', String(li.getAttribute('data-v') === sel.value)); }); }
-      function writeSelect(shown) {
-        var stored = shown ? '$' + shown : '', i, match = -1, opts = sel.options;
-        for (i = 0; i < opts.length; i++) { if (opts[i] === blank || opts[i] === customOpt) continue; if (opts[i].value === stored) { match = i; break; } }
-        if (!stored) sel.value = '';
-        else if (match > -1) sel.selectedIndex = match;
-        else {
-          if (!customOpt) { customOpt = doc.createElement('option'); sel.appendChild(customOpt); }
-          customOpt.value = stored; customOpt.textContent = stored; customOpt.selected = true;
-        }
-        mark();
-      }
-      function pick(k) { sel.selectedIndex = k; inp.value = moneyShown(sel.options[k].textContent); mark(); sel.dispatchEvent(new Event('change', { bubbles: true })); closeDD(); inp.focus(); }
-      function open() {
-        closeDD(); list.hidden = false; wrap.classList.add('is-open'); pop.setAttribute('aria-expanded', 'true'); inp.setAttribute('aria-expanded', 'true');
-        openDD = { wrap: wrap, list: list, btn: pop, inp: inp }; place(wrap, list);
-        var idx = -1; $$('[role=option]', list).forEach(function (li, k) { if (li.getAttribute('data-v') === sel.value) idx = k; });
-        act = activate(list, idx > -1 ? idx : 0);
-      }
-      box.appendChild(cur); box.appendChild(inp); box.appendChild(pop);
-      sel.classList.add('dd-native'); sel.tabIndex = -1; sel.setAttribute('aria-hidden', 'true');
-      sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(box); wrap.appendChild(list); wrap.appendChild(sel);
-      inp.value = moneyShown(sel.options[sel.selectedIndex].textContent); mark(); armList(list);
-      pop.addEventListener('mousedown', function (e) { e.preventDefault(); });
-      pop.addEventListener('click', function () { if (openDD && openDD.wrap === wrap) closeDD(); else open(); });
-      box.addEventListener('click', function (e) {
-        if (e.target.closest && e.target.closest('.dd-pop')) return;
-        if (list.hidden) open();
-      });
-      list.addEventListener('mousedown', function (e) { if (e.target.closest && e.target.closest('[role=option]')) e.preventDefault(); });
-      list.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); var li = e.target.closest && e.target.closest('[role=option]'); if (li) pick(+li.getAttribute('data-k')); });
-      hoverList(list, function () { return act; }, function (i) { act = i; });
+      inp.classList.add('dd-amt'); inp.spellcheck = false;
+      var lab = inp.closest('label'), cap = lab && $('span', lab);
+      if (cap) { cap.id = cap.id || 'amt-' + inp.name; inp.setAttribute('aria-labelledby', cap.id); }
+      inp.parentNode.insertBefore(wrap, inp);
+      box.appendChild(cur); box.appendChild(inp); wrap.appendChild(box);
+      if (inp.value) inp.value = moneyCommas(moneyDigits(inp.value));
       inp.addEventListener('input', function () {
         var caretDigits = moneyDigits(inp.value.slice(0, inp.selectionStart == null ? inp.value.length : inp.selectionStart)).length;
         var shown = moneyCommas(moneyDigits(inp.value));
@@ -1140,20 +1073,11 @@
         var seen = 0, i = 0;
         while (i < shown.length && seen < caretDigits) { if (shown.charAt(i) >= '0' && shown.charAt(i) <= '9') seen++; i++; }
         try { inp.setSelectionRange(i, i); } catch (err) {}
-        writeSelect(shown);
       });
-      inp.addEventListener('keydown', function (e) {
-        var isOpen = !list.hidden;
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!isOpen) open(); else act = activate(list, act + (e.key === 'ArrowDown' ? 1 : -1)); }
-        else if (e.key === 'Enter' && isOpen) { e.preventDefault(); e.stopPropagation(); pick(act); }
-        else if (e.key === 'Escape' && isOpen) { e.preventDefault(); e.stopPropagation(); closeDD(); }
-        else if (e.key === 'Tab' && isOpen) closeDD();
-      });
-      watchBlur(inp, wrap);
     }
+    $$('[data-money]', form).forEach(moneyField);
     // select -> button + listbox (the real <select> stays in the form, hidden, so the data sent is unchanged)
     $$('select', form).forEach(function (sel, n) {
-      if (sel.hasAttribute('data-money')) { moneySelect(sel, n); return; }
       var wrap = doc.createElement('div'); wrap.className = 'dd';
       var btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'dd-btn'; btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
       var lab = sel.closest('label'), cap = lab && $('span', lab); if (cap) { cap.id = cap.id || 'ddl' + n; btn.setAttribute('aria-labelledby', cap.id + ' ddv' + n); }
