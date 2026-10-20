@@ -898,6 +898,7 @@
       prog.forEach(function (p, k) { p.classList.toggle('is-on', k <= i); });
       back.hidden = i === 0; setLbl(i === DETAILS ? 'Send and pick a time' : 'Continue');
       m.classList.toggle('is-cal', i === LAST);
+      if (typeof closeDD === 'function') closeDD();
       if (i === LAST) loadCal();
       var card = $('.modal-card', m); if (card) card.scrollTop = 0;
     }
@@ -974,6 +975,7 @@
     }
     function close() {
       emit('book-close', { step: cur });
+      closeDD();
       m.classList.remove('is-open'); lock(false);
       setTimeout(function () { m.hidden = true; }, 450);
       if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
@@ -1013,19 +1015,145 @@
     };
     /* ---- themed dropdowns: native popups (select lists, datalists) look like the operating system, not like us ---- */
     var openDD = null;
-    function closeDD() { if (!openDD) return; openDD.list.hidden = true; openDD.btn && openDD.btn.setAttribute('aria-expanded', 'false'); openDD.wrap.classList.remove('is-open'); openDD = null; }
-    function place(wrap, list) {
-      var card = $('.modal-card', m), r = wrap.getBoundingClientRect(), cr = card.getBoundingClientRect();
-      wrap.classList.toggle('dd-up', cr.bottom - r.bottom < Math.min(260, list.scrollHeight + 12) && r.top - cr.top > cr.bottom - r.bottom);
+    function closeDD() {
+      if (!openDD) return;
+      openDD.list.hidden = true;
+      if (openDD.btn) openDD.btn.setAttribute('aria-expanded', 'false');
+      if (openDD.inp) openDD.inp.setAttribute('aria-expanded', 'false');
+      openDD.wrap.classList.remove('is-open');
+      openDD = null;
+      var card = $('.modal-card', m); if (card) card.classList.remove('is-dd');
     }
-    function activate(list, i) {
+    // the menu hangs from the field itself, so it stays under that control
+    function place(wrap, list) {
+      if (list.parentNode !== wrap) wrap.appendChild(list);
+      list.style.position = ''; list.style.left = ''; list.style.right = ''; list.style.top = ''; list.style.bottom = ''; list.style.width = '';
+      var card = $('.modal-card', m); if (card) card.classList.add('is-dd');
+      var r = wrap.getBoundingClientRect(), gap = 6, pad = 12, cap = 260;
+      var below = window.innerHeight - r.bottom - gap - pad, above = r.top - gap - pad;
+      var up = below < Math.min(cap, (list.scrollHeight || cap) + 8) && above > below;
+      var room = up ? above : below;
+      if (room < 140 && Math.max(above, below) > room) { up = above > below; room = up ? above : below; }
+      wrap.classList.toggle('dd-up', up);
+      list.classList.toggle('dd-up', up);
+      list.style.maxHeight = Math.max(120, Math.min(cap, room)) + 'px';
+    }
+    function activate(list, i, scroll) {
       var it = $$('[role=option]', list); if (!it.length) return -1; i = (i + it.length) % it.length;
-      it.forEach(function (o, k) { o.classList.toggle('is-act', k === i); }); var o = it[i];
-      if (o.offsetTop < list.scrollTop) list.scrollTop = o.offsetTop; else if (o.offsetTop + o.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = o.offsetTop + o.offsetHeight - list.clientHeight;
+      it.forEach(function (o, k) { o.classList.toggle('is-act', k === i); });
+      if (scroll === false) return i;
+      var o = it[i];
+      if (o.offsetTop < list.scrollTop) list.scrollTop = o.offsetTop;
+      else if (o.offsetTop + o.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = o.offsetTop + o.offsetHeight - list.clientHeight;
       return i;
+    }
+    // while the booking window is open, Lenis swallows the wheel. scroll the menu ourselves, and never
+    // move it just because the pointer is resting on a row (that was cancelling the mouse wheel and the scrollbar)
+    function armList(list) {
+      list.setAttribute('data-lenis-prevent', '');
+      list.addEventListener('wheel', function (e) {
+        if (!e.deltaY || list.scrollHeight <= list.clientHeight + 1) return;
+        var dy = e.deltaY;
+        if (e.deltaMode === 1) dy *= 16; else if (e.deltaMode === 2) dy *= list.clientHeight;
+        var max = list.scrollHeight - list.clientHeight, next = list.scrollTop + dy;
+        if (next < 0) next = 0; else if (next > max) next = max;
+        if (next === list.scrollTop) return;
+        list.scrollTop = next;
+        e.preventDefault();
+        e.stopPropagation();
+      }, { passive: false });
+    }
+    function watchBlur(inp, wrap) {
+      inp.addEventListener('blur', function () {
+        setTimeout(function () {
+          if (!openDD || openDD.wrap !== wrap) return;
+          var a = doc.activeElement;
+          if (a && wrap.contains(a)) return;
+          closeDD();
+        }, 140);
+      });
+    }
+    function hoverList(list, getAct, setAct) {
+      list.addEventListener('mousemove', function (e) {
+        var li = e.target.closest && e.target.closest('[role=option]');
+        if (!li || !list.contains(li)) return;
+        var i = $$('[role=option]', list).indexOf(li);
+        if (i > -1 && i !== getAct()) setAct(activate(list, i, false));
+      });
+    }
+    function moneyDigits(v) { return String(v == null ? '' : v).replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 8); }
+    function moneyCommas(d) { return d.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+    function moneyShown(text) {
+      var raw = String(text || '').trim(), plus = /\+$/.test(raw);
+      var d = raw.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+      return d ? moneyCommas(d) + (plus ? '+' : '') : '';
+    }
+    // budget: type any amount, or pick a preset. the dollar sign sits outside the field so it cannot be deleted
+    function moneySelect(sel, n) {
+      var wrap = doc.createElement('div'); wrap.className = 'dd dd--money';
+      var box = doc.createElement('div'); box.className = 'dd-money';
+      var cur = doc.createElement('span'); cur.className = 'dd-cur'; cur.textContent = '$'; cur.setAttribute('aria-hidden', 'true');
+      var inp = doc.createElement('input'); inp.type = 'text'; inp.className = 'dd-amt'; inp.inputMode = 'numeric'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.placeholder = 'Type an amount';
+      var pop = doc.createElement('button'); pop.type = 'button'; pop.className = 'dd-pop'; pop.setAttribute('aria-label', 'Show amounts'); pop.setAttribute('aria-haspopup', 'listbox'); pop.setAttribute('aria-expanded', 'false'); pop.innerHTML = '<i class="dd-chev" aria-hidden="true"></i>';
+      var lab = sel.closest('label'), cap = lab && $('span', lab); if (cap) { cap.id = cap.id || 'ddl' + n; inp.setAttribute('aria-labelledby', cap.id); }
+      var list = doc.createElement('ul'); list.className = 'dd-list'; list.setAttribute('role', 'listbox'); list.hidden = true; list.id = 'ml' + n; list.tabIndex = -1;
+      inp.setAttribute('role', 'combobox'); inp.setAttribute('aria-autocomplete', 'list'); inp.setAttribute('aria-controls', list.id); inp.setAttribute('aria-expanded', 'false'); inp.setAttribute('aria-required', 'true');
+      Array.prototype.forEach.call(sel.options, function (o, k) { var li = doc.createElement('li'); li.setAttribute('role', 'option'); li.textContent = o.textContent; li.setAttribute('data-k', k); li.setAttribute('data-v', o.value); list.appendChild(li); });
+      var blank = doc.createElement('option'); blank.value = ''; blank.textContent = ''; sel.appendChild(blank);
+      var customOpt = null, act = 0;
+      function mark() { $$('[role=option]', list).forEach(function (li) { li.setAttribute('aria-selected', String(li.getAttribute('data-v') === sel.value)); }); }
+      function writeSelect(shown) {
+        var stored = shown ? '$' + shown : '', i, match = -1, opts = sel.options;
+        for (i = 0; i < opts.length; i++) { if (opts[i] === blank || opts[i] === customOpt) continue; if (opts[i].value === stored) { match = i; break; } }
+        if (!stored) sel.value = '';
+        else if (match > -1) sel.selectedIndex = match;
+        else {
+          if (!customOpt) { customOpt = doc.createElement('option'); sel.appendChild(customOpt); }
+          customOpt.value = stored; customOpt.textContent = stored; customOpt.selected = true;
+        }
+        mark();
+      }
+      function pick(k) { sel.selectedIndex = k; inp.value = moneyShown(sel.options[k].textContent); mark(); sel.dispatchEvent(new Event('change', { bubbles: true })); closeDD(); inp.focus(); }
+      function open() {
+        closeDD(); list.hidden = false; wrap.classList.add('is-open'); pop.setAttribute('aria-expanded', 'true'); inp.setAttribute('aria-expanded', 'true');
+        openDD = { wrap: wrap, list: list, btn: pop, inp: inp }; place(wrap, list);
+        var idx = -1; $$('[role=option]', list).forEach(function (li, k) { if (li.getAttribute('data-v') === sel.value) idx = k; });
+        act = activate(list, idx > -1 ? idx : 0);
+      }
+      box.appendChild(cur); box.appendChild(inp); box.appendChild(pop);
+      sel.classList.add('dd-native'); sel.tabIndex = -1; sel.setAttribute('aria-hidden', 'true');
+      sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(box); wrap.appendChild(list); wrap.appendChild(sel);
+      inp.value = moneyShown(sel.options[sel.selectedIndex].textContent); mark(); armList(list);
+      pop.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      pop.addEventListener('click', function () { if (openDD && openDD.wrap === wrap) closeDD(); else open(); });
+      box.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('.dd-pop')) return;
+        if (list.hidden) open();
+      });
+      list.addEventListener('mousedown', function (e) { if (e.target.closest && e.target.closest('[role=option]')) e.preventDefault(); });
+      list.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); var li = e.target.closest && e.target.closest('[role=option]'); if (li) pick(+li.getAttribute('data-k')); });
+      hoverList(list, function () { return act; }, function (i) { act = i; });
+      inp.addEventListener('input', function () {
+        var caretDigits = moneyDigits(inp.value.slice(0, inp.selectionStart == null ? inp.value.length : inp.selectionStart)).length;
+        var shown = moneyCommas(moneyDigits(inp.value));
+        inp.value = shown;
+        var seen = 0, i = 0;
+        while (i < shown.length && seen < caretDigits) { if (shown.charAt(i) >= '0' && shown.charAt(i) <= '9') seen++; i++; }
+        try { inp.setSelectionRange(i, i); } catch (err) {}
+        writeSelect(shown);
+      });
+      inp.addEventListener('keydown', function (e) {
+        var isOpen = !list.hidden;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!isOpen) open(); else act = activate(list, act + (e.key === 'ArrowDown' ? 1 : -1)); }
+        else if (e.key === 'Enter' && isOpen) { e.preventDefault(); e.stopPropagation(); pick(act); }
+        else if (e.key === 'Escape' && isOpen) { e.preventDefault(); e.stopPropagation(); closeDD(); }
+        else if (e.key === 'Tab' && isOpen) closeDD();
+      });
+      watchBlur(inp, wrap);
     }
     // select -> button + listbox (the real <select> stays in the form, hidden, so the data sent is unchanged)
     $$('select', form).forEach(function (sel, n) {
+      if (sel.hasAttribute('data-money')) { moneySelect(sel, n); return; }
       var wrap = doc.createElement('div'); wrap.className = 'dd';
       var btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'dd-btn'; btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
       var lab = sel.closest('label'), cap = lab && $('span', lab); if (cap) { cap.id = cap.id || 'ddl' + n; btn.setAttribute('aria-labelledby', cap.id + ' ddv' + n); }
@@ -1037,8 +1165,9 @@
       var act = 0;
       function open() { closeDD(); list.hidden = false; wrap.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); openDD = { wrap: wrap, list: list, btn: btn }; place(wrap, list); act = activate(list, sel.selectedIndex); }
       btn.addEventListener('click', function () { if (openDD && openDD.wrap === wrap) closeDD(); else open(); });
+      list.addEventListener('mousedown', function (e) { if (e.target.closest && e.target.closest('[role=option]')) e.preventDefault(); });
       list.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); var li = e.target.closest('[role=option]'); if (li) pick(+li.getAttribute('data-k')); });
-      list.addEventListener('mousemove', function (e) { var li = e.target.closest('[role=option]'); if (li) act = activate(list, +li.getAttribute('data-k')); });
+      hoverList(list, function () { return act; }, function (i) { act = i; });
       btn.addEventListener('keydown', function (e) {
         var isOpen = !list.hidden;
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!isOpen) open(); else act = activate(list, act + (e.key === 'ArrowDown' ? 1 : -1)); }
@@ -1047,42 +1176,69 @@
         else if (e.key === 'Tab' && isOpen) closeDD();
       });
       sel.classList.add('dd-native'); sel.tabIndex = -1; sel.setAttribute('aria-hidden', 'true');
-      sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(btn); wrap.appendChild(list); wrap.appendChild(sel); sync();
+      sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(btn); wrap.appendChild(list); wrap.appendChild(sel); sync(); armList(list);
     });
     // text input + suggestion list (country, then state / region for the chosen country)
     function suggest(inp, source) {
-      var wrap = doc.createElement('div'); wrap.className = 'dd dd--input'; inp.parentNode.insertBefore(wrap, inp); wrap.appendChild(inp);
+      var wrap = doc.createElement('div'); wrap.className = 'dd dd--input';
+      var pop = doc.createElement('button'); pop.type = 'button'; pop.className = 'dd-pop'; pop.setAttribute('aria-haspopup', 'listbox'); pop.setAttribute('aria-expanded', 'false'); pop.setAttribute('aria-label', inp.name === 'country' ? 'Show countries' : 'Show regions'); pop.innerHTML = '<i class="dd-chev" aria-hidden="true"></i>';
+      inp.parentNode.insertBefore(wrap, inp); wrap.appendChild(inp); wrap.appendChild(pop);
       var list = doc.createElement('ul'); list.className = 'dd-list'; list.setAttribute('role', 'listbox'); list.hidden = true; list.id = 'sg' + inp.name; wrap.appendChild(list);
       inp.setAttribute('role', 'combobox'); inp.setAttribute('aria-autocomplete', 'list'); inp.setAttribute('aria-controls', list.id); inp.setAttribute('aria-expanded', 'false');
       var act = -1;
-      function render() {
-        var q = inp.value.trim().toLowerCase(), all = source(), a = [], b = [];
+      function render(opts) {
+        var showAll = opts && opts.all;
+        var q = showAll ? '' : inp.value.trim().toLowerCase(), all = source() || [], a = [], b = [];
         all.forEach(function (x) { var l = x.toLowerCase(); if (!q || l.indexOf(q) === 0) a.push(x); else if (l.indexOf(q) > 0) b.push(x); });
-        var res = a.concat(b).slice(0, 40);
-        if (!res.length || (res.length === 1 && res[0].toLowerCase() === q)) { closeDD(); return; }
-        list.innerHTML = ''; res.forEach(function (x) { var li = doc.createElement('li'); li.setAttribute('role', 'option'); li.textContent = x; list.appendChild(li); });
+        var res = a.concat(b);
+        if (!res.length) { closeDD(); return; }
+        var cur = inp.value.trim().toLowerCase();
+        list.innerHTML = '';
+        res.forEach(function (x) { var li = doc.createElement('li'); li.setAttribute('role', 'option'); li.textContent = x; if (x.toLowerCase() === cur) li.setAttribute('aria-selected', 'true'); list.appendChild(li); });
         if (openDD && openDD.wrap !== wrap) closeDD();
-        list.hidden = false; wrap.classList.add('is-open'); inp.setAttribute('aria-expanded', 'true'); openDD = { wrap: wrap, list: list, btn: null, inp: inp }; place(wrap, list); act = -1; list.scrollTop = 0;
+        list.hidden = false; wrap.classList.add('is-open'); inp.setAttribute('aria-expanded', 'true'); pop.setAttribute('aria-expanded', 'true');
+        openDD = { wrap: wrap, list: list, btn: pop, inp: inp }; place(wrap, list);
+        var items = $$('[role=option]', list), idx = -1;
+        items.forEach(function (li, k) { if (li.getAttribute('aria-selected') === 'true') idx = k; });
+        act = idx > -1 ? activate(list, idx) : -1;
+        if (idx < 0) list.scrollTop = 0;
       }
-      function pick(li) { inp.value = li.textContent; inp.classList.remove('is-bad'); closeDD(); inp.dispatchEvent(new Event('change', { bubbles: true })); }
-      inp.addEventListener('input', render); inp.addEventListener('focus', render);
-      list.addEventListener('mousedown', function (e) { var li = e.target.closest('[role=option]'); if (li) { e.preventDefault(); pick(li); } });
+      function pick(li) { inp.value = li.textContent; inp.classList.remove('is-bad'); var w = inp.closest('.dd'); if (w) w.classList.remove('is-bad'); closeDD(); inp.dispatchEvent(new Event('change', { bubbles: true })); }
+      inp.addEventListener('input', function () { render(); });
+      inp.addEventListener('focus', function () { render({ all: true }); });
+      inp.addEventListener('click', function () { if (list.hidden) render({ all: true }); });
+      pop.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      pop.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); if (!list.hidden && openDD && openDD.wrap === wrap) closeDD(); else render({ all: true }); });
+      list.addEventListener('mousedown', function (e) { var li = e.target.closest && e.target.closest('[role=option]'); if (li) { e.preventDefault(); pick(li); } });
       list.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); });
+      hoverList(list, function () { return act; }, function (i) { act = i; });
       inp.addEventListener('keydown', function (e) {
-        if (list.hidden) { if (e.key === 'ArrowDown') { render(); } return; }
+        if (list.hidden) { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); render({ all: true }); act = activate(list, e.key === 'ArrowDown' ? 0 : -1); } return; }
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); act = activate(list, act + (e.key === 'ArrowDown' ? 1 : -1)); }
-        else if (e.key === 'Enter' && act > -1) { e.preventDefault(); e.stopPropagation(); pick($$('[role=option]', list)[act]); }
+        else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); var items = $$('[role=option]', list); if (act > -1 && items[act]) pick(items[act]); else if (items[0]) pick(items[0]); }
         else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeDD(); }
+        else if (e.key === 'Tab') closeDD();
       });
-      inp.addEventListener('blur', function () { setTimeout(function () { if (openDD && openDD.wrap === wrap) closeDD(); }, 120); });
+      watchBlur(inp, wrap); armList(list);
     }
     var countries = $$('#stCountries option').map(function (o) { return o.value; });
     if (E.country) suggest(E.country, function () { return countries; });
     if (E.region) suggest(E.region, function () { var r = REG[(E.country.value || '').trim()]; return r ? r.split(',') : []; });
-    doc.addEventListener('pointerdown', function (e) { if (openDD && !openDD.wrap.contains(e.target)) closeDD(); });
-    $('.modal-card', m).addEventListener('scroll', function () { if (openDD && openDD.btn) closeDD(); }, { passive: true });
-    function bad(f, isBad) { f.classList.toggle('is-bad', isBad); return isBad; }
+    doc.addEventListener('pointerdown', function (e) { if (openDD && !openDD.wrap.contains(e.target) && !openDD.list.contains(e.target)) closeDD(); });
+    $('.modal-card', m).addEventListener('scroll', function () { if (openDD) closeDD(); }, { passive: true });
+    window.addEventListener('resize', function () { if (openDD) place(openDD.wrap, openDD.list); });
+    function bad(f, isBad) { f.classList.toggle('is-bad', isBad); var w = f.closest && f.closest('.dd'); if (w) w.classList.toggle('is-bad', isBad); return isBad; }
+    function clearBad(f) {
+      if (!f || !f.classList) return;
+      f.classList.remove('is-bad');
+      var w = f.closest && f.closest('.dd');
+      if (w) { w.classList.remove('is-bad'); var s = $('.dd-native', w); if (s) s.classList.remove('is-bad'); var vis = $('input.is-bad', w); if (vis) vis.classList.remove('is-bad'); }
+    }
     function money(v) { return parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0; }
+    function budgetState() {
+      var mn = money(E.budget_min.value), mx = money(E.budget_max.value);
+      return { mn: mn, mx: mx, empty: !mn || !mx, order: mn > 0 && mx > 0 && mx < mn };
+    }
     function check(i) {
       var st = steps[i], ok = true;
       if (st.querySelector('[name=help]')) {
@@ -1090,22 +1246,37 @@
         $('#helpNote').classList.toggle('is-bad', !any); if (!any) return false;
       }
       if (st.querySelector('[name=budget_min]')) {
-        var be = money(E.budget_max.value) < money(E.budget_min.value); $('#budgetErr').hidden = !be;
-        if (bad(E.budget_max, be)) ok = false;
+        var b = budgetState(), err = $('#budgetErr');
+        err.textContent = b.empty ? 'Enter a minimum and a maximum budget.' : 'The maximum budget needs to be at least the minimum.';
+        err.hidden = !b.empty && !b.order;
+        if (bad(E.budget_min, !b.mn)) ok = false;
+        if (bad(E.budget_max, !b.mx || b.order)) ok = false;
         if (bad(E.country, !E.country.value.trim())) ok = false;
       }
       if (st.querySelector('[name=email]')) {
         if (bad(E.name, !E.name.value.trim())) ok = false;
         if (bad(E.email, !/^\S+@\S+\.\S+$/.test(E.email.value.trim()))) ok = false;
       }
-      if (!ok) { var f = $('.is-bad', st); if (f && f.focus) f.focus(); }
+      if (!ok) {
+        var f = $('.is-bad', st);
+        var vis = f && f.closest && f.closest('.dd') && $('input:not(.dd-native), .dd-btn', f.closest('.dd'));
+        if (vis && vis.focus) vis.focus({ preventScroll: true }); else if (f && f.focus) f.focus();
+      }
       return ok;
     }
     $$('[name=help]', form).forEach(function (x) { x.addEventListener('change', function () { $('#helpNote').classList.remove('is-bad'); }); });
     // errors clear as soon as the visitor fixes the field
     ['input', 'change'].forEach(function (ev) { form.addEventListener(ev, function (e) {
-      var t = e.target; if (t && t.classList && t.classList.contains('is-bad')) t.classList.remove('is-bad');
-      if (t && /budget_/.test(t.name || '')) { var ok = money(E.budget_max.value) >= money(E.budget_min.value); $('#budgetErr').hidden = ok; if (ok) E.budget_max.classList.remove('is-bad'); }
+      var t = e.target;
+      if (t && t.classList && t.classList.contains('is-bad')) clearBad(t);
+      if (t && t.classList && (t.classList.contains('dd-amt') || t.name === 'country' || t.name === 'region')) clearBad(t);
+      if (t && (/budget_/.test(t.name || '') || (t.classList && t.classList.contains('dd-amt')))) {
+        var b = budgetState(), err = $('#budgetErr');
+        err.textContent = b.empty ? 'Enter a minimum and a maximum budget.' : 'The maximum budget needs to be at least the minimum.';
+        err.hidden = !b.empty && !b.order;
+        if (b.mn) clearBad(E.budget_min);
+        if (b.mx && !b.order) clearBad(E.budget_max);
+      }
     }); });
     form.addEventListener('submit', function (e) {
       e.preventDefault();

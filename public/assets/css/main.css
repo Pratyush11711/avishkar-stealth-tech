@@ -205,11 +205,7 @@ main,.foot{position:relative;z-index:1}
 .js body:not(.is-ready) .hero-rv,.js body:not(.is-ready) .top{animation:heroBail .6s var(--e) 6s forwards}
 @keyframes heroBail{to{opacity:1;transform:none}}
 .is-ready .hero-r{transition-delay:1.1s}
-.hero-foot{position:relative;z-index:4;display:flex;justify-content:space-between;align-items:flex-end;gap:30px;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
-.hero-l{display:flex;flex-direction:column;gap:18px}
-.mol-hint{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.04em;color:var(--mut);max-width:34ch;line-height:1.6}
-.hint-touch{display:none}
-@media (hover:none){.hint-desk{display:none}.hint-touch{display:inline}}
+.hero-foot{position:relative;z-index:4;display:flex;justify-content:flex-end;align-items:flex-end;gap:30px;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
 /* the sub line is exactly as wide as the two CTAs under it (its own width does not count: width 0, min-width 100%) */
 .hero-r{width:max-content;max-width:min(620px,100%);display:flex;flex-direction:column;align-items:flex-end;text-align:right}
 .hero-sub{width:0;min-width:100%;font-size:clamp(14.5px,1.1vw,16px);color:var(--mut);line-height:1.7;text-wrap:pretty}
@@ -661,6 +657,7 @@ main,.foot{position:relative;z-index:1}
 .m-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 /* themed dropdowns (the native select stays in the form, hidden) */
 .dd{position:relative}
+.dd.is-open{z-index:40}
 .m-fields label .dd-val{display:block;margin:0;font-size:16px;color:var(--ink)}
 .dd-native{position:absolute!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none;bottom:0;left:0}
 .dd-btn{width:100%;height:52px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 16px 0 18px;border-radius:14px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:inherit;font-size:16px;text-align:left;transition:border-color .3s}
@@ -668,16 +665,31 @@ main,.foot{position:relative;z-index:1}
 .dd-val{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dd-chev{flex:none;width:8px;height:8px;margin-top:-4px;border-right:1.5px solid var(--mut);border-bottom:1.5px solid var(--mut);transform:rotate(45deg);transition:transform .35s var(--e),margin .35s var(--e),border-color .3s}
 .dd.is-open .dd-chev{transform:rotate(-135deg);margin-top:4px;border-color:var(--acc)}
-.dd-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;max-height:260px;overflow-y:auto;overscroll-behavior:contain;margin:0;padding:6px;list-style:none;border-radius:16px;border:1px solid var(--line2);background:var(--surface);box-shadow:0 24px 50px -20px rgba(0,0,0,.55);scrollbar-width:thin;scrollbar-color:var(--line2) transparent;-webkit-animation:ddIn .22s var(--e);animation:ddIn .22s var(--e)}
+.dd--input,.dd-money{display:flex;align-items:center;height:52px;padding:0 6px 0 16px;border-radius:14px;border:1px solid var(--line2);background:var(--bg);transition:border-color .3s}
+.dd--input.is-open,.dd--input:focus-within,.dd--money.is-open .dd-money,.dd-money:focus-within{border-color:var(--acc)}
+.dd.is-bad.dd--input,.dd--money.is-bad .dd-money{border-color:#D9534F}
+.m-fields .dd--input>input,.m-fields .dd-amt{flex:1;min-width:0;width:1%;height:100%;padding:0 4px;border:0;border-radius:0;background:transparent}
+.m-fields .dd-amt{padding:0 4px 0 1px}
+.m-fields .dd--input>input:focus,.m-fields .dd-amt:focus{border-color:transparent}
+.dd-money{font-size:16px;font-weight:400;line-height:1;color:var(--ink)}
+.m-fields label span.dd-cur{display:inline;margin:0;flex:none;font-size:16px;font-weight:400;line-height:1;letter-spacing:0;color:var(--ink);user-select:none}
+.m-fields .dd-amt{font-size:16px;font-weight:400;line-height:1;letter-spacing:0;color:var(--ink)}
+.dd-pop{flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;color:var(--mut)}
+.dd-pop:hover,.dd-pop:focus-visible{color:var(--ink);outline:none}
+.dd-pop .dd-chev,.dd.is-open .dd-pop .dd-chev{margin-top:0}
+.dd-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:5;max-height:260px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;margin:0;padding:6px;list-style:none;border-radius:16px;border:1px solid var(--line2);background:var(--surface);box-shadow:0 24px 50px -20px rgba(0,0,0,.55);scrollbar-width:thin;scrollbar-color:var(--line2) transparent;-webkit-animation:ddIn .22s var(--e);animation:ddIn .22s var(--e)}
 .dd-list[hidden]{display:none}
 .dd.dd-up .dd-list{top:auto;bottom:calc(100% + 6px)}
+.modal-card.is-dd{overflow:visible}
+.dd-list::-webkit-scrollbar{width:10px}
+.dd-list::-webkit-scrollbar-thumb{background:var(--line2);border-radius:10px;border:3px solid transparent;background-clip:padding-box}
 .dd-list li{display:flex;align-items:center;justify-content:space-between;min-height:42px;padding:9px 12px;border-radius:10px;font-size:14.5px;color:var(--ink);cursor:pointer}
 .dd-list li.is-act{background:var(--glow2)}
 .dd-list li[aria-selected="true"]{color:var(--acc);font-weight:500}
 .dd-list li[aria-selected="true"]::after{content:"";width:5px;height:9px;margin-right:4px;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(45deg)}
 @-webkit-keyframes ddIn{from{opacity:0;-webkit-transform:translateY(-4px)}}
 @keyframes ddIn{from{opacity:0;transform:translateY(-4px)}}
-.dd.dd-up .dd-list{-webkit-animation-name:ddUp;animation-name:ddUp}
+.dd.dd-up .dd-list,.dd-list.dd-up{-webkit-animation-name:ddUp;animation-name:ddUp}
 @-webkit-keyframes ddUp{from{opacity:0;-webkit-transform:translateY(4px)}}
 @keyframes ddUp{from{opacity:0;transform:translateY(4px)}}
 .m-grid .m-wide{grid-column:1/-1}
@@ -733,11 +745,9 @@ main,.foot{position:relative;z-index:1}
  .hero{height:auto;min-height:100vh;min-height:100svh;padding-top:clamp(96px,13vh,130px);grid-template-rows:auto auto auto;align-content:start}
  .hero-h{font-size:clamp(40px,11.4vw,84px)}
  .hero-foot{flex-direction:column;align-items:stretch;gap:22px;margin-top:6px}
- .hero-l{order:2;align-items:center}
  .hero-r{order:1;width:auto;max-width:none;text-align:center;align-items:stretch}
  .hero-sub{width:auto;min-width:0;font-size:15px;max-width:40ch;margin:0 auto;text-align:center}
  .hero-cta{justify-content:center;align-items:center;flex-direction:column;gap:6px}
- .mol-hint{max-width:none}
  .trust-stats{grid-template-columns:1fr;gap:0}
  .trust-stats div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
  .trust-stats dt{white-space:nowrap;font-size:20px}
