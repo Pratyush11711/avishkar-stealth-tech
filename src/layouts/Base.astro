@@ -93,9 +93,9 @@ if (/^https?:$/.test(location.protocol)) document.write('<base href="/">');</scr
   try{var pl=+ss.getItem('st-pl')||0;ss.removeItem('st-pl');if(pl&&Date.now()-pl<5000){c.add('pl-in');window.__plAt=pl;d.style.setProperty('--pl-t',(pl-Date.now())+'ms')}}catch(e){}
   try{var o=ls.getItem('st-perf'),m=/[?&]perf=(lite|full|auto)/.exec(location.search);if(m){o=m[1];ls.setItem('st-perf',o);if(o==='auto')ls.removeItem('st-lite')}
   if(o==='lite'||(o!=='full'&&((n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||(n.connection&&n.connection.saveData)||Date.now()-(+ls.getItem('st-lite')||0)<6048e5)))c.add('lite')}catch(e){}
-  var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,cn=n.connection,seen=0;try{seen=ss.getItem('st-sp');ss.setItem('st-sp','1')}catch(e){}
-  /* the intro plays once per visit (not on every reload) and never on 2G / data-saver connections */
-  c.add(rm||seen||(cn&&(cn.saveData||/2g/.test(cn.effectiveType||'')))||c.contains('pl-in')?'no-sp':'sp-on');
+  var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,cn=n.connection;
+  /* the intro plays on every load and refresh, and stays off on 2G / data-saver and when arriving through the page loader */
+  c.add(rm||(cn&&(cn.saveData||/2g/.test(cn.effectiveType||'')))||c.contains('pl-in')?'no-sp':'sp-on');
   })();
   </script>
 ) : (
