@@ -297,8 +297,11 @@
     var m = $('meta[name="theme-color"]'); if (m) m.setAttribute('content', t === 'dark' ? '#060807' : '#F2F3EE');
     if (forms) forms.setTheme(t); if (hex) hex.theme();
   }
+  var themeBusy = false;
   $$('[data-theme-toggle]').forEach(function (b) {
     b.addEventListener('click', function () {
+      if (themeBusy) return;
+      themeBusy = true; setTimeout(function () { themeBusy = false; }, 900);
       var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       if (RM) { applyTheme(next); return; }
       if (doc.startViewTransition) {
@@ -445,14 +448,16 @@
       var clock = null; anims.forEach(function (a) { if (a.effect && a.effect.target === clockEl) clock = a; });
       // browsers without @property cannot count in CSS: count with script instead
       var jsCount = !(window.CSS && CSS.registerProperty); if (jsCount) cnt.classList.add('sp-js');
-      var rate = 1, t0 = performance.now(), wordOn = false, done = false;
+      var rate = 1, t0 = performance.now(), wordOn = false, done = false, loaded = doc.readyState === 'complete', fontsOk = !doc.fonts;
+      if (!loaded) window.addEventListener('load', function () { loaded = true; });
+      if (doc.fonts) doc.fonts.ready.then(function () { fontsOk = true; });
       function now() { return clock && clock.currentTime != null ? clock.currentTime : (performance.now() - t0) * rate; }
       (function poll() {
         if (done) return;
         var t = now();
         if (jsCount) { var p = clamp(t / 2300, 0, 1), e = 0.5 - Math.cos(Math.PI * p) / 2; cnt.firstChild.textContent = String(Math.round(e * 100)).padStart(3, '0'); }
         if (!wordOn && t >= WORD) { wordOn = true; word.style.opacity = 1; scramble(word, 650 / rate); }
-        if (t >= END || (clock && clock.playState === 'finished')) {
+        if ((t >= END || (clock && clock.playState === 'finished')) && ((loaded && fontsOk) || performance.now() - t0 > 6500)) {
           done = true;
           if (!wordOn) { word.style.opacity = 1; }
           shatter(sp).then(resolve); return;
@@ -891,11 +896,13 @@
         .to(shape, { keyframes: [{ scaleX: 1.025, scaleY: 0.98, duration: 0.14 }, { scaleX: 0.996, scaleY: 1.006, duration: 0.16 }, { scaleX: 1, scaleY: 1, duration: 0.22 }], ease: 'sine.inOut' }, 0.42)
         .fromTo(parts, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.42, stagger: 0.04, ease: 'power3.out' }, 0.46);
     }
+    var arrBusy = 0;
+    function armReview(fn) { return function () { if (arrBusy) return; arrBusy = setTimeout(function () { arrBusy = 0; }, 700); fn(); }; }
     rows.forEach(function (r, i) {
-      r.addEventListener('click', function () { go(i); });
+      r.addEventListener('click', armReview(function () { go(i); }));
       $('.tm-bar', r).addEventListener('animationend', function () { if (!paused && r.classList.contains('is-on')) go((cur + 1) % rows.length); });
     });
-    $$('.tm-arr', grid).forEach(function (b) { b.addEventListener('click', function () { go((cur + (+b.getAttribute('data-d')) + rows.length) % rows.length); }); });
+    $$('.tm-arr', grid).forEach(function (b) { b.addEventListener('click', armReview(function () { go((cur + (+b.getAttribute('data-d')) + rows.length) % rows.length); })); });
     var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { setRow(cur); io.disconnect(); } }, { threshold: 0.3 });
     rows.forEach(function (r) { r.classList.remove('is-on'); });
     io.observe(grid);

@@ -1,0 +1,75 @@
+---
+import LandingLayout from '../../../layouts/LandingLayout.astro';
+import Footer from '../../../components/landing/Footer.astro';
+import Dock from '../../../components/landing/Dock.astro';
+---
+<LandingLayout
+  title="Thank you | Stealth Tech"
+  robots="noindex, nofollow"
+  bodyClass="ty-page"
+  lead
+>
+<div class="tyl" id="tyl" aria-hidden="true">
+ <div class="tyl-w">
+  <svg class="tyl-ring" viewBox="0 0 120 120"><circle class="tyl-track" cx="60" cy="60" r="54"/><circle class="tyl-bar" cx="60" cy="60" r="54" pathLength="1" transform="rotate(-90 60 60)"/></svg>
+  <svg class="tyl-logo"><use href="#logo"/></svg>
+ </div>
+ <p class="tyl-t">Sending your request</p>
+</div>
+
+<header class="top" id="top">
+ <a class="brand" href="/" aria-label="Stealth Tech homepage">
+  <svg class="brand-mark" aria-hidden="true"><use href="#logo"/></svg>
+  <span class="brand-word">Stealth Tech</span>
+ </a>
+ <div class="top-r">
+  <p class="top-note"><svg aria-hidden="true"><use href="#i-clock"/></svg>Reply within 1 business day</p>
+  <a class="btn btn--sm" href="https://cal.id/arpitsharmawritingsessions/peptide-brand-discovery-call" target="_blank" rel="noopener" data-book><span class="btn-t">Book my call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+ </div>
+</header>
+
+<main id="main" class="ty">
+ <div class="wrap ty-grid">
+  <section class="ty-l" aria-labelledby="tyH">
+   <a class="ty-back ty-in" href="/peptide-store-build" data-back><svg aria-hidden="true"><use href="#i-left"/></svg><span>Back to the page</span></a>
+   <!-- the tick: ring draws, badge pops, check draws, small hexagons burst out -->
+   <div class="tick" aria-hidden="true">
+    <span class="tick-burst"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+    <span class="tick-wave"></span>
+    <svg viewBox="0 0 100 100"><polygon class="tick-hex" points="50,11 84,30.5 84,69.5 50,89 16,69.5 16,30.5"/><path class="tick-ck" pathLength="1" d="M32 51l12 12 25-26"/></svg>
+   </div>
+   <p class="eyebrow ty-in"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Request received</span></p>
+   <h1 class="ty-h" id="tyH"><span class="hl"><span class="hl-i" id="tyHi">Great move.</span></span><span class="hl"><span class="hl-i">Your store is in</span></span><span class="hl"><span class="hl-i"><span class="acc-w">good hands</span> now.</span></span></h1>
+   <p class="ty-p ty-in">Most founders put this step off for months. You just took it. A senior strategist is already reading your project, and we will reach you within one business day by email and on the number you shared.</p>
+   <div class="ty-book ty-in">
+    <div><b>Want to move even faster?</b><small>Pick a time for your free 30-minute call now.</small></div>
+    <a class="btn" href="https://cal.id/arpitsharmawritingsessions/peptide-brand-discovery-call" target="_blank" rel="noopener" data-book data-pulse><span class="btn-t">Book my call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+   </div>
+  </section>
+
+  <aside class="ty-r ty-in" aria-label="What happens next">
+   <p class="ty-k">What happens next</p>
+   <ol class="ty-tl">
+    <li class="is-done"><i><svg><use href="#i-check"/></svg></i><div><b>You sent your request</b><span>Just now</span></div></li>
+    <li><i>02</i><div><b>We review your project</b><span>Within one business day</span></div></li>
+    <li><i>03</i><div><b>We talk for 30 minutes</b><span>At a time that suits you</span></div></li>
+    <li><i>04</i><div><b>We send your plan and fixed price</b><span>Within 48 hours of the call</span></div></li>
+   </ol>
+   <div class="ty-promise">
+    <p><svg aria-hidden="true"><use href="#i-lock"/></svg>Your details stay private. Never shared.</p>
+    <p><svg aria-hidden="true"><use href="#i-key"/></svg>Your plan is yours to keep.</p>
+   </div>
+   <p class="ty-mail">Questions right now? <a class="lk" href="mailto:arpit@avishkarai.com"><span data-brick>arpit@avishkarai.com</span></a></p>
+  </aside>
+ </div>
+</main>
+<Footer planHref="/peptide-store-build#start" />
+<Dock
+  logoHref="/peptide-store-build"
+  logoLabel="Back to the page"
+  open
+  buttonHref="https://cal.id/arpitsharmawritingsessions/peptide-brand-discovery-call"
+  buttonLabel="Book my call"
+  external
+/>
+</LandingLayout>

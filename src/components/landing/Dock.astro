@@ -1,0 +1,29 @@
+---
+interface Link {
+  href: string;
+  sec?: string;
+  label: string;
+}
+interface Props {
+  logoHref: string;
+  logoLabel: string;
+  top?: boolean;
+  links?: Link[];
+  buttonHref: string;
+  buttonLabel: string;
+  external?: boolean;
+  open?: boolean;
+}
+const { logoHref, logoLabel, top = false, links = [], buttonHref, buttonLabel, external = false, open = false } = Astro.props;
+---
+<nav class:list={['dock', { 'is-on': open }]} id="dock" aria-label={links.length ? 'Page sections' : 'Quick actions'}>
+ <a class="dock-logo" href={logoHref} data-top={top ? '' : undefined} aria-label={logoLabel}><svg aria-hidden="true"><use href="#logo"/></svg></a>
+ {links.length > 0 && (
+  <div class="dock-links" id="dockLinks">
+   <i class="dock-hl" aria-hidden="true"></i>
+   {links.map((link) => <a href={link.href} data-sec={link.sec}>{link.label}</a>)}
+  </div>
+ )}
+ <button class="dock-ic theme-t" type="button" data-theme-toggle aria-label="Switch theme"><svg class="ico-sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="ico-moon" aria-hidden="true"><use href="#i-moon"/></svg></button>
+ <a class="btn btn--sm btn--dock" href={buttonHref} target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined} data-book={external ? '' : undefined} data-go-form={external ? undefined : ''}><span class="btn-t">{buttonLabel}</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+</nav>

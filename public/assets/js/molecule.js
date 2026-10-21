@@ -12,6 +12,8 @@
 (function (w) {
   'use strict';
   var doc = document, root = doc.documentElement;
+  // this page keeps its own copy of the pictures next to this script (works on any path, and from disk)
+  var A = /^https?:$/.test(location.protocol) ? '/assets/' : ((doc.currentScript && doc.currentScript.src) || '').replace(/js\/molecule\.js.*$/, '');
   var stages = doc.querySelectorAll('[data-mol]');
   if (!stages.length) return;
   var RM = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -36,7 +38,7 @@
   var PIC = null, waiting = [], loading = false;
   // always the sharp file. A smaller one was chosen from the viewport at the moment the script ran,
   // so a phone or a window that had not finished laying out kept the soft picture until a reload.
-  var CHAINS = ['chain-1800', 'chain-1100', 'chain-760'];
+  var CHAINS = ['chain-1800', 'chain-1100', 'chain-760'];  // always the sharpest picture first
   function picture(cb) {
     if (PIC) { cb(PIC); return; }
     waiting.push(cb); if (loading) return; loading = true;
@@ -72,9 +74,9 @@
     function loadChain(i) {
       if (i >= CHAINS.length) { done(false); return; }
       var name = CHAINS[i], fail = function () { loadChain(i + 1); };
-      if (/^https?:$/.test(location.protocol)) { fromUrl('/assets/img/' + name + '.webp?v=75e0c789c1', fail); return; }
+      if (/^https?:$/.test(location.protocol)) { fromUrl(A + 'img/' + name + '.webp', fail); return; }
       // file://: a picture loaded from disk cannot be read by WebGL, a data URL can
-      var s = doc.createElement('script'); s.src = 'assets/js/' + name + '.js';
+      var s = doc.createElement('script'); s.src = A + 'js/' + name + '.js';
       s.onload = function () { if (w.ST_CHAIN) fromUrl(w.ST_CHAIN, fail); else fail(); }; s.onerror = fail; doc.head.appendChild(s);
     }
     loadChain(0);
@@ -368,6 +370,7 @@
     function local(e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
     function inChain(x, y) { return Math.abs(x - CX) < IW * 0.52 && Math.abs(y - CY) < IH * 0.62; }
     w.addEventListener('pointermove', function (e) {
+      if (!vis && !down) return;
       var l = local(e); pmx = l[0]; pmy = l[1];
       if (down) {
         var dx = e.clientX - sx0, dy = e.clientY - sy0;
@@ -395,7 +398,7 @@
     cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
     // the hero needs its picture now (it is preloaded); footer and 404 fetch it only when they get close to the screen
-    if (kind === 'hero' || !w.IntersectionObserver) picture(build);
+    if (kind === 'hero' || !w.IntersectionObserver || stage._early) picture(build);
     else { var lio = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { lio.disconnect(); picture(build); } }, { rootMargin: '600px 0px' }); lio.observe(stage); }
     if (kind === 'hero') {
       // the hero forms right after the splash (main.js adds .is-ready to <body>)
@@ -418,6 +421,11 @@
     }
     var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); boot(); } }, { rootMargin: '700px 0px' });
     io.observe(st);
+    // a few seconds after the page has loaded, in idle time: get it fully ready in the background
+    function early() { st._early = 1; io.disconnect(); boot(); }
+    var idle = w.requestIdleCallback || function (f) { return setTimeout(f, 200); };
+    function arm() { setTimeout(function () { idle(early, { timeout: 4000 }); }, 2500); }
+    if (doc.readyState === 'complete') arm(); else w.addEventListener('load', arm);
   }
   each(stages, lazy);
 })(window);

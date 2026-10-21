@@ -1,0 +1,98 @@
+---
+import SvgSprite from '../components/landing/SvgSprite.astro';
+import Splash from '../components/landing/Splash.astro';
+import PageLoader from '../components/landing/PageLoader.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  robots: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  splash?: boolean;
+  lenis?: boolean;
+  lead?: boolean;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description = '',
+  robots,
+  canonical = '',
+  ogTitle = title,
+  ogDescription = description,
+  splash = false,
+  lenis = false,
+  lead = false,
+  bodyClass = '',
+} = Astro.props;
+
+const themeBoot = `(function(){var SPLASH=${splash ? 1 : 0},d=document.documentElement,c=d.classList,cn=navigator.connection;c.add('js');
+try{var t=localStorage.getItem('st-theme-v2');if(t==='light'||t==='dark')d.setAttribute('data-theme',t)}catch(e){}
+try{var ss=sessionStorage,pl=+ss.getItem('st-pl')||0;ss.removeItem('st-pl');if(pl&&Date.now()-pl<5000){c.add('pl-in');window.__plAt=pl;d.style.setProperty('--pl-t',(pl-Date.now())+'ms')}}catch(e){}
+var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+c.add(!SPLASH||rm||c.contains('pl-in')||(cn&&(cn.saveData||/2g/.test(cn.effectiveType||'')))?'no-sp':'sp-on');})();`;
+
+const gtagBoot = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MQP9BWN5ZZ');`;
+
+const leadBoot = `(function(){
+ var lead=null;try{lead=JSON.parse(sessionStorage.getItem('st-lead')||'null');sessionStorage.removeItem('st-lead');}catch(e){}
+ window.__stLead=lead;
+ if(!lead||Date.now()-lead.t>30*60*1000)return;
+ try{gtag('event','generate_lead',{form:'peptide-store-build',project_type:lead.type||''});}catch(e){}
+ try{if(window.fbq)fbq('track','Lead',{content_name:'peptide-store-build'});}catch(e){}
+ try{if(window.ttq)ttq.track('SubmitForm');}catch(e){}
+ try{window.dataLayer.push({event:'lead_submitted',form:'peptide-store-build'});}catch(e){}
+})();`;
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script is:inline set:html={themeBoot}></script>
+<meta name="theme-color" content="#F2F3EE">
+<meta name="color-scheme" content="light dark">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/css/fonts.css" as="style">
+<link rel="stylesheet" href="/assets/css/fonts.css">
+<link rel="stylesheet" href="/assets/css/lp.css">
+<link rel="stylesheet" href="/assets/css/molecule.css">
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-MQP9BWN5ZZ"></script>
+<script is:inline set:html={gtagBoot}></script>
+<title>{title}</title>
+{description && <meta name="description" content={description}>}
+<meta name="robots" content={robots}>
+{canonical && <link rel="canonical" href={canonical}>}
+{canonical && (
+  <>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Stealth Tech">
+    <meta property="og:title" content={ogTitle}>
+    <meta property="og:description" content={ogDescription}>
+    <meta property="og:url" content={canonical}>
+    <meta property="og:image" content="https://stealthtech.agency/assets/og/stealth-tech-og-light.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+  </>
+)}
+{lead && <script is:inline set:html={leadBoot}></script>}
+{lenis && <script is:inline src="/assets/vendor/lenis.min.js" defer></script>}
+<script is:inline src="/assets/js/molecule.js" defer></script>
+<script is:inline src="/assets/js/lp.js" defer></script>
+</head>
+<body class={bodyClass}>
+<slot name="start" />
+<SvgSprite />
+{splash && <Splash />}
+<PageLoader />
+<canvas class="hexbg" id="hexbg" aria-hidden="true"></canvas>
+<div class="bgtex" aria-hidden="true"></div>
+<slot />
+<div class="sbar" id="sbar" aria-hidden="true"><i id="sthumb"></i></div>
+</body>
+</html>

@@ -21,7 +21,8 @@ export default defineConfig({
     inlineStylesheets: 'never',
     assets: '_astro',
   },
-  trailingSlash: 'never',
+  // Both /peptide-store-build and /peptide-store-build/ open in dev.
+  trailingSlash: 'ignore',
   compressHTML: false,
   integrations: [swStamp],
   vite: {

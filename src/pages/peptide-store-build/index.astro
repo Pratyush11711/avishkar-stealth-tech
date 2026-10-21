@@ -1,0 +1,444 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import Footer from '../../components/landing/Footer.astro';
+import Dock from '../../components/landing/Dock.astro';
+---
+<LandingLayout
+  title="Stealth Tech | Peptide Stores That Look Legit, Stay Live and Get Paid"
+  description="We design and build peptide and RUO stores: a brand buyers trust, a compliant store you own and a checkout processors approve. Get a free written plan within 48 hours."
+  robots="noindex, follow"
+  canonical="https://stealthtech.agency/peptide-store-build"
+  ogTitle="Stealth Tech | Peptide Stores That Look Legit, Stay Live and Get Paid"
+  ogDescription="We build peptide stores that get approved and stay live. Get a free written plan and fixed price within 48 hours."
+  splash
+  lenis
+>
+<a slot="start" class="skip" href="#start">Skip to the form</a>
+<header class="top" id="top">
+ <a class="brand" href="/" aria-label="Stealth Tech homepage">
+  <svg class="brand-mark" aria-hidden="true"><use href="#logo"/></svg>
+  <span class="brand-word">Stealth Tech</span>
+ </a>
+ <div class="top-r">
+  <a class="btn btn--sm" href="#start" data-go-form><span class="btn-t">Get my free plan</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+ </div>
+</header>
+
+<main id="main">
+
+<!-- ============ 1. HERO: what we do + the form ============ -->
+<section class="hero" aria-labelledby="heroTitle">
+ <div class="wrap hero-grid">
+  <div class="hero-l">
+   <p class="eyebrow hero-in"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Peptide store design &amp; build</span></p>
+   <h1 class="hero-h" id="heroTitle">
+    <span class="hl"><span class="hl-i">We build peptide</span></span>
+    <span class="hl"><span class="hl-i">stores that get</span></span>
+    <span class="hl"><span class="hl-i"><span class="acc-w">approved</span> and</span></span>
+    <span class="hl"><span class="hl-i">stay live.</span></span>
+   </h1>
+   <p class="hero-sub hero-in">You have the product. We build the brand, the store and the checkout around it, so buyers trust you on sight and processors say yes.</p>
+   <dl class="hero-facts hero-in">
+    <div><dt>Peptide-first</dt><dd>Brands like yours are our everyday work</dd></div>
+    <div><dt>48-hour plan</dt><dd>Scope and one fixed price, in writing</dd></div>
+    <div><dt>100% yours</dt><dd>Domain, store and code in your name</dd></div>
+   </dl>
+  </div>
+
+  <!-- ===== THE FORM: 5 short steps. Netlify stores every lead (Site > Forms > peptide-store-build) ===== -->
+  <div class="hero-r" id="start">
+   <div class="fcard">
+    <div class="fc-head">
+     <div>
+      <p class="fc-t">Get your free store plan</p>
+      <p class="fc-s">5 quick questions · about 60 seconds</p>
+     </div>
+     <p class="fc-n" aria-live="polite">Step <b id="stepNow">1</b> of 5</p>
+    </div>
+    <ol class="fc-prog" aria-hidden="true"><li class="is-on"></li><li></li><li></li><li></li><li></li></ol>
+
+    <form class="lf" id="leadForm" name="peptide-store-build" method="POST" action="/peptide-store-build/thank-you" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+     <input type="hidden" name="form-name" value="peptide-store-build">
+     <p class="lf-hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+     <input type="hidden" name="page" value="/peptide-store-build">
+     <input type="hidden" name="phone"><input type="hidden" name="country">
+     <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium"><input type="hidden" name="utm_campaign"><input type="hidden" name="utm_content"><input type="hidden" name="utm_term"><input type="hidden" name="click_id">
+
+     <div class="lf-steps">
+      <fieldset class="lf-step is-on" data-step="0">
+       <legend class="lf-h">What can we build for you?</legend>
+       <div class="lf-chips">
+        <label><input type="radio" name="type" value="New peptide store"><span><b>A new peptide store</b><small>Starting fresh</small></span></label>
+        <label><input type="radio" name="type" value="Rebuild my store"><span><b>A better version of my store</b><small>Rebuild what I have</small></span></label>
+        <label><input type="radio" name="type" value="Brand + store launch"><span><b>Brand + store launch</b><small>Name, labels and store</small></span></label>
+        <label><input type="radio" name="type" value="Checkout and payments fix"><span><b>Checkout &amp; payments</b><small>Get approved and paid</small></span></label>
+       </div>
+      </fieldset>
+
+      <fieldset class="lf-step" data-step="1">
+       <legend class="lf-h">Tell us a little about it.</legend>
+       <label class="lf-f"><span>A line or two is enough. You can also skip this.</span><textarea name="project" rows="4" maxlength="1200" placeholder="E.g. 20 research peptides, need a store and a processor that accepts us. Launch in 6 weeks."></textarea></label>
+      </fieldset>
+
+      <fieldset class="lf-step" data-step="2">
+       <legend class="lf-h">What is your name?</legend>
+       <label class="lf-f"><span>Full name</span><input name="name" autocomplete="name" placeholder="Jane Carter"></label>
+      </fieldset>
+
+      <fieldset class="lf-step" data-step="3">
+       <legend class="lf-h">Where should we send your plan?</legend>
+       <label class="lf-f"><span>Work email</span><input name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@yourbrand.com"></label>
+       <p class="lf-hint"><svg aria-hidden="true"><use href="#i-lock"/></svg>Your plan arrives here. No newsletters, no spam.</p>
+      </fieldset>
+
+      <fieldset class="lf-step" data-step="4">
+       <legend class="lf-h">Best number to reach you?</legend>
+       <div class="lf-f">
+        <span id="telLbl">Phone or WhatsApp</span>
+        <div class="tel">
+         <label class="tel-cc" title="Country code">
+          <img class="tel-flag" id="telFlag" alt="" width="22" height="16" decoding="async" hidden><i class="tel-iso" id="telIso">US</i>
+          <b id="telDial">+1</b><svg class="tel-chev" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <select id="telCountry" aria-label="Country code"></select>
+         </label>
+         <input id="telNum" name="phone_local" type="tel" autocomplete="tel-national" inputmode="tel" placeholder="555 123 4567" aria-labelledby="telLbl">
+        </div>
+       </div>
+       <p class="lf-hint"><svg aria-hidden="true"><use href="#i-clock"/></svg>We only use it to arrange your free call.</p>
+      </fieldset>
+     </div>
+
+     <p class="lf-err" id="lfErr" role="alert" hidden></p>
+
+     <div class="lf-foot">
+      <button type="button" class="lf-back" id="lfBack" hidden><svg aria-hidden="true"><use href="#i-left"/></svg>Back</button>
+      <button type="button" class="lf-skip" id="lfSkip" hidden>Skip</button>
+      <button type="submit" class="btn lf-next" id="lfNext"><span class="btn-t">Continue</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></button>
+     </div>
+    </form>
+
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 2. SOCIAL PROOF STRIP ============ -->
+<section class="strip" aria-label="Brands we have built for">
+ <p class="strip-k">Trusted by peptide suppliers, RUO labs and wellness founders</p>
+ <div class="marquee">
+  <div class="marquee-track">
+   <span class="logo-it"><img src="/assets/logos/frontier-biomed.webp" alt="Frontier Biomed" height="28" loading="lazy"></span>
+   <span class="logo-it"><img src="/assets/logos/hols.webp" alt="HOLS" height="24" loading="lazy"></span>
+   <span class="logo-it"><img src="/assets/logos/medivance.webp" alt="Medivance" height="26" loading="lazy"></span>
+   <span class="logo-it"><img src="/assets/logos/pba-mark.webp" alt="" height="30" loading="lazy"><span class="logo-cap">Peptide Broker Academy</span></span>
+   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/frontier-biomed.webp" alt="" height="28" loading="lazy"></span>
+   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/hols.webp" alt="" height="24" loading="lazy"></span>
+   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/medivance.webp" alt="" height="26" loading="lazy"></span>
+   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/pba-mark.webp" alt="" height="30" loading="lazy"><span class="logo-cap">Peptide Broker Academy</span></span>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 3. THE THREE WALLS ============ -->
+<section class="sec walls" id="problems" aria-labelledby="wallsTitle">
+ <div class="wrap">
+  <header class="sec-head">
+   <div>
+    <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>What holds great brands back</span></p>
+    <h2 class="h2" id="wallsTitle">Your product deserves to sell. We take down the three walls in its way.</h2>
+   </div>
+   <p class="lead">Peptide stores play by stricter rules than any other category, and most developers have never built one. We build them every day, so we already know the way through.</p>
+  </header>
+  <div class="wall-grid">
+   <article class="wall rv">
+    <div class="wall-top"><span class="wall-n">Wall 01</span><p class="wall-bad">"This store looks like a scam."</p></div>
+    <div class="wall-fix">
+     <p class="wall-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>How we fix it</p>
+     <h3>A brand buyers trust on sight</h3>
+     <p>We design your name, logo, vial labels and store together, and put a COA on every product page.</p>
+    </div>
+   </article>
+   <article class="wall rv">
+    <div class="wall-top"><span class="wall-n">Wall 02</span><p class="wall-bad">"Your application was declined."</p></div>
+    <div class="wall-fix">
+     <p class="wall-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>How we fix it</p>
+     <h3>A checkout processors approve</h3>
+     <p>We write your policies, add the research-use confirmation and test a backup gateway before launch.</p>
+    </div>
+   </article>
+   <article class="wall rv">
+    <div class="wall-top"><span class="wall-n">Wall 03</span><p class="wall-bad">"Your store has been shut down."</p></div>
+    <div class="wall-fix">
+     <p class="wall-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>How we fix it</p>
+     <h3>A store nobody can take away</h3>
+     <p>We build on WooCommerce or custom code that you own, so your store never depends on someone else's rules.</p>
+    </div>
+   </article>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 4. WHAT WE BUILD: each part opens as you scroll ============ -->
+<section class="feat" id="included" aria-labelledby="featTitle">
+ <div class="feat-pin">
+  <div class="wrap">
+   <header class="sec-head">
+    <div>
+     <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>What we build for you</span></p>
+     <h2 class="h2" id="featTitle">We build every part of your store. You focus on your product.</h2>
+    </div>
+    <p class="lead">One team, one plan, one fixed price. We own the work from the first call to launch day.</p>
+   </header>
+   <div class="feat-grid" id="featGrid">
+    <ol class="feat-list" id="featList">
+     <li class="fr-item is-on">
+      <button type="button" class="fr" aria-expanded="true"><span class="fr-n">01</span><span class="fr-t">Your brand &amp; vial labels</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+      <div class="fr-d"><p>We create your name, logo, colours and vial labels, so your brand looks established from the very first order.</p></div>
+      <div class="fr-vis" aria-hidden="true">
+       <div class="v-brand">
+        <div class="vb-logo"><svg><use href="#logo"/></svg><b>YOUR BRAND</b><small>Research compounds</small></div>
+        <div class="vb-label">
+         <i class="vb-crop c1"></i><i class="vb-crop c2"></i><i class="vb-crop c3"></i><i class="vb-crop c4"></i>
+         <div class="vb-lt"><span><svg><use href="#logo"/></svg>YOUR BRAND</span><span>Lot 2409</span></div>
+         <p class="vb-name">BPC-157</p>
+         <p class="vb-dose">10 mg · Lyophilized powder</p>
+         <div class="vb-lb"><span class="vb-ruo">For research use only</span><span class="vb-bar"></span></div>
+        </div>
+        <div class="vb-kit">
+         <div class="vb-sw"><span style="--c:#0B5B3A"><i></i>#0B5B3A</span><span style="--c:#0A1410"><i></i>#0A1410</span><span style="--c:#E8EAE3"><i></i>#E8EAE3</span></div>
+         <p class="vb-type"><b>Aa</b><span>Poppins<br>Light · Regular · Medium</span></p>
+        </div>
+       </div>
+      </div>
+     </li>
+     <li class="fr-item">
+      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">02</span><span class="fr-t">A store built to pass review</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+      <div class="fr-d"><p>We build fast product pages, a COA library and research-use copy, written to pass review and still sell.</p></div>
+      <div class="fr-vis" aria-hidden="true">
+       <div class="v-spec">
+        <div class="vs-page">
+         <div class="vs-img"><div class="vs-doc"><p class="vs-doc-t">Certificate of Analysis</p><p class="vs-doc-s">Lot 2409 · Third-party lab</p><i></i><i></i><i class="s"></i><i></i><span class="vs-seal"><svg><use href="#i-check"/></svg></span></div><b class="vs-pin p1">1</b></div>
+         <div class="vs-info">
+          <p class="vs-t">BPC-157 · 10 mg</p>
+          <p class="vs-p">$89.00</p>
+          <p class="vs-ruo">For research use only<b class="vs-pin p2">2</b></p>
+          <p class="vs-copy">Third-party tested. Lyophilized.<b class="vs-pin p3">3</b></p>
+          <span class="vs-btn">Add to cart</span>
+          <p class="vs-coa">View COA · Lot 2409</p>
+         </div>
+        </div>
+        <ol class="vs-notes"><li><b>1</b>COA for this exact lot</li><li><b>2</b>Research-use label on every product</li><li><b>3</b>Copy written to pass review</li></ol>
+       </div>
+      </div>
+     </li>
+     <li class="fr-item">
+      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">03</span><span class="fr-t">A checkout that gets you paid</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+      <div class="fr-d"><p>We match you with providers that accept your category, prepare your application and set up a tested backup gateway.</p></div>
+      <div class="fr-vis" aria-hidden="true">
+       <div class="v-route">
+        <svg viewBox="0 0 340 170" class="vr-svg">
+         <path class="vr-line" d="M40 85 C 100 85 110 38 170 38"/>
+         <path class="vr-line" d="M40 85 C 100 85 110 132 170 132 C 230 132 250 85 300 85"/>
+         <path class="vr-run vr-a" pathLength="1" d="M40 85 C 100 85 110 38 170 38"/>
+         <path class="vr-run vr-b" pathLength="1" d="M40 85 C 100 85 110 132 170 132 C 230 132 250 85 300 85"/>
+         <polygon class="vr-node" points="40,73 50.4,79 50.4,91 40,97 29.6,91 29.6,79"/>
+         <polygon class="vr-node vr-na" points="170,26 180.4,32 180.4,44 170,50 159.6,44 159.6,32"/>
+         <path class="vr-x" d="M165 33l10 10M175 33l-10 10"/>
+         <polygon class="vr-node vr-nb" points="170,120 180.4,126 180.4,138 170,144 159.6,138 159.6,126"/>
+         <polygon class="vr-node vr-end" points="300,71 312,78 312,92 300,99 288,92 288,78"/>
+         <text x="40" y="118" text-anchor="middle">Order</text><text x="170" y="16" text-anchor="middle">Gateway A</text><text x="170" y="164" text-anchor="middle">Gateway B</text><text x="300" y="118" text-anchor="middle">Payout</text>
+        </svg>
+        <div class="vr-ticket">
+         <p class="vk">Order #1042</p>
+         <p class="vr-conf"><i><svg><use href="#i-check"/></svg></i>I confirm this order is for research use only.</p>
+         <p class="vr-res">Re-routed to Gateway B <b>Approved</b></p>
+        </div>
+       </div>
+      </div>
+     </li>
+     <li class="fr-item">
+      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">04</span><span class="fr-t">A back office that runs itself</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+      <div class="fr-d"><p>We build wholesale pricing, affiliate payouts and subscriptions into one admin, so you stop paying for plugins that break.</p></div>
+      <div class="fr-vis" aria-hidden="true">
+       <div class="v-table">
+        <p class="vk">BPC-157 · price tiers</p>
+        <table>
+         <thead><tr><th>Buyer</th><th>Min. order</th><th>Price</th></tr></thead>
+         <tbody><tr><td>Retail</td><td>1</td><td>$89.00</td></tr><tr class="is-hl"><td>Wholesale</td><td>10+</td><td>$71.00</td></tr><tr><td>Distributor</td><td>50+</td><td>$62.00</td></tr></tbody>
+        </table>
+        <div class="vt-row"><span>Affiliate commission</span><b>10% · paid monthly</b></div>
+        <div class="vt-row"><span>Subscription</span><b>Renews every 30 days</b></div>
+       </div>
+      </div>
+     </li>
+    </ol>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 5. WHY US (bento) + comparison ============ -->
+<section class="sec why" id="why" aria-labelledby="whyTitle">
+ <div class="wrap">
+  <header class="sec-head">
+   <div>
+    <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Why brands choose us</span></p>
+    <h2 class="h2" id="whyTitle">You deserve a team that already speaks peptide.</h2>
+   </div>
+   <p class="lead">You should never have to explain your category to the people building your store. With us, you will not.</p>
+  </header>
+  <div class="bento">
+   <!-- IMAGE: replace assets/img/why-studio-*.webp to change this picture (portrait 4:5) -->
+   <figure class="b-img rv">
+    <img src="/assets/img/why-studio-1120.webp" srcset="/assets/img/why-studio-720.webp 720w, /assets/img/why-studio-1120.webp 1120w" sizes="(max-width:900px) 92vw, 440px" alt="A designer reviewing printed label proofs next to a laptop showing a dark green online store" width="1120" height="1400" loading="lazy" decoding="async">
+    <figcaption><b>Senior designers and developers.</b>Every label, page and checkout is reviewed by hand.</figcaption>
+   </figure>
+   <article class="b-card rv"><span class="b-n">01</span><h3>We know your category</h3><p>Peptide and RUO brands are our everyday work. We know the rules before you explain them.</p></article>
+   <article class="b-card rv"><span class="b-n">02</span><h3>We build compliance in</h3><p>We write copy, policies and checkout for processor review before anything goes live.</p></article>
+   <article class="b-card rv"><span class="b-n">03</span><h3>We stay with you</h3><p>The senior people on your first call are the people who build your store.</p></article>
+   <article class="b-card rv"><span class="b-n">04</span><h3>We put it in your name</h3><p>Domain, store, code and data belong to you from day one.</p></article>
+  </div>
+
+  <div class="cmp rv" role="table" aria-label="A typical web agency compared with Stealth Tech">
+   <div class="cmp-row cmp-head" role="row"><span role="columnheader">What you get</span><span role="columnheader">Typical web agency</span><span role="columnheader"><svg class="cmp-logo" aria-hidden="true"><use href="#logo"/></svg>Stealth Tech</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Peptide &amp; RUO know-how</span><span role="cell">Often new to it</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Our everyday work</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Platform</span><span role="cell">Shopify by default</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>WooCommerce or custom code you own</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Product copy</span><span role="cell">General ecommerce copy</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Research-use copy written for review</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Checkout</span><span role="cell">One payment gateway</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Application pack + tested backup</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Price</span><span role="cell">Hourly estimates</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>One fixed price, agreed up front</span></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 6. MADE FOR YOU + OUR PROMISE ============ -->
+<section class="sec fit" aria-labelledby="fitTitle">
+ <div class="wrap">
+  <header class="sec-head">
+   <div>
+    <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Made for ambitious founders</span></p>
+    <h2 class="h2" id="fitTitle">You are serious about your brand. We are serious about building it.</h2>
+   </div>
+   <p class="lead">Founders who come to us share one thing: a great product that deserves a better store.</p>
+  </header>
+  <div class="fit-cards">
+   <div class="fit-card fit-card--a rv">
+    <p class="fit-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>You are in the right place if</p>
+    <ul>
+     <li><i><svg><use href="#i-check"/></svg></i>You sell research peptides or RUO products and want a store that looks established</li>
+     <li><i><svg><use href="#i-check"/></svg></i>You want a clean, stronger restart after a store or payment problem</li>
+     <li><i><svg><use href="#i-check"/></svg></i>You are launching a new brand and want name, labels and store done together</li>
+     <li><i><svg><use href="#i-check"/></svg></i>You are growing and ready for wholesale, affiliates or subscriptions</li>
+    </ul>
+   </div>
+   <div class="fit-card fit-card--b rv">
+    <p class="fit-k"><svg aria-hidden="true"><use href="#i-shield"/></svg>Our promise to your brand</p>
+    <ul>
+     <li><i><svg><use href="#i-check"/></svg></i>We keep every page research-use correct, so your store stays safe</li>
+     <li><i><svg><use href="#i-check"/></svg></i>We build on platforms that welcome your category</li>
+     <li><i><svg><use href="#i-check"/></svg></i>We give you one fixed price before any work starts</li>
+     <li><i><svg><use href="#i-check"/></svg></i>We set up everything in your name</li>
+    </ul>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 7. HOW IT WORKS (compact, horizontal) ============ -->
+<section class="proc" id="process" aria-labelledby="procTitle">
+ <div class="proc-bg" aria-hidden="true"></div>
+ <div class="wrap">
+  <div class="proc-head">
+   <div>
+    <p class="eyebrow eyebrow--on"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>How it works</span></p>
+    <h2 class="h2" id="procTitle">You fill one form. We handle the rest.</h2>
+   </div>
+   <a class="btn btn--neon" href="#start" data-go-form data-pulse><span class="btn-t">Start step 01</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+  </div>
+  <ol class="hs" id="tl">
+   <li class="hs-rail" aria-hidden="true"><i id="tlFill"></i></li>
+   <li class="tl-st"><span class="tl-n">01</span><p class="tl-when">Today</p><h3>You send the form</h3><p>Five quick answers. About 60 seconds.</p></li>
+   <li class="tl-st"><span class="tl-n">02</span><p class="tl-when">This week</p><h3>We talk for 30 minutes</h3><p>A free call with a senior strategist.</p></li>
+   <li class="tl-st"><span class="tl-n">03</span><p class="tl-when">Within 48 hours</p><h3>We send your plan</h3><p>Scope, timeline and one fixed price.</p></li>
+   <li class="tl-st"><span class="tl-n">04</span><p class="tl-when">2 to 6 weeks</p><h3>We launch your store</h3><p>Tested end to end before you go live.</p></li>
+  </ol>
+ </div>
+</section>
+
+<!-- ============ 8. CLIENT VOICES ============ -->
+<section class="sec proof" id="results" aria-labelledby="proofTitle">
+ <div class="wrap">
+  <header class="sec-head">
+   <div>
+    <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Client voices</span></p>
+    <h2 class="h2" id="proofTitle">Founders like you, now selling with confidence.</h2>
+   </div>
+   <p class="lead">Real outcomes from peptide and RUO founders. We keep names private, because discretion is part of what we do.</p>
+  </header>
+  <div class="tm" id="tm">
+   <div class="tm-stack" aria-live="polite">
+    <figure class="tm-slide is-on"><p class="tm-k"><b>Weeks</b>to a live store</p><blockquote>"Three developers went quiet the moment they heard RUO. These guys built the brand, the store and the checkout, and we were taking orders within weeks."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Founder</b>RUO peptide brand</span></figcaption></figure>
+    <figure class="tm-slide"><p class="tm-k"><b>Days</b>to processor approval</p><blockquote>"Our first store was on Shopify and got shut down. The rebuild went in with a clean application and a new processor approved us within days."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Operator</b>Peptide store</span></figcaption></figure>
+    <figure class="tm-slide"><p class="tm-k"><b>One admin</b>for wholesale and affiliates</p><blockquote>"Wholesale pricing, affiliate payouts and subscriptions all live inside one admin. We stopped paying for apps that kept breaking."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Head of Ops</b>Research supplier</span></figcaption></figure>
+    <figure class="tm-slide"><p class="tm-k"><b>1st look</b>buyers now trust</p><blockquote>"Buyers used to ask if we were legit. Now they ask when the next batch drops. The labels and COA pages did that."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Founder</b>Peptide brand</span></figcaption></figure>
+   </div>
+   <div class="tm-nav">
+    <div class="tm-dots" role="tablist" aria-label="Reviews"><button type="button" role="tab" aria-selected="true" aria-label="Review 1" class="is-on"><i></i></button><button type="button" role="tab" aria-selected="false" aria-label="Review 2"><i></i></button><button type="button" role="tab" aria-selected="false" aria-label="Review 3"><i></i></button><button type="button" role="tab" aria-selected="false" aria-label="Review 4"><i></i></button></div>
+    <div class="tm-arrs"><button type="button" class="tm-arr" data-d="-1" aria-label="Previous review"><svg><use href="#i-left"/></svg></button><button type="button" class="tm-arr tm-arr--r" data-d="1" aria-label="Next review"><svg><use href="#i-left"/></svg></button></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 9. FAQ ============ -->
+<section class="sec faq" id="faq" aria-labelledby="faqTitle">
+ <div class="wrap faq-grid">
+  <div class="faq-l">
+   <p class="eyebrow"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Straight answers</span></p>
+   <h2 class="h2" id="faqTitle">Your questions, answered.</h2>
+   <p class="lead">Anything else, ask us on the call. It is free.</p>
+  </div>
+  <div class="faq-list">
+   <div class="qa is-open"><button type="button" class="qa-q" aria-expanded="true"><span>Do you really work with peptide and RUO brands?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Yes. Peptide and RUO brands are our main specialty. We also build for hemp, botanical and kanna businesses.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Which platform will you build my store on?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>WooCommerce or custom code that you own. Shopify and Stripe restrict research peptides, so we choose platforms that keep your store safe.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>How fast can we launch?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Most store builds take 2 to 6 weeks. You get a written plan with a timeline within 48 hours of our first call. We also help you apply to your processor early, since approval can take longer than the build.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>What will it cost?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>One fixed price after the audit, so you know the number before we start. We give you a realistic range on the first call.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>I already have a store. Can you make it better?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Yes. We audit what you have, keep what works and move your products, customers, wholesale accounts and affiliates to the new build.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Who owns the store?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>You do. We set up the domain, store, code, content and data in your name from day one. Everything stays with you, always.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Do you sell or ship product?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>No. We are your design and technology team. Your product and your supply stay fully in your hands.</p></div></div></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 10. FINAL CTA ============ -->
+<section class="end" aria-labelledby="endTitle">
+ <div class="wrap">
+  <div class="end-card">
+   <div class="end-glow" aria-hidden="true"></div>
+   <div class="end-l">
+    <p class="eyebrow eyebrow--on"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Free 30-minute call</span></p>
+    <h2 class="end-h" id="endTitle">Let us build the store your brand deserves.</h2>
+   </div>
+   <div class="end-r">
+    <ol class="end-steps"><li><span>01</span>You answer five quick questions</li><li><span>02</span>We talk with you for 30 minutes</li><li><span>03</span>We send your plan and fixed price in 48 hours</li></ol>
+    <a class="btn btn--neon" href="#start" data-go-form data-pulse><span class="btn-t">Get my free plan</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+    <p class="end-note">Free. No obligation. Your plan is yours to keep.</p>
+   </div>
+  </div>
+ </div>
+</section>
+</main>
+<Footer planHref="#start" current />
+<Dock
+  logoHref="#top"
+  logoLabel="Back to top"
+  top
+  links={[
+    { href: '#included', sec: 'included', label: 'What we build' },
+    { href: '#why', sec: 'why', label: 'Why us' },
+    { href: '#process', sec: 'process', label: 'Process' },
+    { href: '#faq', sec: 'faq', label: 'FAQ' },
+  ]}
+  buttonHref="#start"
+  buttonLabel="Get my free plan"
+/>
+</LandingLayout>
