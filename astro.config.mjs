@@ -14,15 +14,14 @@ export default defineConfig({
   site: 'https://stealthtech.agency',
   output: 'static',
   build: {
-    // directory layout so /peptide-brand-launch is a real folder with index.html.
-    // format: 'file' emitted peptide-brand-launch.html, which the dev server
-    // opens but a static host answers with 404.
+    // Each route is route/index.html. Vercel clean URLs serve that file at /route.
     format: 'directory',
     inlineStylesheets: 'never',
     assets: '_astro',
   },
-  // Both /peptide-store-build and /peptide-store-build/ open in dev.
-  trailingSlash: 'ignore',
+  // Matches vercel.json trailingSlash: false. The real page must be written into
+  // route/index.html; see src/middleware.ts for why a slash redirect cannot run at build time.
+  trailingSlash: 'never',
   compressHTML: false,
   integrations: [swStamp],
   vite: {
