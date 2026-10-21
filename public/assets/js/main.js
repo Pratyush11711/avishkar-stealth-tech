@@ -28,6 +28,8 @@
   if (!gsap || !ST) { root.classList.remove('js', 'sp-on', 'pl-in'); body.classList.add('is-ready'); var s0 = $('#splash'); if (s0) s0.remove(); return; }
   gsap.registerPlugin(ST);
   ST.config({ ignoreMobileResize: true });
+  // a hard flick fires many scroll events per frame. Catch-up ticks after a missed frame would stack on top of that.
+  if (TOUCH) gsap.ticker.lagSmoothing(1000, 16);
 
   /* =====================================================
      PERFORMANCE MODE
@@ -94,6 +96,19 @@
       window.__stScrolling = true; clearTimeout(sT); sT = setTimeout(function () { window.__stScrolling = false; }, 160);
     }, { passive: true });
   });
+  // touch: mark a hard flick (well over one screen a second) so WebGL and text effects yield those frames to the scroll
+  if (TOUCH) {
+    var flingY = window.pageYOffset, flingT = 0, flingIdle = 0, flingTracks = $$('.marquee-track');
+    var flingPause = function (on) { for (var i = 0; i < flingTracks.length; i++) flingTracks[i].style.animationPlayState = on ? 'paused' : ''; };
+    window.addEventListener('scroll', function () {
+      var now = performance.now(), y = window.pageYOffset, dt = flingT ? now - flingT : 16, dy = Math.abs(y - flingY);
+      flingY = y; flingT = now;
+      window.__stScrolling = true;
+      if (dy / dt * 1000 > 1200 || dy > 64) { if (!window.__stFast) { window.__stFast = true; flingPause(true); } }
+      clearTimeout(flingIdle);
+      flingIdle = setTimeout(function () { window.__stScrolling = false; window.__stFast = false; flingT = 0; flingPause(false); }, 140);
+    }, { passive: true });
+  }
 
   /* =====================================================
      SMOOTH SCROLL (native scrolling in lite mode: the compositor scrolls, so it never stutters)
@@ -507,13 +522,39 @@
      ===================================================== */
   // full-screen scenes (Problem, Industries): the scene spreads from a rounded panel to the full screen as it arrives
   // (and folds back on the way up), and a magnet glides the page the rest of the way, so no half-shown edge ever sits on screen
+  // touch scenes follow the finger, but the paint happens once per frame (a flick was redrawing the same scene several times before the next paint)
+  function driveScroll(tl, opts, each) {
+    var job = 0, prog = 0;
+    opts.onUpdate = function (s) {
+      if (each) each(s);
+      prog = s.progress;
+      if (job) return;
+      job = requestAnimationFrame(function () { job = 0; tl.progress(prog); });
+    };
+    opts.onRefresh = function (s) { tl.invalidate(); prog = s.progress; tl.progress(prog); };
+    return ST.create(opts);
+  }
   function sceneEntry(sec, stage) {
     if (!sec || !stage) return;
     // both clip-path spellings for WebKit; once fully open the clip is removed so nothing extra is painted
     var cp = { k: 1 };
-    var setClip = function () { var k = cp.k, v = k > 0.001 ? 'inset(' + (6 * k).toFixed(2) + '% ' + (4 * k).toFixed(2) + '% 0% ' + (4 * k).toFixed(2) + '% round ' + (40 * k).toFixed(1) + 'px)' : 'none'; stage.style.webkitClipPath = v; stage.style.clipPath = v; };
-    gsap.fromTo(cp, { k: 1 }, { k: 0, ease: 'none', onUpdate: setClip, scrollTrigger: { trigger: sec, start: 'top 94%', end: 'top top', scrub: true } });
-    setClip();
+    var setClip = function () {
+      var k = cp.k, v = k > 0.001 ? 'inset(' + (6 * k).toFixed(2) + '% ' + (4 * k).toFixed(2) + '% 0% ' + (4 * k).toFixed(2) + '% round ' + (40 * k).toFixed(1) + 'px)' : 'none';
+      if (stage._clip === v) return;
+      stage._clip = v; stage.style.webkitClipPath = v; stage.style.clipPath = v;
+    };
+    if (TOUCH) {
+      var job = 0, k = 1, apply = function () { cp.k = k; setClip(); };
+      apply();
+      ST.create({ trigger: sec, start: 'top 94%', end: 'top top', onUpdate: function (s) {
+        k = 1 - s.progress;
+        if (job) return;
+        job = requestAnimationFrame(function () { job = 0; apply(); });
+      }});
+    } else {
+      gsap.fromTo(cp, { k: 1 }, { k: 0, ease: 'none', onUpdate: setClip, scrollTrigger: { trigger: sec, start: 'top 94%', end: 'top top', scrub: true } });
+      setClip();
+    }
     // the magnet finishes a half-shown scene on a mouse wheel. On a touch screen it fights the finger
     // and the momentum, so the page jumps between sections. Touch scrolling stays with the finger.
     if (TOUCH) return;
@@ -553,7 +594,9 @@
       } else { n.classList.add('pw'); words.push(n); }
     });
     var track = $('.pb-track', sec), panel = $('.pb-panel', sec), img = $('.pb-img', sec), end = $('.pb-end', sec);
-    var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top 85%', end: 'bottom bottom', scrub: SCRUB, invalidateOnRefresh: true } });
+    var tl = gsap.timeline(TOUCH
+      ? { paused: true, defaults: { ease: 'none' } }
+      : { defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top 85%', end: 'bottom bottom', scrub: SCRUB, invalidateOnRefresh: true } });
     gsap.set('.pb-bg', { opacity: 1 });
     tl.fromTo('.pb-bubbles', { opacity: 0 }, { opacity: 1, duration: 0.8 }, 0.5)
       .set(intro, { opacity: 1 }, 1.95)
@@ -564,6 +607,7 @@
       .fromTo(img, { opacity: 0, scale: 0.82, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 1.4, ease: 'power2.out' }, 9.3)
       .fromTo(end, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, 9.7)
       .to({}, { duration: 1.4 }, 10.9);
+    if (TOUCH) driveScroll(tl, { trigger: sec, start: 'top 85%', end: 'bottom bottom' });
     // the opening line plays by itself the moment the scene has filled the screen (no extra scrolling needed to read it)
     gsap.set(words, TOUCH ? { opacity: 0, y: 18 } : { opacity: 0, y: 18, filter: 'blur(6px)' });
     ST.create({ trigger: sec, start: 'top 6%', onEnter: function () { gsap.to(words, TOUCH ? { opacity: 1, y: 0, stagger: 0.06, duration: 0.6, ease: 'power2.out', overwrite: true } : { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.06, duration: 0.6, ease: 'power2.out', overwrite: true }); },
@@ -577,7 +621,7 @@
     var sec = $('#industries'); if (!sec) return;
     var stage = $('.ind-stage', sec), num = $('#indNum'), bar = $('.ind-bar i', sec);
     sceneEntry(sec, stage);
-    $$('.ind-name', sec).forEach(function (n) {
+    if (!TOUCH) $$('.ind-name', sec).forEach(function (n) {
       var t = n.textContent; n.textContent = '';
       t.split('').forEach(function (c) { var s = doc.createElement('span'); s.className = 'ch'; s.textContent = c; s.setAttribute('aria-hidden', 'true'); n.appendChild(s); });
     });
@@ -585,8 +629,10 @@
     var full = function () { return Math.hypot(stage.clientWidth, stage.clientHeight) / 2 + 10; };
     var circ = function (r) { return 'circle(' + r + 'px at 50% 50%)'; };
     var cur = -1;
-    var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: SCRUB, invalidateOnRefresh: true,
-      onUpdate: function (s) { var i = s.progress < 0.36 ? 0 : s.progress < 0.71 ? 1 : 2; if (i !== cur) { cur = i; num.textContent = '0' + (i + 1); } } } });
+    var indStep = function (s) { var i = s.progress < 0.36 ? 0 : s.progress < 0.71 ? 1 : 2; if (i !== cur) { cur = i; num.textContent = '0' + (i + 1); } };
+    var tl = gsap.timeline(TOUCH
+      ? { paused: true, defaults: { ease: 'none' } }
+      : { defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: SCRUB, invalidateOnRefresh: true, onUpdate: indStep } });
     tl.to({}, { duration: 1 }, 0);
     tl.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 7 }, 0);
     [1, 2].forEach(function (s, idx) {
@@ -599,20 +645,21 @@
         .fromTo($('img', c1), { rotation: 80, scale: 1.45 }, { rotation: 0, scale: 1, duration: 2, ease: 'power2.inOut' }, T)
         .fromTo($('img', c2), { rotation: -120, scale: 1.45 }, { rotation: 0, scale: 1, duration: 2, ease: 'power2.inOut' }, T)
         .fromTo($('img', c3), { rotation: 160, scale: 1.45 }, { rotation: 0, scale: 1, duration: 2, ease: 'power2.inOut' }, T)
-        .to($$('.ch', prevT), { yPercent: -60, opacity: 0, duration: 0.5, stagger: 0.03, ease: 'power2.in' }, T + 0.1)
+        .to(TOUCH ? $('.ind-name', prevT) : $$('.ch', prevT), TOUCH ? { yPercent: -30, opacity: 0, duration: 0.45, ease: 'power2.in' } : { yPercent: -60, opacity: 0, duration: 0.5, stagger: 0.03, ease: 'power2.in' }, T + 0.1)
         .to($('.ind-sub', prevT), { opacity: 0, y: -10, duration: 0.4 }, T + 0.1)
         .to($('.ind-desc [data-d="' + (s - 1) + '"]', sec), { opacity: 0, y: -10, duration: 0.4 }, T + 0.1)
         .set(nextT, { opacity: 1 }, T + 1)
-        .fromTo($$('.ch', nextT), { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, stagger: 0.035, ease: 'power3.out' }, T + 1.1)
+        .fromTo(TOUCH ? $('.ind-name', nextT) : $$('.ch', nextT), TOUCH ? { yPercent: 40, opacity: 0 } : { yPercent: 70, opacity: 0 }, TOUCH ? { yPercent: 0, opacity: 1, duration: 0.5, ease: 'power2.out' } : { yPercent: 0, opacity: 1, duration: 0.6, stagger: 0.035, ease: 'power3.out' }, T + 1.1)
         .fromTo($('.ind-sub', nextT), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, T + 1.4)
         .fromTo($('.ind-desc [data-d="' + s + '"]', sec), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, T + 1.4)
         .fromTo('.ind-rings .r2', { scale: 1 }, { scale: 1.12, duration: 1, ease: 'sine.inOut', yoyo: true, repeat: 1 }, T)
         .to({}, { duration: 1 }, T + 2);
     });
+    var indST = TOUCH ? driveScroll(tl, { trigger: sec, start: 'top top', end: 'bottom bottom' }, indStep) : null;
     var POS = [0.07, 0.5, 0.93];
     $$('.ind-arr', sec).forEach(function (b) {
       b.addEventListener('click', function () {
-        var st = tl.scrollTrigger, t = clamp(Math.max(0, cur) + (+b.getAttribute('data-dir')), 0, 2);
+        var st = tl.scrollTrigger || indST, t = clamp(Math.max(0, cur) + (+b.getAttribute('data-dir')), 0, 2);
         scrollToY(st.start + (st.end - st.start) * POS[t], 1.2);
       });
     });
@@ -630,7 +677,8 @@
       nums.forEach(function (b, k) { b.classList.toggle('is-on', k === i); b.setAttribute('aria-selected', String(k === i)); });
       txs.forEach(function (t, k) { t.classList.toggle('is-on', k === i); });
       prog.forEach(function (b, k) { b.classList.toggle('is-on', k <= i); b.classList.toggle('is-cur', k === i); });
-      var h = $('h3', txs[i]); if (h) scramble(h, 420);
+      var h = $('h3', txs[i]);
+      if (h && !window.__stFast) scramble(h, 420);
     }
     var deckH = 0, deckW = 0;
     function place() {
@@ -640,9 +688,12 @@
         var o = i - p, a = Math.abs(o), th = o * step;
         var x = mob ? Math.sin(th) * deckW * 1.05 : R * (1 - Math.cos(th)), y = mob ? (1 - Math.cos(th)) * H * 0.55 : R * Math.sin(th);
         var sc = 1 - Math.min(a, 2) * 0.12, op = a <= 1 ? 1 - a * 0.45 : Math.max(0, 0.55 - (a - 1) * 0.9);
-        c.style.transform = 'translate3d(' + x.toFixed(1) + 'px,calc(-50% + ' + y.toFixed(1) + 'px),0) rotate(' + (th * 180 / Math.PI * 0.42).toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
-        c.style.opacity = op.toFixed(3); c.style.zIndex = String(20 - Math.round(a * 4));
-        c.style.pointerEvents = a < 0.5 ? 'auto' : 'none';
+        var tr = 'translate3d(' + x.toFixed(1) + 'px,calc(-50% + ' + y.toFixed(1) + 'px),0) rotate(' + (th * 180 / Math.PI * 0.42).toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+        var opS = op.toFixed(3), zi = String(20 - Math.round(a * 4)), pe = a < 0.5 ? 'auto' : 'none';
+        if (c._tr !== tr) { c._tr = tr; c.style.transform = tr; }
+        if (c._op !== opS) { c._op = opS; c.style.opacity = opS; }
+        if (c._zi !== zi) { c._zi = zi; c.style.zIndex = zi; }
+        if (c._pe !== pe) { c._pe = pe; c.style.pointerEvents = pe; }
       });
     }
     function target(prog) {
@@ -697,8 +748,14 @@
     // on a good connection the 3D models are prepared quietly a few seconds after load, long before anyone scrolls there
     window.addEventListener('load', function () { if (!slowNet()) setTimeout(function () { (window.requestIdleCallback || setTimeout)(boot, { timeout: 3000 }); }, 3500); });
     ST.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: function (s) { visible = s.isActive; if (forms) { s.isActive ? forms.start() : forms.stop(); } } });
-    var curP = null;
-    ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: function (s) { curP = clamp((s.progress - 0.05) / 0.9, 0, 1); if (forms) forms.setProgress(curP); setStep(Math.min(3, Math.floor(s.progress * 3 + 0.5))); } });
+    var curP = null, stepJob = 0, stepWant = 0;
+    ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: function (s) {
+      curP = clamp((s.progress - 0.05) / 0.9, 0, 1); if (forms) forms.setProgress(curP);
+      stepWant = Math.min(3, Math.floor(s.progress * 3 + 0.5));
+      if (!TOUCH) { setStep(stepWant); return; }
+      if (stepJob) return;
+      stepJob = requestAnimationFrame(function () { stepJob = 0; setStep(stepWant); });
+    } });
     sec.addEventListener('pointermove', function (e) { if (forms) forms.pointer((e.clientX / innerWidth - 0.5) * 2, (e.clientY / innerHeight - 0.5) * 2); });
     window.addEventListener('resize', function () { if (forms) forms.resize(); });
   }
@@ -722,14 +779,21 @@
       var H = rulerH, gap = H * (MQ.matches ? 0.2 : 0.22), center = H / 2, pos = p * (DAYS.length - 1), depth = MQ.matches ? 22 : 30;
       for (var k = 0; k < ticks.length; k++) {
         var tk = ticks[k], y = center + (tk._pos - pos) * gap, dd = (y - center) / (H * 0.09), dx = -depth * Math.exp(-dd * dd);
-        tk.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + (y - 10).toFixed(1) + 'px)';
-        tk.style.opacity = clamp(1.25 - Math.abs(y - center) / (H * 0.32), 0, 1).toFixed(2);
+        var tr = 'translate(' + dx.toFixed(1) + 'px,' + (y - 10).toFixed(1) + 'px)', op = clamp(1.25 - Math.abs(y - center) / (H * 0.32), 0, 1).toFixed(2);
+        if (tk._tr !== tr) { tk._tr = tr; tk.style.transform = tr; }
+        if (tk._op !== op) { tk._op = op; tk.style.opacity = op; }
       }
       var a = clamp(Math.round(pos), 0, DAYS.length - 1);
       if (a !== cur) { cur = a; setOdo(DAYS[a]); steps.forEach(function (s, k) { s.classList.toggle('is-on', k === a); }); ticks.forEach(function (t) { t.classList.toggle('is-cur', t._step === a); }); }
     }
     render(0);
-    ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: function (s) { render(s.progress); }, onRefresh: function (s) { rulerH = 0; render(s.progress); } });
+    var procJob = 0, procP = 0;
+    ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: function (s) {
+      if (!TOUCH) { render(s.progress); return; }
+      procP = s.progress;
+      if (procJob) return;
+      procJob = requestAnimationFrame(function () { procJob = 0; render(procP); });
+    }, onRefresh: function (s) { rulerH = 0; render(s.progress); } });
   }
 
   /* =====================================================

@@ -731,11 +731,14 @@ main,.foot{position:relative;z-index:1}
  /* the page itself scrolls; a bounce at a sticky scene was kicking the next section out from under the finger */
  html,body{overscroll-behavior-y:none}
  .pb-bubbles{display:none}
- .pb-track{will-change:auto}
+ /* difference-blend on a line wider than the screen was repainted on every flick frame */
+ .pb-track{will-change:auto;mix-blend-mode:normal;color:#f3fff7;text-shadow:0 1px 0 #07140f,0 8px 22px rgba(0,0,0,.45)}
+ .dock{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(6,8,7,.94)}
  .top{padding:16px var(--pad)}
  .top .btn{display:none}
  .brand-word{font-size:15px}
- .hero{height:auto;min-height:100vh;min-height:100svh;padding-top:clamp(96px,13svh,130px);grid-template-rows:auto auto auto;align-content:start}
+ .hero{height:auto;min-height:0;padding-top:clamp(88px,12svh,120px);padding-bottom:8px;grid-template-rows:auto auto auto;align-content:start}
+ .trust{padding-top:16px;padding-bottom:clamp(48px,8vw,80px)}
  .hero-head{isolation:isolate;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
  .hero-h{font-size:clamp(40px,11.4vw,84px)}
  .hero-foot{flex-direction:column;align-items:stretch;gap:22px;margin-top:6px}

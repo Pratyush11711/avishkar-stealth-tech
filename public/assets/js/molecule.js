@@ -34,21 +34,55 @@
 
   /* ---------------- the picture, loaded and analysed once for every instance ---------------- */
   var PIC = null, waiting = [], loading = false;
+  // always the sharp file. A smaller one was chosen from the viewport at the moment the script ran,
+  // so a phone or a window that had not finished laying out kept the soft picture until a reload.
+  var CHAINS = ['chain-1800', 'chain-1100', 'chain-760'];
   function picture(cb) {
     if (PIC) { cb(PIC); return; }
     waiting.push(cb); if (loading) return; loading = true;
-    // same rule as the <link rel=preload> in the page head, so the preloaded file is the one used
-    var big = w.matchMedia('(min-width: 901px) and (min-resolution: 1.5dppx), (min-width: 1301px)').matches, small = w.matchMedia('(max-width: 600px)').matches,
-      name = big ? 'chain-1800' : small ? 'chain-760' : 'chain-1100';   // phones get the light 760px picture (~40 KB)
-    function done(p) { PIC = p; var l = waiting; waiting = []; each(l, function (f) { f(p); }); }
-    function fromUrl(u) { var im = new Image(); im.onload = function () { done(analyse(im)); }; im.onerror = function () { done(false); }; im.src = u; }
-    if (/^https?:$/.test(location.protocol)) { fromUrl('assets/img/' + name + '.webp?v=75e0c789c1'); return; }
-    // file://: a picture loaded from disk cannot be read by WebGL, a data URL can
-    var s = doc.createElement('script'); s.src = 'assets/js/' + name + '.js';
-    s.onload = function () { if (w.ST_CHAIN) fromUrl(w.ST_CHAIN); else done(false); }; s.onerror = function () { done(false); }; doc.head.appendChild(s);
+    function done(p) { PIC = p; loading = false; var l = waiting; waiting = []; each(l, function (f) { f(p); }); }
+    function raster(src) {
+      var nw = src.naturalWidth || src.width, nh = src.naturalHeight || src.height;
+      if (!nw || !nh) return src;
+      var c = doc.createElement('canvas'); c.width = nw; c.height = nh;
+      var g = c.getContext('2d');
+      g.imageSmoothingEnabled = true; if ('imageSmoothingQuality' in g) g.imageSmoothingQuality = 'high';
+      g.drawImage(src, 0, 0, nw, nh);
+      return c;
+    }
+    function adopt(im) {
+      var pic = analyse(im);
+      if (!pic) { done(false); return; }
+      pic.img = raster(im);
+      if (im.close) try { im.close(); } catch (e) {}
+      done(pic);
+    }
+    function decode(im) {
+      if (!w.createImageBitmap) { adopt(im); return; }
+      var ready = function (bmp) {
+        var nw = im.naturalWidth || im.width;
+        // a preview decode is smaller than the file; keep the full image instead of uploading the soft one
+        if (nw && bmp.width && bmp.width < nw * 0.95) { try { bmp.close(); } catch (e) {} adopt(im); return; }
+        adopt(bmp);
+      };
+      try { w.createImageBitmap(im, { premultiplyAlpha: 'none' }).then(ready, function () { adopt(im); }); }
+      catch (e) { adopt(im); }
+    }
+    function fromUrl(u, fail) { var im = new Image(); im.decoding = 'sync'; im.onload = function () { decode(im); }; im.onerror = fail; im.src = u; }
+    function loadChain(i) {
+      if (i >= CHAINS.length) { done(false); return; }
+      var name = CHAINS[i], fail = function () { loadChain(i + 1); };
+      if (/^https?:$/.test(location.protocol)) { fromUrl('/assets/img/' + name + '.webp?v=75e0c789c1', fail); return; }
+      // file://: a picture loaded from disk cannot be read by WebGL, a data URL can
+      var s = doc.createElement('script'); s.src = 'assets/js/' + name + '.js';
+      s.onload = function () { if (w.ST_CHAIN) fromUrl(w.ST_CHAIN, fail); else fail(); }; s.onerror = fail; doc.head.appendChild(s);
+    }
+    loadChain(0);
   }
   function analyse(img) {
-    var asp = img.naturalWidth / img.naturalHeight, sw = 320, sh = Math.round(sw / asp), c = doc.createElement('canvas'), px;
+    var nw = img.naturalWidth || img.width, nh = img.naturalHeight || img.height;
+    if (!nw || !nh) return false;
+    var asp = nw / nh, sw = 320, sh = Math.round(sw / asp), c = doc.createElement('canvas'), px;
     c.width = sw; c.height = sh; var g = c.getContext('2d'); g.drawImage(img, 0, 0, sw, sh);
     try { px = g.getImageData(0, 0, sw, sh).data; } catch (e) { return false; }
     var body = [], dens = new Float32Array(sw), x, y, k, mx = 0;
@@ -191,8 +225,9 @@
       try { texFrom(tex, p.img, true); texFrom(stex, p.shadow, false); } catch (e) { still(stage); return; }
       NI = grid(140, 16, gb, eb); NSI = grid(70, 2, sb, seb);
       // particles: many form the picture, some keep rising from the whole structure afterwards
-      var mob = MQ.matches, lite = LITE(), d = [], n = p.body.length / 3;
-      NB = lite ? 800 : (mob ? 1200 : (kind === 'hero' ? 2400 : 2000)); NA = lite ? 50 : (mob ? 80 : 140);
+      var mob = MQ.matches, d = [], n = p.body.length / 3;
+      // the chain stays at full detail. Lite mode slows other parts of the page, not this picture.
+      NB = mob ? 2000 : (kind === 'hero' ? 2400 : 2000); NA = mob ? 120 : 140;
       function add(rise) {
         var j = Math.floor(Math.random() * n) * 3, k = p.body[j + 2], u = (p.body[j] + Math.random()) / p.sw, v = (p.body[j + 1] + Math.random()) / p.sh;
         d.push(u, v, kAt(p, u), rise ? 1 : 0, p.px[k] / 255, p.px[k + 1] / 255, p.px[k + 2] / 255, Math.random());
@@ -205,9 +240,12 @@
     /* layout: the picture sits in the middle of the stage; the canvas is taller so waves, pulls and rising particles fit */
     var W = 0, H = 0, dpr = 1, IW = 0, IH = 0, CX = 0, CY = 0, SR = null;
     function resize() {
-      dpr = Math.min(w.devicePixelRatio || 1, LITE() ? 1 : 1.5);
+      // up to 2x. Capping at 1, or sizing the canvas before layout, left a soft picture until the next reload.
+      var next = Math.min(w.devicePixelRatio || 1, 2);
       W = cv.clientWidth; H = cv.clientHeight; if (!W || !H || !P) return;
-      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      dpr = next;
+      var bw = Math.round(W * dpr), bh = Math.round(H * dpr);
+      if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
       var mob = MQ.matches, sr = stage.getBoundingClientRect(), cr = cv.getBoundingClientRect();
       var fw = kind === 'hero' ? (mob ? 0.94 : 0.8) : kind === 'foot' ? (mob ? 0.96 : 0.74) : (mob ? 0.94 : 0.62);
       IW = Math.min(W * fw, sr.height * (mob ? 0.92 : 0.9) * P.asp, kind === '404' ? 900 : 1240); IH = IW / P.asp;
@@ -215,19 +253,32 @@
     }
 
     /* state */
-    var t0 = 0, on = false, vis = false, raf = 0, last = 0, started = false, want = false, scrollUntil = 0;
-    // while the page is scrolling, the molecule draws at half rate so every frame of the scroll stays smooth
-    w.addEventListener('scroll', function () { scrollUntil = performance.now() + 180; }, { passive: true });
+    var t0 = 0, on = false, vis = false, raf = 0, last = 0, started = false, want = false, scrollUntil = 0, scrollHold = 0, held = false;
+    var touchScroll = !FINE || MQ.matches;
+    // desktop: half rate while the wheel moves. A phone flick stops the draw until the page settles, so those frames stay with the scroll.
+    w.addEventListener('scroll', function () {
+      if (touchScroll) {
+        held = true;
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        clearTimeout(scrollHold);
+        scrollHold = setTimeout(function () {
+          scrollHold = 0; held = false;
+          if (on && vis && !doc.hidden && !raf) raf = requestAnimationFrame(frame);
+        }, 120);
+        return;
+      }
+      scrollUntil = performance.now() + 180;
+    }, { passive: true });
     var pmx = -9999, pmy = -9999, amp = 1, hot = false, hovA = 0, hovAt = 0, boost = 0;
     var waveAt = -99, S = 0, Sv = 0, stretchAt = -99, nextWave = 8;
     var down = false, dragging = false, sx0 = 0, sy0 = 0, grabU = 0.5, grabZ = 0, pX = 0, pY = 0, vX = 0, vY = 0;
     function now() { return (performance.now() - t0) / 1000; }
 
     function frame(ms) {
-      raf = 0; if (!on) return;
+      raf = 0; if (!on || held) return;
       if ((LITE() || ms < scrollUntil) && ms - last < 31) { raf = requestAnimationFrame(frame); return; }
       var dt = last ? Math.min(0.05, (ms - last) / 1000) : 0.016; last = ms;
-      step(dt); render(now()); raf = requestAnimationFrame(frame);
+      step(dt); render(now()); if (!held) raf = requestAnimationFrame(frame);
     }
     function step(dt) {
       var t = now();
@@ -291,6 +342,7 @@
     function go() {
       want = true; if (started || !ready) return;
       if (NOGPU()) { still(stage); return; }
+      resize();
       started = true; t0 = performance.now(); stage.classList.add('is-on'); start();
     }
     if (w.IntersectionObserver) new IntersectionObserver(function (es) {
@@ -302,6 +354,14 @@
     else vis = true;
     doc.addEventListener('visibilitychange', function () { if (doc.hidden) stop(); else start(); });
     var rzT = 0; w.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(resize, 100); });
+    if (w.ResizeObserver) new ResizeObserver(function () { resize(); }).observe(cv);
+    // moving the window between screens changes the pixel ratio without a resize
+    (function armDpr() {
+      if (!w.matchMedia) return;
+      var mq = w.matchMedia('(resolution: ' + (w.devicePixelRatio || 1) + 'dppx)');
+      var fn = function () { if (mq.removeEventListener) mq.removeEventListener('change', fn); resize(); armDpr(); };
+      if (mq.addEventListener) mq.addEventListener('change', fn);
+    })();
     cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); stop(); still(stage); });
 
     /* pointer: hover glow, one click = stretch, drag = pull (the wave also plays by itself every 8 seconds) */
