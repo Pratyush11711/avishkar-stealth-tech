@@ -37,9 +37,10 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scrollbar-width:none;-ms-overflow-style:none;overflow-x:hidden}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scrollbar-width:none;-ms-overflow-style:none;overflow-x:hidden;overscroll-behavior-y:none}
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}
-@supports (overflow:clip){html,body{overflow-x:clip}}
+/* clip the page, not the body: clipping both makes Chrome treat the body as the scroller and its reload pull comes back */
+@supports (overflow:clip){html{overflow-x:clip}}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:400;font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;scrollbar-width:none}
 body.is-locked{overflow:hidden}
 img,svg,canvas{display:block;max-width:100%}
@@ -729,7 +730,7 @@ main,.foot{position:relative;z-index:1}
 @media (max-width:900px){
  :root{--rad:22px}
  /* the page itself scrolls; a bounce at a sticky scene was kicking the next section out from under the finger */
- html,body{overscroll-behavior-y:none}
+ html,body{overscroll-behavior:none}
  .pb-bubbles{display:none}
  /* difference-blend on a line wider than the screen was repainted on every flick frame */
  .pb-track{will-change:auto;mix-blend-mode:normal;color:#f3fff7;text-shadow:0 1px 0 #07140f,0 8px 22px rgba(0,0,0,.45)}

@@ -108,6 +108,28 @@
       clearTimeout(flingIdle);
       flingIdle = setTimeout(function () { window.__stScrolling = false; window.__stFast = false; flingT = 0; flingPause(false); }, 140);
     }, { passive: true });
+    // Chrome's reload arrow is a downward tug at the top. Block only that tug, and only while the page is still there,
+    // so the rest of the scroll never waits on this listener.
+    var pullY = 0, pullOn = false;
+    function pullStart(e) { if (e.touches.length === 1) pullY = e.touches[0].clientY; }
+    function pullMove(e) {
+      if (e.touches.length !== 1) return;
+      if (window.pageYOffset <= 0 && e.touches[0].clientY - pullY > 10) e.preventDefault();
+    }
+    function pullArm() {
+      var top = window.pageYOffset <= 0;
+      if (top === pullOn) return;
+      pullOn = top;
+      if (top) {
+        doc.addEventListener('touchstart', pullStart, { passive: true, capture: true });
+        doc.addEventListener('touchmove', pullMove, { passive: false, capture: true });
+      } else {
+        doc.removeEventListener('touchstart', pullStart, true);
+        doc.removeEventListener('touchmove', pullMove, true);
+      }
+    }
+    window.addEventListener('scroll', pullArm, { passive: true });
+    pullArm();
   }
 
   /* =====================================================
