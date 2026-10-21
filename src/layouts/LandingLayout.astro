@@ -32,6 +32,7 @@ const {
 const themeBoot = `(function(){var SPLASH=${splash ? 1 : 0},d=document.documentElement,c=d.classList,cn=navigator.connection;c.add('js');
 try{var t=localStorage.getItem('st-theme-v2');if(t==='light'||t==='dark')d.setAttribute('data-theme',t)}catch(e){}
 try{var ss=sessionStorage,pl=+ss.getItem('st-pl')||0;ss.removeItem('st-pl');if(pl&&Date.now()-pl<5000){c.add('pl-in');window.__plAt=pl;d.style.setProperty('--pl-t',(pl-Date.now())+'ms')}}catch(e){}
+try{var vw=d.clientWidth;if(vw)d.style.setProperty('--plw',vw+'px')}catch(e){}
 var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 c.add(!SPLASH||rm||c.contains('pl-in')||(cn&&(cn.saveData||/2g/.test(cn.effectiveType||'')))?'no-sp':'sp-on');})();`;
 

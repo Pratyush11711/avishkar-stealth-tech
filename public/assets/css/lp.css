@@ -166,7 +166,9 @@ main,.foot{position:relative;z-index:1}
 .fc-prog li::after{content:"";position:absolute;inset:0;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .55s var(--e)}
 .fc-prog li.is-on::after{transform:none}
 .lf{position:relative}
-.lf-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* keep the spam field in the form, but at 1px. Parking it at left:-9999px makes phones treat the page as wider than the screen and open it zoomed in. */
+.lf-hp,.lf-hp label,.lf-hp input{position:absolute;left:0;top:0;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+.lf-hp input{font-size:16px}
 .lf-steps{position:relative;display:grid}
 .lf-step{grid-area:1/1;border:0;margin:0;padding:0;min-width:0;visibility:hidden;opacity:0;transform:translateX(24px);transition:opacity .4s var(--e),transform .5s var(--e),visibility 0s .5s;pointer-events:none}
 .lf-step.is-prev{transform:translateX(-24px)}
@@ -638,6 +640,10 @@ main,.foot{position:relative;z-index:1}
  .faq-grid{grid-template-columns:1fr}
 }
 @media (max-width:900px){
+ /* phones use the plain page colour. The still honeycomb is the fallback for the desktop particle field, and it was the only pattern left on this page. */
+ .hexbg,.bgtex,.hero::before{display:none}
+ /* a child a few pixels wider than the screen is what makes this page open slightly magnified */
+ .hero-grid,.hero-grid>*,.fcard,.wrap,.lf,.lf-steps{min-width:0;max-width:100%}
  .hs{grid-template-columns:1fr 1fr;gap:28px 20px}
  .hs-rail{display:none}
  :root{--sec:clamp(60px,12vw,84px)}
@@ -660,7 +666,19 @@ main,.foot{position:relative;z-index:1}
  .fr-i{display:none}
  .fr{grid-template-columns:40px 1fr;cursor:default}
  .fr-vis{padding-bottom:24px}
- .fr-vis>div{padding:22px}
+ .fr-vis>div{display:flex;flex-direction:column;justify-content:center;height:560px;min-height:560px;max-height:none;padding:22px;overflow:hidden}
+ .vs-page{grid-template-columns:1fr;gap:12px;padding:14px}
+ .vs-img{aspect-ratio:auto;height:128px}
+ .vs-info{min-width:0;gap:8px}
+ .vs-t{font-size:16px;line-height:1.3}
+ .vs-copy{display:flex;align-items:center;gap:8px;padding-right:0;line-height:1.45}
+ .vs-ruo{display:inline-flex;align-items:center;gap:8px;line-height:1.35;max-width:100%}
+ .vs-pin.p2,.vs-pin.p3{position:static;flex:none;box-shadow:none}
+ .vs-notes{gap:10px;margin-top:14px}
+ .vs-notes li{font-size:14.5px;line-height:1.4}
+ .vr-svg{max-height:150px}
+ .vr-conf{font-size:14.5px;line-height:1.45}
+ .vr-res{font-size:14.5px;line-height:1.4}
  .end-card{grid-template-columns:1fr}
  .ty-grid{grid-template-columns:1fr}
  .tm-slide blockquote{font-size:22px}
@@ -694,7 +712,7 @@ main,.foot{position:relative;z-index:1}
  .wall-top{border-right:0;border-bottom:1px solid var(--line)}
  .v-brand{grid-template-columns:1fr}
  .vb-kit{grid-template-columns:1fr}
- .vs-page{grid-template-columns:1fr 1.2fr;padding:12px}
+ .fr-vis>div{padding:18px}
  .bento{grid-template-columns:1fr}
  .b-img{min-height:340px}
  .cmp{padding:6px}
@@ -765,9 +783,11 @@ main,.foot{position:relative;z-index:1}
 .splash.is-shatter .sp-stage,.splash.is-shatter .sp-count{visibility:hidden}
 .splash.is-shatter .sp-shards{display:block}
 
-/* page loader between pages: the logo draws itself, same as the rest of the site */
-.pl{position:fixed;inset:0;z-index:2000;overflow:hidden;background:var(--bg);visibility:hidden;pointer-events:none;transform:translate3d(-101%,0,0);contain:strict}
-.pl-in .pl,.pl.is-on,.pl.is-out,.pl-in .pl-w,.pl.is-on .pl-w,.pl.is-out .pl-w{will-change:transform}
+/* page loader between pages: the logo stays pinned to the centre while the panel wipes.
+   JS (class pl-js) moves the panel and the logo by one shared pixel distance; the transitions are the no-JS fallback.
+   Height is the large viewport so the mobile toolbar cannot shove the mark. Phones show the finished mark:
+   a stroke draw on the main thread stuttered, then froze when the next page started. */
+.pl{position:fixed;top:0;left:0;z-index:2000;overflow:hidden;background:var(--bg);visibility:hidden;pointer-events:none;width:var(--plw,100%);width:var(--plw,100dvw);height:100vh;height:100lvh;transform:translate3d(-101%,0,0);contain:paint}
 .pl-w{position:absolute;inset:0;display:grid;place-items:center;transform:translate3d(101%,0,0)}
 .pl-w::before{content:"";position:absolute;left:50%;top:50%;width:min(60vw,420px);aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,var(--glow2),transparent);pointer-events:none}
 .pl-in .pl,.pl.is-on{visibility:visible;transform:none}
@@ -776,6 +796,8 @@ main,.foot{position:relative;z-index:1}
 .pl.is-on .pl-w{transition:transform .5s cubic-bezier(.65,0,.35,1)}
 .pl.is-out{visibility:visible;transform:translate3d(101%,0,0);transition:transform .7s cubic-bezier(.65,0,.35,1),visibility 0s .7s}
 .pl.is-out .pl-w{transform:translate3d(-101%,0,0);transition:transform .7s cubic-bezier(.65,0,.35,1)}
+.pl.pl-js,.pl.pl-js .pl-w{transition:none!important}
+.pl.pl-js.is-on,.pl.pl-js.is-out,.pl.pl-js.is-on .pl-w,.pl.pl-js.is-out .pl-w{transform:none}
 .pl-logo{width:clamp(120px,12vw,170px);height:auto;overflow:visible}
 .pl-p{fill:var(--ink);fill-opacity:0;stroke:var(--ink);stroke-width:4;stroke-dasharray:1;stroke-dashoffset:1}
 .pl-m{fill:var(--acc);stroke:var(--acc)}
@@ -783,5 +805,15 @@ main,.foot{position:relative;z-index:1}
 .pl.is-on .pl-p:nth-child(2){animation-delay:.05s}.pl.is-on .pl-p:nth-child(3){animation-delay:.1s}.pl.is-on .pl-p:nth-child(4){animation-delay:.15s}
 @keyframes plDraw{0%{stroke-dashoffset:1;fill-opacity:0;stroke-opacity:1}60%{stroke-dashoffset:0;fill-opacity:0;stroke-opacity:1}100%{stroke-dashoffset:0;fill-opacity:1;stroke-opacity:0}}
 .pl-in .pl-p,.pl.is-out .pl-p{stroke-dashoffset:0;fill-opacity:1;stroke-opacity:0}
-.pl-in .pl-logo{will-change:opacity;animation:plBreath 1.2s ease-in-out infinite}
-@keyframes plBreath{50%{opacity:.6}}
+/* the pulse sits on a plain box, not the SVG, so it keeps running on the compositor while the next page boots.
+   Longhands: a var() inside the animation shorthand is dropped on some phones, which left the mark frozen. */
+@property --pl-t{syntax:"<time>";inherits:true;initial-value:0s}
+.pl-mark{display:block;transform:translateZ(0)}
+.pl-in .pl-mark,.pl.is-out .pl-mark{animation-name:plBreath;animation-duration:1.2s;animation-timing-function:ease-in-out;animation-delay:var(--pl-t);animation-iteration-count:infinite;animation-play-state:running!important}
+@keyframes plBreath{50%{opacity:.55}}
+.pl-in .pl{animation:plGone 0s 2.6s forwards}
+@keyframes plGone{to{visibility:hidden}}
+@media (max-width:900px),(hover:none) and (pointer:coarse){
+ .pl.is-on .pl-p{animation:none;stroke-dashoffset:0;fill-opacity:1;stroke-opacity:0}
+ .pl.is-on .pl-mark{animation-name:plBreath;animation-duration:1.2s;animation-timing-function:ease-in-out;animation-delay:var(--pl-t);animation-iteration-count:infinite;animation-play-state:running!important}
+}

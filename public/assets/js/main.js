@@ -1327,6 +1327,31 @@
   }
   (function () {
     var pl = $('#pl'); if (!pl) return;
+    var wrap = $('.pl-w', pl);
+    function phone() { return matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches; }
+    // one distance, two layers, the same start time: the mark cannot drift the way two CSS transitions did
+    function pin() { var w = doc.documentElement.clientWidth; if (w) root.style.setProperty('--plw', w + 'px'); }
+    function wipe(mode) {
+      if (!wrap || RM || !pl.animate) return;
+      pin();
+      var w = Math.ceil(pl.offsetWidth || doc.documentElement.clientWidth || innerWidth); if (w < 2) w = innerWidth;
+      var dur = mode === 'out' ? 700 : 500, from = mode === 'out' ? 0 : -w, to = mode === 'out' ? w : 0;
+      pl.classList.add('pl-js');
+      pl.style.transform = 'translate3d(' + from + 'px,0,0)';
+      wrap.style.transform = 'translate3d(' + (-from) + 'px,0,0)';
+      var opt = { duration: dur, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' };
+      pl.animate([{ transform: 'translate3d(' + from + 'px,0,0)' }, { transform: 'translate3d(' + to + 'px,0,0)' }], opt);
+      wrap.animate([{ transform: 'translate3d(' + (-from) + 'px,0,0)' }, { transform: 'translate3d(' + (-to) + 'px,0,0)' }], opt);
+    }
+    function clearWipe() {
+      [pl, wrap].forEach(function (el) {
+        if (!el || !el.getAnimations) return;
+        el.getAnimations().forEach(function (a) { if (typeof a.transitionProperty !== 'string') a.cancel(); });
+      });
+      pl.classList.remove('pl-js');
+      pl.style.transform = '';
+      if (wrap) wrap.style.transform = '';
+    }
     // the logo stays up at least ~0.75 s in total (counted from the click on the previous page), then wipes away;
     // the page underneath has already painted, so nothing waits on images or scripts
     function out() {
@@ -1334,16 +1359,19 @@
       var since = window.__plAt ? Date.now() - window.__plAt : 9999, wait = RM ? 0 : Math.max(0, 750 - since);
       setTimeout(function () {
         pl.classList.add('is-out'); root.classList.remove('pl-in');
+        wipe('out');
         if (plDoneFn) setTimeout(plDoneFn, 200);
-        setTimeout(function () { pl.classList.remove('is-out'); }, 800);
+        setTimeout(function () { pl.classList.remove('is-out'); clearWipe(); }, 800);
       }, wait);
     }
-    // wipe away only once the new page has painted and the first busy start-up work is done (idle), so the slide never stutters
-    requestAnimationFrame(function () { requestAnimationFrame(function () { (window.requestIdleCallback || function (f) { setTimeout(f, 60); })(out, { timeout: 450 }); }); });
+    // requestIdleCallback often never fires on a phone while the new page is starting, which left the mark stuck
+    setTimeout(out, phone() ? 40 : 80);
     function go(fn) {
       try { sessionStorage.setItem('st-pl', String(Date.now())); } catch (x) {}
       root.style.removeProperty('--pl-t');
-      pl.classList.remove('is-out'); void pl.offsetWidth; pl.classList.add('is-on'); setTimeout(fn, RM ? 0 : 640);
+      pl.classList.remove('is-out'); clearWipe(); pl.classList.add('is-on'); wipe('in');
+      // phones: the mark is already filled, so leave once the wipe has landed (it used to freeze mid-draw)
+      setTimeout(fn, RM ? 0 : (phone() ? 520 : 640));
     }
     doc.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]');
@@ -1357,7 +1385,7 @@
         if (same && history.length > 1) { e.preventDefault(); e.stopPropagation(); go(function () { history.back(); }); }
       });
     });
-    window.addEventListener('pageshow', function (e) { if (e.persisted) { pl.classList.remove('is-on'); root.classList.remove('pl-in'); try { sessionStorage.removeItem('st-pl'); } catch (x) {} } });
+    window.addEventListener('pageshow', function (e) { if (e.persisted) { pl.classList.remove('is-on', 'is-out'); root.classList.remove('pl-in'); clearWipe(); try { sessionStorage.removeItem('st-pl'); } catch (x) {} } });
   })();
 
   /* ---------- instant page switches: the next page is fetched the moment someone shows intent ---------- */

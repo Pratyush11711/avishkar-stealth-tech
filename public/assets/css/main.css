@@ -856,11 +856,12 @@ html.lenis-stopped{overflow:hidden}
 }
 
 /* ---------- page loader (between pages): the footer logo draws itself ----------
-   Only transform and opacity move here, so the wipe runs on the compositor and stays smooth
-   even while the next page is busy starting up. The panel slides, its content slides the other way (= a clean wipe). */
-.pl{position:fixed;inset:0;z-index:2000;overflow:hidden;background:var(--bg);visibility:hidden;pointer-events:none;transform:translate3d(-101%,0,0);contain:strict}
-/* GPU layers only while the loader is actually in use */
-.pl-in .pl,.pl.is-on,.pl.is-out,.pl-in .pl-w,.pl.is-on .pl-w,.pl.is-out .pl-w{will-change:transform}
+   The panel slides and its content slides the other way, so the mark stays pinned to the centre.
+   JS (class pl-js) runs that as one shared pixel distance; the transitions here are the no-JS fallback.
+   Height is the large viewport so the mobile toolbar cannot shove the centred mark up or down.
+   Phones show the finished mark: drawing the stroke on the main thread stuttered, then froze mid-draw
+   when the next page started. */
+.pl{position:fixed;top:0;left:0;z-index:2000;overflow:hidden;background:var(--bg);visibility:hidden;pointer-events:none;width:var(--plw,100%);width:var(--plw,100dvw);height:100vh;height:100lvh;transform:translate3d(-101%,0,0);contain:paint}
 .pl-w{position:absolute;inset:0;display:grid;place-items:center;transform:translate3d(101%,0,0)}
 /* soft glow behind the logo: a plain gradient (the old blurred SVG filter was re-drawn every frame) */
 .pl-w::before{content:"";position:absolute;left:50%;top:50%;width:min(60vw,420px);aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,var(--glow2),transparent);pointer-events:none}
@@ -870,6 +871,8 @@ html.lenis-stopped{overflow:hidden}
 .pl.is-on .pl-w{transition:transform .5s cubic-bezier(.65,0,.35,1)}
 .pl.is-out{visibility:visible;transform:translate3d(101%,0,0);transition:transform .7s cubic-bezier(.65,0,.35,1),visibility 0s .7s}
 .pl.is-out .pl-w{transform:translate3d(-101%,0,0);transition:transform .7s cubic-bezier(.65,0,.35,1)}
+.pl.pl-js,.pl.pl-js .pl-w{transition:none!important}
+.pl.pl-js.is-on,.pl.pl-js.is-out,.pl.pl-js.is-on .pl-w,.pl.pl-js.is-out .pl-w{transform:none}
 .pl-logo{width:clamp(120px,12vw,170px);height:auto;overflow:visible}
 .pl-p{fill:var(--ink);fill-opacity:0;stroke:var(--ink);stroke-width:4;stroke-dasharray:1;stroke-dashoffset:1}
 .pl-m{fill:var(--acc);stroke:var(--acc)}
@@ -877,11 +880,20 @@ html.lenis-stopped{overflow:hidden}
 .pl.is-on .pl-p{animation:plDraw .7s cubic-bezier(.65,0,.35,1) forwards}
 .pl.is-on .pl-p:nth-child(2){animation-delay:.05s}.pl.is-on .pl-p:nth-child(3){animation-delay:.1s}.pl.is-on .pl-p:nth-child(4){animation-delay:.15s}
 @keyframes plDraw{0%{stroke-dashoffset:1;fill-opacity:0;stroke-opacity:1}60%{stroke-dashoffset:0;fill-opacity:0;stroke-opacity:1}100%{stroke-dashoffset:0;fill-opacity:1;stroke-opacity:0}}
-/* page you arrive on: the finished logo breathes (opacity and scale only) while the page underneath starts, then wipes away */
 .pl-in .pl-p,.pl.is-out .pl-p{stroke-dashoffset:0;fill-opacity:1;stroke-opacity:0}
-/* opacity-only pulse on its own layer: zero repaint while the new page boots */
-.pl-in .pl-logo{will-change:opacity;animation:plBreath 1.2s ease-in-out infinite}
-@keyframes plBreath{50%{opacity:.6}}
+/* the pulse sits on a plain box, not the SVG, so it keeps running on the compositor while the next page boots.
+   Longhands: a var() inside the animation shorthand is dropped on some phones, which left the mark frozen. */
+@property --pl-t{syntax:"<time>";inherits:true;initial-value:0s}
+.pl-mark{display:block;transform:translateZ(0)}
+.pl-in .pl-mark,.pl.is-out .pl-mark{animation-name:plBreath;animation-duration:1.2s;animation-timing-function:ease-in-out;animation-delay:var(--pl-t);animation-iteration-count:infinite;animation-play-state:running!important}
+@keyframes plBreath{50%{opacity:.55}}
+/* if the script never gets a turn (a phone can stay busy for the whole load), the screen still leaves */
+.pl-in .pl{animation:plGone 0s 2.6s forwards}
+@keyframes plGone{to{visibility:hidden}}
+@media (max-width:900px),(hover:none) and (pointer:coarse){
+ .pl.is-on .pl-p{animation:none;stroke-dashoffset:0;fill-opacity:1;stroke-opacity:0}
+ .pl.is-on .pl-mark{animation-name:plBreath;animation-duration:1.2s;animation-timing-function:ease-in-out;animation-delay:var(--pl-t);animation-iteration-count:infinite;animation-play-state:running!important}
+}
 
 /* ---------- performance ---------- */
 html.is-locked{overflow-y:hidden}
