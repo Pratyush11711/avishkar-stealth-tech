@@ -381,8 +381,8 @@ export const PAGES: PageData[] = [
     body: `<div class="lg-sum"><p class="lg-k">In short</p><ul>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>We only collect what you type into the booking form, what you enter in the calendar, and anonymous statistics about how the site is used.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>We use it to reply to you and prepare your call. We never sell it and there are no advertising trackers on this site.</li>
-<li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>You can see, correct or delete your information at any time: email <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>.</li></ul></div>
-<h2>1. Who we are</h2><p>Stealth Tech is a design and development studio for peptide, RUO, botanical and kanna brands. This policy covers this website (stealthtech.agency) and the enquiries you send through it. For anything about your data, contact <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>.</p>
+<li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>You can see, correct or delete your information at any time: email <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>.</li></ul></div>
+<h2>1. Who we are</h2><p>Stealth Tech is a design and development studio for peptide, RUO, botanical and kanna brands. This policy covers this website (stealthtech.agency) and the enquiries you send through it. For anything about your data, contact <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>.</p>
 <h2>2. What we collect</h2><ul>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><b>Booking form</b>: your name, work email, phone or WhatsApp (optional), website (optional), country and region, budget range, launch timing, notes, and your answers about your brand and what you need.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><b>Calendar booking</b>: the time you pick and the details you confirm in the scheduling calendar. Our scheduling provider handles this under its own privacy policy.</li>
@@ -399,10 +399,10 @@ export const PAGES: PageData[] = [
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Anonymous statistics: up to 26 months.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Server logs: a few weeks, as set by our host.</li></ul>
 <h2>7. Security</h2><p>The site runs on HTTPS only, sends strict security headers, and loads code only from our own domain and the few providers listed above. Access to enquiries is limited to the people who work on them.</p>
-<h2>8. Your rights</h2><p>Depending on where you live, you can ask to <b>see</b> the information we hold about you, <b>correct</b> it, <b>delete</b> it, <b>receive a copy</b>, <b>object</b> to or <b>restrict</b> how we use it, and <b>withdraw consent</b> at any time (this does not affect anything done before). Residents of California and other US states have similar rights; we do not sell or share personal information for cross-context advertising. Email <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a> and we will reply within 30 days. You can also complain to your local data protection authority.</p>
+<h2>8. Your rights</h2><p>Depending on where you live, you can ask to <b>see</b> the information we hold about you, <b>correct</b> it, <b>delete</b> it, <b>receive a copy</b>, <b>object</b> to or <b>restrict</b> how we use it, and <b>withdraw consent</b> at any time (this does not affect anything done before). Residents of California and other US states have similar rights; we do not sell or share personal information for cross-context advertising. Email <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a> and we will reply within 30 days. You can also complain to your local data protection authority.</p>
 <h2>9. Children</h2><p>This website is for businesses and is not meant for anyone under 18. We do not knowingly collect information from minors.</p>
 <h2>10. Changes</h2><p>If we change this policy, we update the date at the top of this page. Important changes will be easy to spot.</p>
-<h2>11. Contact</h2><p>Stealth Tech, <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>. Read the <a class="acc" href="/cookies">cookie policy</a> for the details of what is stored in your browser.</p>`,
+<h2>11. Contact</h2><p>Stealth Tech, <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>. Read the <a class="acc" href="/cookies">cookie policy</a> for the details of what is stored in your browser.</p>`,
   },
   {
     slug: 'cookies',
@@ -433,7 +433,7 @@ export const PAGES: PageData[] = [
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Choose <b>Decline</b> on the banner: nothing optional runs, and the site works exactly the same.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Changed your mind? Clear this site's data in your browser settings and the banner will ask again.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Most browsers can also block or delete storage for every site; see your browser's help pages.</li></ul>
-<h2>5. Contact</h2><p>Questions about this policy: <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>. See also our <a class="acc" href="/privacy">privacy policy</a>.</p>`,
+<h2>5. Contact</h2><p>Questions about this policy: <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>. See also our <a class="acc" href="/privacy">privacy policy</a>.</p>`,
   },
 ];
 

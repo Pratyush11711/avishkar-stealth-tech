@@ -5,8 +5,8 @@
   'use strict';
 
   /* ---------- settings ---------- */
-  var LEAD_EMAIL = 'wassamrehman@gmail.com';    // every lead is emailed here (FormSubmit) ...
-  var LEAD_CC = 'arpitsharmawriting@gmail.com'; // ... with a copy here
+  var LEAD_EMAIL = 'arpit@avishkarai.com';      // every lead is emailed here (FormSubmit) ...
+  var LEAD_CC = 'arpitsharmawriting@gmail.com,wassamrehman@gmail.com'; // ... with copies here
   var FORM_ENDPOINT = '';                        // optional webhook (Zapier, Make, a CRM): POST JSON
   var HTTP = /^https?:$/.test(location.protocol);
   var THANK_YOU = HTTP ? '/thank-you' : '../thank-you/index.html';

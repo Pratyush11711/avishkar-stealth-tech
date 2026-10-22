@@ -1,5 +1,5 @@
 /* Stealth Tech: the molecule (hero, footer and 404; replaces the car everywhere).
-   One engine for every element with [data-mol]. The rendered peptide chain picture is drawn with WebGL 1:
+   One engine for every element with [data-mol]. The rendered peptide chain picture is drawn with WebGL:
    - it forms out of thousands of particles (hero: after the splash; footer / 404: when it comes into view),
    - it breathes softly, a gentle accordion and vertical wave run through it, with a slow idle sway in perspective,
    - particles keep rising from the whole structure; a mint energy wave and a light sweep pass over it,
@@ -124,8 +124,8 @@
     ' float wv=sin(uv.x*6.3-uT*1.1)*.55+sin(uv.x*2.9+uT*.78)*.45;y+=wv*uS.y*.024*uAmp*(.2+.8*edge);',
     // one click: only the bonds stretch (k = where each column goes), then they spring back and the units knock together
     ' x+=uStr*uS.x*(k-.5);y*=1.+min(uStr,0.)*.6;',
-    // one click: a smooth wave rolls from left to right
-    ' float p=-.25+uWave*.6,q=uv.x-p,fd=1.-smoothstep(1.7,2.5,uWave);',
+    // one click: a smooth wave rolls from left to right (eases in, so it never pops on)
+    ' float p=-.25+uWave*.6,q=uv.x-p,fd=smoothstep(0.,.35,uWave)*(1.-smoothstep(1.7,2.5,uWave));',
     ' y+=uS.y*.085*fd*(-exp(-q*q*38.)+.42*exp(-(q+.13)*(q+.13)*55.));',
     // drag: the part under the pointer is pulled along
     ' float g=exp(-pow((uv.x-uGrab.x)/.16,2.))*uGrab.z;x+=uPull.x*g;y+=uPull.y*g;',
@@ -145,8 +145,8 @@
     ' vec2 p=proj(s);gl_Position=vec4(p.x/uRes.x*2.-1.,1.-p.y/uRes.y*2.,0.,1.);}'
   ].join('\n');
   var FS_IMG = [
-    'precision mediump float;uniform sampler2D uTex;uniform sampler2D uShTex;uniform float uModeF;uniform vec4 uShC;',
-    'uniform float uRev;uniform float uSweep;uniform float uGlow;uniform float uHov;uniform float uHovA;uniform vec3 uMint;',
+    'precision highp float;uniform sampler2D uTex;uniform sampler2D uShTex;uniform float uModeF;uniform vec4 uShC;',
+    'uniform float uRev;uniform float uSweep;uniform float uSweepA;uniform float uGlow;uniform float uHov;uniform float uHovA;uniform vec3 uMint;',
     'varying vec2 vUV;',
     'void main(){',
     ' float d=abs(vUV.x-.5)*2.;float n=fract(sin(dot(floor(vUV*vec2(220.,70.)),vec2(12.9898,78.233)))*43758.5453);',
@@ -154,10 +154,11 @@
     ' if(uModeF>.5){float a=texture2D(uShTex,vUV).a*uShC.a*rv;gl_FragColor=vec4(uShC.rgb*a,a);return;}',
     ' vec4 c=texture2D(uTex,vUV);',
     ' float green=clamp((c.g-max(c.r,c.b)*.9)*3.5,0.,1.);float lum=dot(c.rgb,vec3(.33));',
-    // idle energy wave over the glass
-    ' vec3 col=c.rgb+uMint*green*exp(-pow((vUV.x-uSweep)*6.,2.))*(.55+uGlow)*.55*c.a;',
-    // hover: a glow runs from the centre out to both ends, again and again while the mouse is on it
-    ' float r=fract(uHov/1.9)*1.35-.12;float hb=exp(-pow((d-r)*6.5,2.))*uHovA;',
+    // idle energy wave over the glass (uSweepA fades it out before the loop restarts, so it never pops)
+    ' vec3 col=c.rgb+uMint*green*exp(-pow((vUV.x-uSweep)*6.,2.))*(.55+uGlow)*.55*c.a*uSweepA;',
+    // hover: a glow runs from the centre out to both ends, fading out before it starts again
+    ' float cyc=fract(uHov/1.9);float r=cyc*1.35-.12;float env=smoothstep(0.,.1,cyc)*(1.-smoothstep(.78,1.,cyc));',
+    ' float hb=exp(-pow((d-r)*6.5,2.))*uHovA*env;',
     ' col+=uMint*(green*1.05+lum*.3)*hb*c.a;',
     // far ends a touch darker (depth)
     ' col*=1.-d*d*d*.1;',
@@ -180,37 +181,74 @@
     '  float k=step(1.,p);pos=mix(pos,au,k);',
     '  a=mix(a,sin(life*3.1416)*uAura*(.5+uBoost),k);vCol=mix(aB.rgb,uMintP,k);',
     ' }',
-    // particles step aside from the mouse
-    ' vec2 dm=pos-uM;float dd=length(dm)+.001;pos+=dm/dd*max(0.,50.*uDpr-dd)*.35;',
+    // particles step aside from the mouse (a soft falloff, so they never jump at the edge of the radius)
+    ' vec2 dm=pos-uM;float dd=length(dm);float rad=46.*uDpr;pos+=dm/(dd+.001)*smoothstep(rad,0.,dd)*rad*.3;',
     ' vA=a;gl_Position=vec4(pos.x/uRes.x*2.-1.,1.-pos.y/uRes.y*2.,0.,1.);',
     ' gl_PointSize=(1.3+r1*1.7)*uDpr*(aA.w>.5?1.3:1.);}'
   ].join('\n');
-  var FS_P = 'precision mediump float;varying vec3 vCol;varying float vA;void main(){vec2 c=gl_PointCoord-.5;float r=dot(c,c)*4.;if(r>1.)discard;float a=vA*(1.-r);gl_FragColor=vec4(vCol*a,a);}';
+  var FS_P = 'precision highp float;varying vec3 vCol;varying float vA;void main(){vec2 c=gl_PointCoord-.5;float r=dot(c,c)*4.;float a=vA*(1.-smoothstep(.62,1.,r));if(a<.003)discard;gl_FragColor=vec4(vCol*a,a);}';
 
   /* ---------------- one molecule ---------------- */
   function Mol(stage) {
     var cv = stage.querySelector('.mol-gl'), kind = stage.getAttribute('data-mol') || 'hero';
     if (!cv) return;
-    var gl = null;
-    try { gl = cv.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: true }) || cv.getContext('experimental-webgl'); } catch (e) {}
+    var gl = null, isGL2 = false, attrs = { alpha: true, antialias: false, depth: false, stencil: false, premultipliedAlpha: true, powerPreference: 'high-performance' };
+    try { gl = cv.getContext('webgl2', attrs); if (gl) isGL2 = true; } catch (e) {}
+    if (!gl) { try { gl = cv.getContext('webgl', attrs) || cv.getContext('experimental-webgl', attrs); } catch (e2) {} }
     if (!gl) { still(stage); return; }
-    function sh(t, s) { var o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; }
-    function prog(v, f) { var p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, v)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, f)); gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link'); return p; }
-    var PI, PP;
-    try { PI = prog(VS_IMG, FS_IMG); PP = prog(VS_P, FS_P); } catch (e) { if (w.console) console.warn('molecule:', e.message); still(stage); return; }
+    var anisoExt = gl.getExtension('EXT_texture_filter_anisotropic');
+    var maxSide = 4096;
+    try { maxSide = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096, 8192); } catch (e3) {}
+    function compile(v, f) {
+      function one(type, src) {
+        var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o);
+        if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) { var log = gl.getShaderInfoLog(o) || 'shader'; gl.deleteShader(o); throw new Error(log); }
+        return o;
+      }
+      var vs, fs;
+      try { vs = one(gl.VERTEX_SHADER, v); fs = one(gl.FRAGMENT_SHADER, f); }
+      catch (err) {
+        if (vs) gl.deleteShader(vs);
+        if (f.indexOf('highp') === -1) throw err;
+        return compile(v, f.replace(/highp/g, 'mediump'));
+      }
+      var p = gl.createProgram(); gl.attachShader(p, vs); gl.attachShader(p, fs); gl.linkProgram(p);
+      gl.deleteShader(vs); gl.deleteShader(fs);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link');
+      return p;
+    }
+    var PI, PP, UI, UP, aP, aA, aB;
+    var tex, stex, gb, eb, sb, seb, pb;
     function locs(p, names) { var o = {}; each(names, function (n) { o[n] = gl.getUniformLocation(p, n); }); return o; }
     var COMMON = ['uT', 'uC', 'uS', 'uAmp', 'uWave', 'uStr', 'uGrab', 'uPull', 'uRot', 'uRes'];
-    var UI = locs(PI, COMMON.concat(['uMode', 'uModeF', 'uTex', 'uShTex', 'uShC', 'uRev', 'uSweep', 'uGlow', 'uHov', 'uHovA', 'uMint']));
-    var UP = locs(PP, COMMON.concat(['uAge', 'uDpr', 'uM', 'uBoost', 'uAura', 'uMintP']));
-    var aP = gl.getAttribLocation(PI, 'aP'), aA = gl.getAttribLocation(PP, 'aA'), aB = gl.getAttribLocation(PP, 'aB');
-    var tex = gl.createTexture(), stex = gl.createTexture(), gb = gl.createBuffer(), eb = gl.createBuffer(), sb = gl.createBuffer(), seb = gl.createBuffer(), pb = gl.createBuffer();
-    var NI = 0, NSI = 0, NB = 0, NA = 0, ready = false, P = null;
+    function link() {
+      PI = compile(VS_IMG, FS_IMG); PP = compile(VS_P, FS_P);
+      UI = locs(PI, COMMON.concat(['uMode', 'uModeF', 'uTex', 'uShTex', 'uShC', 'uRev', 'uSweep', 'uSweepA', 'uGlow', 'uHov', 'uHovA', 'uMint']));
+      UP = locs(PP, COMMON.concat(['uAge', 'uDpr', 'uM', 'uBoost', 'uAura', 'uMintP']));
+      aP = gl.getAttribLocation(PI, 'aP'); aA = gl.getAttribLocation(PP, 'aA'); aB = gl.getAttribLocation(PP, 'aB');
+    }
+    function alloc() {
+      tex = gl.createTexture(); stex = gl.createTexture();
+      gb = gl.createBuffer(); eb = gl.createBuffer(); sb = gl.createBuffer(); seb = gl.createBuffer(); pb = gl.createBuffer();
+    }
+    try { link(); alloc(); } catch (e) { if (w.console) console.warn('molecule:', e.message); still(stage); return; }
+    var NI = 0, NSI = 0, NB = 0, NA = 0, ready = false, P = null, partBuf = null;
 
-    function texFrom(t, src, premul) {
-      gl.bindTexture(gl.TEXTURE_2D, t); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, !!premul);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    function texFrom(t, src, premul, mips) {
+      gl.bindTexture(gl.TEXTURE_2D, t); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premul ? 1 : 0);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      // mipmaps keep the chain sharp when it is smaller than the file, and kill the shimmer on the thin bonds.
+      // WebGL 1 cannot mipmap a non-power-of-two picture, so that path stays on a single sharp sample.
+      if (mips && isGL2) {
+        gl.hint(gl.GENERATE_MIPMAP_HINT, gl.NICEST); gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        if (anisoExt) {
+          var maxA = gl.getParameter(anisoExt.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 1;
+          gl.texParameterf(gl.TEXTURE_2D, anisoExt.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, maxA));
+        }
+      } else gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     }
     // a grid (u, v, k) so the picture bends smoothly; k lets the bonds stretch without stretching the units
     function grid(GX, GY, vb, ib) {
@@ -221,11 +259,16 @@
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(ix), gl.STATIC_DRAW);
       return ix.length;
     }
+    function upload() {
+      texFrom(tex, P.img, true, true); texFrom(stex, P.shadow, false, true);
+      // the shadow uses the same columns as the chain, so a stretch never leaves a kink under it
+      NI = grid(140, 16, gb, eb); NSI = grid(140, 4, sb, seb);
+      if (partBuf) { gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.bufferData(gl.ARRAY_BUFFER, partBuf, gl.STATIC_DRAW); }
+    }
     function build(p) {
       if (!p) { still(stage); return; }
       P = p;
-      try { texFrom(tex, p.img, true); texFrom(stex, p.shadow, false); } catch (e) { still(stage); return; }
-      NI = grid(140, 16, gb, eb); NSI = grid(70, 2, sb, seb);
+      try { upload(); } catch (e) { still(stage); return; }
       // particles: many form the picture, some keep rising from the whole structure afterwards
       var mob = MQ.matches, d = [], n = p.body.length / 3;
       // the chain stays at full detail. Lite mode slows other parts of the page, not this picture.
@@ -235,65 +278,80 @@
         d.push(u, v, kAt(p, u), rise ? 1 : 0, p.px[k] / 255, p.px[k + 1] / 255, p.px[k + 2] / 255, Math.random());
       }
       var b; if (n) { for (b = 0; b < NB; b++) add(false); for (b = 0; b < NA; b++) add(true); } else { NB = NA = 0; }
-      gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(d), gl.STATIC_DRAW);
+      partBuf = new Float32Array(d);
+      gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.bufferData(gl.ARRAY_BUFFER, partBuf, gl.STATIC_DRAW);
       ready = true; resize(); if (want) go();
     }
 
     /* layout: the picture sits in the middle of the stage; the canvas is taller so waves, pulls and rising particles fit */
     var W = 0, H = 0, dpr = 1, IW = 0, IH = 0, CX = 0, CY = 0, SR = null;
+    var sizing = false;
     function resize() {
-      // up to 2x. Capping at 1, or sizing the canvas before layout, left a soft picture until the next reload.
-      var next = Math.min(w.devicePixelRatio || 1, 2);
-      W = cv.clientWidth; H = cv.clientHeight; if (!W || !H || !P) return;
-      dpr = next;
-      var bw = Math.round(W * dpr), bh = Math.round(H * dpr);
-      if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
-      var mob = MQ.matches, sr = stage.getBoundingClientRect(), cr = cv.getBoundingClientRect();
-      var fw = kind === 'hero' ? (mob ? 0.94 : 0.8) : kind === 'foot' ? (mob ? 0.96 : 0.74) : (mob ? 0.94 : 0.62);
-      IW = Math.min(W * fw, sr.height * (mob ? 0.92 : 0.9) * P.asp, kind === '404' ? 900 : 1240); IH = IW / P.asp;
-      CX = W / 2; CY = (sr.top + sr.height / 2) - cr.top;
+      if (sizing) return;
+      sizing = true;
+      try {
+        // up to 2x. Capping at 1, or sizing the canvas before layout, left a soft picture until the next reload.
+        // never ask the GPU for a buffer bigger than it can hold: that draws a blank or torn frame.
+        var ratio = Math.min(w.devicePixelRatio || 1, 2);
+        W = cv.clientWidth; H = cv.clientHeight; if (!W || !H || !P) return;
+        if (W * ratio > maxSide) ratio = maxSide / W;
+        if (H * ratio > maxSide) ratio = Math.min(ratio, maxSide / H);
+        dpr = ratio;
+        var bw = Math.max(1, Math.round(W * dpr)), bh = Math.max(1, Math.round(H * dpr));
+        var resized = cv.width !== bw || cv.height !== bh;
+        if (resized) { cv.width = bw; cv.height = bh; }
+        var mob = MQ.matches, sr = stage.getBoundingClientRect(), cr = cv.getBoundingClientRect();
+        var fw = kind === 'hero' ? (mob ? 0.94 : 0.8) : kind === 'foot' ? (mob ? 0.96 : 0.74) : (mob ? 0.94 : 0.62);
+        IW = Math.min(W * fw, sr.height * (mob ? 0.92 : 0.9) * P.asp, kind === '404' ? 900 : 1240); IH = IW / P.asp;
+        CX = W / 2; CY = (sr.top + sr.height / 2) - cr.top;
+        // changing the buffer clears it. Paint again immediately, including while a scroll has the loop throttled.
+        if (resized && started) render(anim);
+      } finally { sizing = false; }
     }
 
     /* state */
-    var t0 = 0, on = false, vis = false, raf = 0, last = 0, started = false, want = false, scrollUntil = 0, scrollHold = 0, held = false;
-    var touchScroll = !FINE || MQ.matches;
-    // desktop: half rate while the wheel moves. A phone flick stops the draw until the page settles, so those frames stay with the scroll.
-    w.addEventListener('scroll', function () {
-      if (touchScroll) {
-        held = true;
-        if (raf) { cancelAnimationFrame(raf); raf = 0; }
-        clearTimeout(scrollHold);
-        scrollHold = setTimeout(function () {
-          scrollHold = 0; held = false;
-          if (on && vis && !doc.hidden && !raf) raf = requestAnimationFrame(frame);
-        }, 120);
-        return;
-      }
-      scrollUntil = performance.now() + 180;
-    }, { passive: true });
+    var anim = 0, on = false, vis = false, raf = 0, last = 0, started = false, want = false, scrollUntil = 0;
+    // while the page is moving, draw at half rate so the scroll keeps its frames. The picture keeps moving; it does not freeze and then jump.
+    w.addEventListener('scroll', function () { scrollUntil = performance.now() + 180; }, { passive: true });
     var pmx = -9999, pmy = -9999, amp = 1, hot = false, hovA = 0, hovAt = 0, boost = 0;
     var waveAt = -99, S = 0, Sv = 0, stretchAt = -99, nextWave = 8;
     var down = false, dragging = false, sx0 = 0, sy0 = 0, grabU = 0.5, grabZ = 0, pX = 0, pY = 0, vX = 0, vY = 0;
-    function now() { return (performance.now() - t0) / 1000; }
+    function now() { return anim; }
+    // springs are stiff. One big frame used to step past the stop and knock twice; small steps stay on the curve.
+    function substep(dt, fn) { var left = dt; while (left > 0.00001) { var h = left > 0.008 ? 0.008 : left; fn(h); left -= h; } }
 
     function frame(ms) {
-      raf = 0; if (!on || held) return;
-      if ((LITE() || ms < scrollUntil) && ms - last < 31) { raf = requestAnimationFrame(frame); return; }
-      var dt = last ? Math.min(0.05, (ms - last) / 1000) : 0.016; last = ms;
-      step(dt); render(now()); if (!held) raf = requestAnimationFrame(frame);
+      raf = 0; if (!on) return;
+      if ((LITE() || ms < scrollUntil) && last && ms - last < 31) { raf = requestAnimationFrame(frame); return; }
+      // cap the step so a hitch slows the motion instead of skipping it ahead
+      var dt = last ? Math.min(0.034, (ms - last) / 1000) : 0.016; last = ms;
+      anim += dt; step(dt); render(anim); if (on) raf = requestAnimationFrame(frame);
     }
     function step(dt) {
-      var t = now();
+      var t = now(), ease = 1 - Math.exp(-3.2 * dt);
       // the one-click wave, on its own, every 8 seconds (hero, footer and 404 share this)
       if (t >= nextWave) { waveAt = t; boost = Math.max(boost, 0.5); nextWave = t + 8; }
-      amp += ((hot ? 1.25 : 1) - amp) * 0.05;
-      hovA += ((hot ? 1 : 0) - hovA) * (hot ? 0.08 : 0.04); boost *= 0.95;
+      amp += ((hot ? 1.25 : 1) - amp) * ease;
+      hovA += ((hot ? 1 : 0) - hovA) * (1 - Math.exp(-(hot ? 5.2 : 2.55) * dt));
+      boost *= Math.exp(-3.2 * dt);
       // one click: stretch for a moment, then a spring pulls the bonds back and the units knock together
       var ts = t - stretchAt;
       if (ts >= 0 && ts < 0.32) { var e = ts / 0.32; S = 0.24 * (1 - Math.pow(1 - e, 3)); Sv = 0; }
-      else { var a = -230 * S - 9 * Sv; Sv += a * dt; S += Sv * dt; if (S < -0.15) { S = -0.15; Sv = Math.abs(Sv) * 0.35; boost = 1; } if (Math.abs(S) < 0.0004 && Math.abs(Sv) < 0.002) { S = 0; Sv = 0; } }
+      else if (S || Sv) {
+        substep(dt, function (h) {
+          var a = -230 * S - 9 * Sv; Sv += a * h; S += Sv * h;
+          if (S < -0.15) { S = -0.15; Sv = Math.abs(Sv) * 0.35; boost = 1; }
+          if (Math.abs(S) < 0.0004 && Math.abs(Sv) < 0.002) { S = 0; Sv = 0; }
+        });
+      }
       // drag: the grabbed part follows the pointer; released, it springs back
-      if (!dragging) { var ax = -210 * pX - 12 * vX, ay = -210 * pY - 12 * vY; vX += ax * dt; vY += ay * dt; pX += vX * dt; pY += vY * dt; if (Math.abs(pX) + Math.abs(pY) < 0.2 && Math.abs(vX) + Math.abs(vY) < 2) { pX = pY = vX = vY = 0; grabZ = 0; } }
+      if (!dragging && (pX || pY || vX || vY)) {
+        substep(dt, function (h) {
+          var ax = -210 * pX - 12 * vX, ay = -210 * pY - 12 * vY;
+          vX += ax * h; vY += ay * h; pX += vX * h; pY += vY * h;
+          if (Math.abs(pX) + Math.abs(pY) < 0.2 && Math.abs(vX) + Math.abs(vY) < 2) { pX = pY = vX = vY = 0; grabZ = 0; }
+        });
+      }
     }
     function setCommon(U, t) {
       gl.uniform1f(U.uT, t); gl.uniform2f(U.uC, CX * dpr, CY * dpr); gl.uniform2f(U.uS, IW * dpr, IH * dpr);
@@ -308,7 +366,9 @@
       gl.enable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
       var rev = Math.min(1.25, Math.max(0, (t - 0.45) / 1.3) * 1.25);
       gl.useProgram(PI); setCommon(UI, t);
-      gl.uniform1f(UI.uRev, rev); gl.uniform1f(UI.uSweep, t > 2.4 ? ((t - 2.4) % 5.5) / 4.6 * 1.3 - 0.15 : -1);
+      var sweep = -1, sweepA = 0;
+      if (t > 2.4) { var cyc = (t - 2.4) % 5.5, u = cyc / 5.5; sweep = cyc / 4.6 * 1.3 - 0.15; sweepA = Math.sin(Math.min(1, u / 0.1) * 1.5708) * Math.sin(Math.min(1, (1 - u) / 0.12) * 1.5708); }
+      gl.uniform1f(UI.uRev, rev); gl.uniform1f(UI.uSweep, sweep); gl.uniform1f(UI.uSweepA, sweepA);
       gl.uniform1f(UI.uGlow, boost); gl.uniform1f(UI.uHov, t - hovAt); gl.uniform1f(UI.uHovA, hovA);
       gl.uniform3fv(UI.uMint, dark ? [0.24, 0.96, 0.56] : [0.06, 0.62, 0.38]);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(UI.uTex, 0);
@@ -345,7 +405,7 @@
       want = true; if (started || !ready) return;
       if (NOGPU()) { still(stage); return; }
       resize();
-      started = true; t0 = performance.now(); stage.classList.add('is-on'); start();
+      started = true; anim = 0; last = 0; stage.classList.add('is-on'); start();
     }
     if (w.IntersectionObserver) new IntersectionObserver(function (es) {
       vis = es[0].isIntersecting;
@@ -364,7 +424,11 @@
       var fn = function () { if (mq.removeEventListener) mq.removeEventListener('change', fn); resize(); armDpr(); };
       if (mq.addEventListener) mq.addEventListener('change', fn);
     })();
-    cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); stop(); still(stage); });
+    cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); stop(); });
+    cv.addEventListener('webglcontextrestored', function () {
+      try { link(); alloc(); if (P) upload(); ready = !!P; if (want && ready) { started = true; start(); } }
+      catch (err) { if (w.console) console.warn('molecule:', err.message); still(stage); }
+    });
 
     /* pointer: hover glow, one click = stretch, drag = pull (the wave also plays by itself every 8 seconds) */
     function local(e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }

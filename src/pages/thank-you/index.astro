@@ -2,7 +2,7 @@
 import ThankYouLayout from '../../layouts/ThankYouLayout.astro';
 import Dock from '../../components/landing/Dock.astro';
 
-const mail = 'mailto:wassamrehman@gmail.com?subject=Store%20plan%20call';
+const mail = 'mailto:arpit@avishkarai.com?subject=Store%20plan%20call';
 ---
 <ThankYouLayout>
 <div class="tyl" id="tyl" aria-hidden="true">
@@ -44,9 +44,13 @@ const mail = 'mailto:wassamrehman@gmail.com?subject=Store%20plan%20call';
 
   <aside class="ty-r ty-in" aria-label="What happens next">
    <p class="ty-k">What happens next</p>
+   <div class="ty-prog">
+    <p><b>You're well on the way</b><span>Review already started</span></p>
+    <div class="ty-prog-track" role="meter" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Your plan is already underway"><i></i></div>
+   </div>
    <ol class="ty-tl">
     <li class="is-done"><i><svg><use href="#i-check"/></svg></i><div><b>You sent your request</b><span>Just now</span></div></li>
-    <li><i>02</i><div><b>We review your project</b><span>Within one business day</span></div></li>
+    <li class="is-now"><i aria-hidden="true"><span></span></i><div><b>We review your project</b><span>In progress now</span><span class="ty-mini" aria-hidden="true"><i></i></span></div></li>
     <li><i>03</i><div><b>We talk for 30 minutes</b><span>At a time that suits you</span></div></li>
     <li><i>04</i><div><b>We send your plan and fixed price</b><span>Within 48 hours of the call</span></div></li>
    </ol>
@@ -54,7 +58,6 @@ const mail = 'mailto:wassamrehman@gmail.com?subject=Store%20plan%20call';
     <p><svg aria-hidden="true"><use href="#i-lock"/></svg>Your details stay private. Never shared.</p>
     <p><svg aria-hidden="true"><use href="#i-key"/></svg>Your plan is yours to keep.</p>
    </div>
-   <p class="ty-mail">Questions right now? <a class="lk" href="mailto:wassamrehman@gmail.com"><span data-brick>wassamrehman@gmail.com</span></a></p>
   </aside>
  </div>
 </main>
