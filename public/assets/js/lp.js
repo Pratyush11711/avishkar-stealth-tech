@@ -484,12 +484,21 @@
   var CC = 'US|United States|1,CA|Canada|1,GB|United Kingdom|44,AU|Australia|61,NZ|New Zealand|64,IE|Ireland|353,DE|Germany|49,NL|Netherlands|31,FR|France|33,ES|Spain|34,IT|Italy|39,CH|Switzerland|41,AT|Austria|43,BE|Belgium|32,SE|Sweden|46,NO|Norway|47,DK|Denmark|45,FI|Finland|358,PL|Poland|48,PT|Portugal|351,CZ|Czechia|420,GR|Greece|30,HU|Hungary|36,RO|Romania|40,BG|Bulgaria|359,HR|Croatia|385,SK|Slovakia|421,SI|Slovenia|386,EE|Estonia|372,LV|Latvia|371,LT|Lithuania|370,LU|Luxembourg|352,MT|Malta|356,CY|Cyprus|357,IS|Iceland|354,UA|Ukraine|380,RS|Serbia|381,TR|Turkey|90,IL|Israel|972,AE|United Arab Emirates|971,SA|Saudi Arabia|966,QA|Qatar|974,KW|Kuwait|965,BH|Bahrain|973,OM|Oman|968,JO|Jordan|962,LB|Lebanon|961,EG|Egypt|20,MA|Morocco|212,ZA|South Africa|27,NG|Nigeria|234,KE|Kenya|254,GH|Ghana|233,IN|India|91,PK|Pakistan|92,BD|Bangladesh|880,LK|Sri Lanka|94,NP|Nepal|977,SG|Singapore|65,MY|Malaysia|60,TH|Thailand|66,ID|Indonesia|62,PH|Philippines|63,VN|Vietnam|84,HK|Hong Kong|852,TW|Taiwan|886,CN|China|86,JP|Japan|81,KR|South Korea|82,MX|Mexico|52,BR|Brazil|55,AR|Argentina|54,CO|Colombia|57,CL|Chile|56,PE|Peru|51,UY|Uruguay|598,CR|Costa Rica|506,PA|Panama|507,DO|Dominican Republic|1,PR|Puerto Rico|1,JM|Jamaica|1,BS|Bahamas|1,TT|Trinidad and Tobago|1,RU|Russia|7,KZ|Kazakhstan|7,GE|Georgia|995,AM|Armenia|374'.split(',').map(function (x) { var a = x.split('|'); return { iso: a[0], name: a[1], dial: a[2] }; });
   var TZ = {"America/New_York":"US","America/Chicago":"US","America/Denver":"US","America/Los_Angeles":"US","America/Phoenix":"US","America/Anchorage":"US","America/Detroit":"US","America/Boise":"US","Pacific/Honolulu":"US","America/Indiana":"US","America/Kentucky":"US","America/Toronto":"CA","America/Vancouver":"CA","America/Edmonton":"CA","America/Winnipeg":"CA","America/Halifax":"CA","America/Regina":"CA","America/St_Johns":"CA","America/Montreal":"CA","Europe/London":"GB","Europe/Dublin":"IE","Europe/Berlin":"DE","Europe/Amsterdam":"NL","Europe/Paris":"FR","Europe/Madrid":"ES","Europe/Rome":"IT","Europe/Zurich":"CH","Europe/Vienna":"AT","Europe/Brussels":"BE","Europe/Stockholm":"SE","Europe/Oslo":"NO","Europe/Copenhagen":"DK","Europe/Helsinki":"FI","Europe/Warsaw":"PL","Europe/Lisbon":"PT","Europe/Prague":"CZ","Europe/Athens":"GR","Europe/Budapest":"HU","Europe/Bucharest":"RO","Europe/Sofia":"BG","Europe/Zagreb":"HR","Europe/Bratislava":"SK","Europe/Ljubljana":"SI","Europe/Tallinn":"EE","Europe/Riga":"LV","Europe/Vilnius":"LT","Europe/Luxembourg":"LU","Europe/Malta":"MT","Asia/Nicosia":"CY","Atlantic/Reykjavik":"IS","Europe/Kiev":"UA","Europe/Kyiv":"UA","Europe/Belgrade":"RS","Europe/Istanbul":"TR","Asia/Jerusalem":"IL","Asia/Tel_Aviv":"IL","Asia/Dubai":"AE","Asia/Riyadh":"SA","Asia/Qatar":"QA","Asia/Kuwait":"KW","Asia/Bahrain":"BH","Asia/Muscat":"OM","Asia/Amman":"JO","Asia/Beirut":"LB","Africa/Cairo":"EG","Africa/Casablanca":"MA","Africa/Johannesburg":"ZA","Africa/Lagos":"NG","Africa/Nairobi":"KE","Africa/Accra":"GH","Asia/Kolkata":"IN","Asia/Calcutta":"IN","Asia/Karachi":"PK","Asia/Dhaka":"BD","Asia/Colombo":"LK","Asia/Kathmandu":"NP","Asia/Singapore":"SG","Asia/Kuala_Lumpur":"MY","Asia/Bangkok":"TH","Asia/Jakarta":"ID","Asia/Manila":"PH","Asia/Ho_Chi_Minh":"VN","Asia/Saigon":"VN","Asia/Hong_Kong":"HK","Asia/Taipei":"TW","Asia/Shanghai":"CN","Asia/Tokyo":"JP","Asia/Seoul":"KR","Pacific/Auckland":"NZ","America/Mexico_City":"MX","America/Tijuana":"MX","America/Sao_Paulo":"BR","America/Argentina":"AR","America/Bogota":"CO","America/Santiago":"CL","America/Lima":"PE","America/Montevideo":"UY","America/Costa_Rica":"CR","America/Panama":"PA","America/Santo_Domingo":"DO","America/Puerto_Rico":"PR","America/Jamaica":"JM","America/Nassau":"BS","America/Port_of_Spain":"TT","Europe/Moscow":"RU","Asia/Almaty":"KZ","Asia/Tbilisi":"GE","Asia/Yerevan":"AM","Australia":"AU"};
   var sel = $('#telCountry'), flag = $('#telFlag'), isoEl = $('#telIso'), dial = $('#telDial'), num = $('#telNum');
+  var LANG = { hi: 'IN', ta: 'IN', te: 'IN', mr: 'IN', gu: 'IN', kn: 'IN', ml: 'IN', pa: 'IN', bn: 'BD', ur: 'PK', ar: 'AE', he: 'IL', ja: 'JP', ko: 'KR', zh: 'CN', th: 'TH', vi: 'VN', id: 'ID', ms: 'MY', tr: 'TR', ru: 'RU', uk: 'UA', pl: 'PL', nl: 'NL', de: 'DE', fr: 'FR', es: 'ES', it: 'IT', pt: 'PT', sv: 'SE', no: 'NO', nb: 'NO', nn: 'NO', da: 'DK', fi: 'FI', el: 'GR', cs: 'CZ', ro: 'RO', hu: 'HU', bg: 'BG', hr: 'HR', sk: 'SK', sl: 'SI' };
+  function known(iso) { return !!iso && CC.some(function (c) { return c.iso === iso; }); }
   function guessCountry() {
     var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
-    var hit = TZ[tz] || TZ[tz.split('/').slice(0, 2).join('/')] || TZ[tz.split('/')[0]];
-    if (hit) return hit;
+    var parts = tz.split('/');
+    var hit = TZ[tz] || (parts.length > 2 ? TZ[parts[0] + '/' + parts[1]] : '') || TZ[parts[0]];
+    if (known(hit)) return hit;
     var langs = navigator.languages || [navigator.language || ''];
-    for (var i = 0; i < langs.length; i++) { var m = /-([A-Z]{2})$/i.exec(langs[i] || ''); if (m && CC.some(function (c) { return c.iso === m[1].toUpperCase(); })) return m[1].toUpperCase(); }
+    for (var i = 0; i < langs.length; i++) {
+      var tag = langs[i] || '';
+      var region = /-([A-Za-z]{2})\b/.exec(tag);
+      if (region && known(region[1].toUpperCase())) return region[1].toUpperCase();
+      var lang = /^[a-z]{2}/i.exec(tag);
+      if (lang && known(LANG[lang[0].toLowerCase()])) return LANG[lang[0].toLowerCase()];
+    }
     return 'US';
   }
   function setCountry(iso) {
@@ -500,7 +509,12 @@
   }
   if (sel) {
     var frag = doc.createDocumentFragment();
-    CC.forEach(function (c) { var o = doc.createElement('option'); o.value = c.iso; o.textContent = c.name + ' (+' + c.dial + ')'; frag.appendChild(o); });
+    CC.forEach(function (c) {
+      var o = doc.createElement('option');
+      o.value = c.iso; o.textContent = c.name + ' (+' + c.dial + ')';
+      o.style.color = '#0A1410'; o.style.backgroundColor = '#ffffff';
+      frag.appendChild(o);
+    });
     sel.appendChild(frag);
     // the code shows straight away; the flag picture replaces it once it has loaded
     flag.onload = function () { flag.hidden = false; isoEl.hidden = true; };
