@@ -1,14 +1,10 @@
 ---
-import LandingLayout from '../../../layouts/LandingLayout.astro';
-import Footer from '../../../components/landing/Footer.astro';
-import Dock from '../../../components/landing/Dock.astro';
+import ThankYouLayout from '../../layouts/ThankYouLayout.astro';
+import Dock from '../../components/landing/Dock.astro';
+
+const mail = 'mailto:wassamrehman@gmail.com?subject=Store%20plan%20call';
 ---
-<LandingLayout
-  title="Thank you | Stealth Tech"
-  robots="noindex, nofollow"
-  bodyClass="ty-page"
-  lead
->
+<ThankYouLayout>
 <div class="tyl" id="tyl" aria-hidden="true">
  <div class="tyl-w">
   <svg class="tyl-ring" viewBox="0 0 120 120"><circle class="tyl-track" cx="60" cy="60" r="54"/><circle class="tyl-bar" cx="60" cy="60" r="54" pathLength="1" transform="rotate(-90 60 60)"/></svg>
@@ -24,15 +20,14 @@ import Dock from '../../../components/landing/Dock.astro';
  </a>
  <div class="top-r">
   <p class="top-note"><svg aria-hidden="true"><use href="#i-clock"/></svg>Reply within 1 business day</p>
-  <a class="btn btn--sm" href="https://cal.id/arpitsharmawritingsessions/peptide-brand-discovery-call" target="_blank" rel="noopener" data-book><span class="btn-t">Book my call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+  <a class="btn btn--sm" href={mail}><span class="btn-t">Email us</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
  </div>
 </header>
 
 <main id="main" class="ty">
  <div class="wrap ty-grid">
   <section class="ty-l" aria-labelledby="tyH">
-   <a class="ty-back ty-in" href="/peptide-store-build" data-back><svg aria-hidden="true"><use href="#i-left"/></svg><span>Back to the page</span></a>
-   <!-- the tick: ring draws, badge pops, check draws, small hexagons burst out -->
+   <a class="ty-back ty-in" href="/" data-back><svg aria-hidden="true"><use href="#i-left"/></svg><span>Back</span></a>
    <div class="tick" aria-hidden="true">
     <span class="tick-burst"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
     <span class="tick-wave"></span>
@@ -42,8 +37,8 @@ import Dock from '../../../components/landing/Dock.astro';
    <h1 class="ty-h" id="tyH"><span class="hl"><span class="hl-i" id="tyHi">Great move.</span></span><span class="hl"><span class="hl-i">Your store is in</span></span><span class="hl"><span class="hl-i"><span class="acc-w">good hands</span> now.</span></span></h1>
    <p class="ty-p ty-in">Most founders put this step off for months. You just took it. A senior strategist is already reading your project, and we will reach you within one business day by email and on the number you shared.</p>
    <div class="ty-book ty-in">
-    <div><b>Want to move even faster?</b><small>Pick a time for your free 30-minute call now.</small></div>
-    <a class="btn" href="https://cal.id/arpitsharmawritingsessions/peptide-brand-discovery-call" target="_blank" rel="noopener" data-book data-pulse><span class="btn-t">Book my call</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
+    <div><b>Want to move even faster?</b><small>Email us and we will send a time for a free 30-minute call.</small></div>
+    <a class="btn" href={mail} data-pulse><span class="btn-t">Email us</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
    </div>
   </section>
 
@@ -59,17 +54,15 @@ import Dock from '../../../components/landing/Dock.astro';
     <p><svg aria-hidden="true"><use href="#i-lock"/></svg>Your details stay private. Never shared.</p>
     <p><svg aria-hidden="true"><use href="#i-key"/></svg>Your plan is yours to keep.</p>
    </div>
-   <p class="ty-mail">Questions right now? <a class="lk" href="mailto:arpit@avishkarai.com"><span data-brick>arpit@avishkarai.com</span></a></p>
+   <p class="ty-mail">Questions right now? <a class="lk" href="mailto:wassamrehman@gmail.com"><span data-brick>wassamrehman@gmail.com</span></a></p>
   </aside>
  </div>
 </main>
-<Footer planHref="/peptide-store-build#start" />
 <Dock
-  logoHref="/peptide-store-build"
-  logoLabel="Back to the page"
+  logoHref="/"
+  logoLabel="Stealth Tech home"
   open
-  buttonHref="https://cal.id/arpitsharmawritingsessions/peptide-brand-discovery-call"
-  buttonLabel="Book my call"
-  external
+  buttonHref={mail}
+  buttonLabel="Email us"
 />
-</LandingLayout>
+</ThankYouLayout>

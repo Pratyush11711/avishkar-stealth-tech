@@ -6,7 +6,7 @@
   /* ---------- settings ---------- */
   var CAL_ORIGIN = 'https://cal.id';                                       // Cal.id (Cal.com compatible embed)
   var CAL_LINK = 'arpitsharmawritingsessions/peptide-brand-discovery-call'; // booking page shown in the last step
-  var LEAD_EMAIL = 'arpit@avishkarai.com';      // every brief is emailed here (FormSubmit) ...
+  var LEAD_EMAIL = 'wassamrehman@gmail.com';    // every brief is emailed here (FormSubmit) ...
   var LEAD_CC = 'arpitsharmawriting@gmail.com'; // ... with a copy here
   var FORM_ENDPOINT = '';                        // optional extra webhook (POST JSON): Zapier, Make, a CRM
 

@@ -2,14 +2,19 @@
 import LandingLayout from '../../layouts/LandingLayout.astro';
 import Footer from '../../components/landing/Footer.astro';
 import Dock from '../../components/landing/Dock.astro';
+
+// India country code plus the 10-digit mobile, digits only.
+const WHATSAPP = '919165824292';
+const waText = encodeURIComponent('Hi Stealth Tech, I would like a store plan.');
+const waHref = `https://wa.me/${WHATSAPP}?text=${waText}`;
 ---
 <LandingLayout
-  title="Stealth Tech | Peptide Stores That Look Legit, Stay Live and Get Paid"
-  description="We design and build peptide and RUO stores: a brand buyers trust, a compliant store you own and a checkout processors approve. Get a free written plan within 48 hours."
-  robots="noindex, follow"
+  title="Stealth Tech | Professional Online Stores for Research and Wellness Brands"
+  description="We design and build professional online stores for research and wellness brands. A finished brand, a fast build and a store you fully own. Stores start from $2,500."
+  robots="index, follow, max-image-preview:large, max-snippet:-1"
   canonical="https://stealthtech.agency/peptide-store-build"
-  ogTitle="Stealth Tech | Peptide Stores That Look Legit, Stay Live and Get Paid"
-  ogDescription="We build peptide stores that get approved and stay live. Get a free written plan and fixed price within 48 hours."
+  ogTitle="Stealth Tech | Professional Online Stores for Research and Wellness Brands"
+  ogDescription="Professional online stores for research and wellness brands. Design, a fast build and a store you fully own. Stores start from $2,500."
   splash
   lenis
 >
@@ -30,16 +35,16 @@ import Dock from '../../components/landing/Dock.astro';
 <section class="hero" aria-labelledby="heroTitle">
  <div class="wrap hero-grid">
   <div class="hero-l">
-   <p class="eyebrow hero-in"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Peptide store design &amp; build</span></p>
+   <p class="eyebrow hero-in"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><span>Store design &amp; build</span></p>
    <h1 class="hero-h" id="heroTitle">
-    <span class="hl"><span class="hl-i">We build peptide</span></span>
-    <span class="hl"><span class="hl-i">stores that get</span></span>
-    <span class="hl"><span class="hl-i"><span class="acc-w">approved</span> and</span></span>
-    <span class="hl"><span class="hl-i">stay live.</span></span>
+    <span class="hl"><span class="hl-i">Professional online</span></span>
+    <span class="hl"><span class="hl-i">stores for research</span></span>
+    <span class="hl"><span class="hl-i">and <span class="acc-w">wellness</span> brands.</span></span>
    </h1>
-   <p class="hero-sub hero-in">You have the product. We build the brand, the store and the checkout around it, so buyers trust you on sight and processors say yes.</p>
+   <p class="hero-sub hero-in">You have the product. We design the brand and build the store around it, quickly, so it looks finished from the first order.</p>
+   <p class="hero-price hero-in">Stores start from $2,500.</p>
    <dl class="hero-facts hero-in">
-    <div><dt>Peptide-first</dt><dd>Brands like yours are our everyday work</dd></div>
+    <div><dt>Design-first</dt><dd>The brand and the store, designed together</dd></div>
     <div><dt>48-hour plan</dt><dd>Scope and one fixed price, in writing</dd></div>
     <div><dt>100% yours</dt><dd>Domain, store and code in your name</dd></div>
    </dl>
@@ -57,7 +62,7 @@ import Dock from '../../components/landing/Dock.astro';
     </div>
     <ol class="fc-prog" aria-hidden="true"><li class="is-on"></li><li></li><li></li><li></li><li></li></ol>
 
-    <form class="lf" id="leadForm" name="peptide-store-build" method="POST" action="/peptide-store-build/thank-you" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+    <form class="lf" id="leadForm" name="peptide-store-build" method="POST" action="/thank-you" data-netlify="true" netlify-honeypot="bot-field" novalidate>
      <input type="hidden" name="form-name" value="peptide-store-build">
      <p class="lf-hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
      <input type="hidden" name="page" value="/peptide-store-build">
@@ -71,13 +76,13 @@ import Dock from '../../components/landing/Dock.astro';
         <label><input type="radio" name="type" value="New peptide store"><span><b>A new peptide store</b><small>Starting fresh</small></span></label>
         <label><input type="radio" name="type" value="Rebuild my store"><span><b>A better version of my store</b><small>Rebuild what I have</small></span></label>
         <label><input type="radio" name="type" value="Brand + store launch"><span><b>Brand + store launch</b><small>Name, labels and store</small></span></label>
-        <label><input type="radio" name="type" value="Checkout and payments fix"><span><b>Checkout &amp; payments</b><small>Get approved and paid</small></span></label>
+        <label><input type="radio" name="type" value="Checkout and payments fix"><span><b>Checkout &amp; payments</b><small>Designed with the store</small></span></label>
        </div>
       </fieldset>
 
       <fieldset class="lf-step" data-step="1">
        <legend class="lf-h">Tell us a little about it.</legend>
-       <label class="lf-f"><span>A line or two is enough. You can also skip this.</span><textarea name="project" rows="4" maxlength="1200" placeholder="E.g. 20 research peptides, need a store and a processor that accepts us. Launch in 6 weeks."></textarea></label>
+       <label class="lf-f"><span>A line or two is enough. You can also skip this.</span><textarea name="project" rows="4" maxlength="1200" placeholder="E.g. 20 research products. I need the brand and the store designed and live in 6 weeks."></textarea></label>
       </fieldset>
 
       <fieldset class="lf-step" data-step="2">
@@ -113,7 +118,10 @@ import Dock from '../../components/landing/Dock.astro';
      <div class="lf-foot">
       <button type="button" class="lf-back" id="lfBack" hidden><svg aria-hidden="true"><use href="#i-left"/></svg>Back</button>
       <button type="button" class="lf-skip" id="lfSkip" hidden>Skip</button>
-      <button type="submit" class="btn lf-next" id="lfNext"><span class="btn-t">Continue</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></button>
+      <div class="lf-acts">
+       <a class="btn wa" href={waHref} target="_blank" rel="noopener"><span class="btn-t">WhatsApp</span><span class="btn-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.15 6.4 2.15 11.83c0 1.74.46 3.44 1.34 4.94L2 22l5.39-1.4a10 10 0 0 0 4.65 1.18h.01c5.46 0 9.89-4.4 9.89-9.83C21.94 6.4 17.5 2 12.04 2Zm5.76 13.95c-.24.68-1.4 1.3-1.94 1.38-.5.07-1.12.1-1.81-.11-.41-.13-.95-.31-1.64-.61-2.88-1.24-4.76-4.14-4.9-4.33-.14-.2-1.16-1.54-1.16-2.94s.73-2.08 1-2.37c.26-.28.57-.35.76-.35h.55c.17 0 .41-.07.64.49.24.58.82 2 .89 2.15.07.14.12.32.02.51-.1.2-.14.32-.28.49-.14.17-.3.38-.42.51-.14.14-.28.29-.12.56.16.28.72 1.18 1.54 1.91 1.06.94 1.95 1.24 2.23 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.63-.14.26.09 1.64.77 1.92.91.28.14.47.21.54.33.07.12.07.68-.17 1.36Z"/></svg></span></a>
+       <button type="submit" class="btn lf-next" id="lfNext"><span class="btn-t">Continue</span><span class="btn-i" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></button>
+      </div>
      </div>
     </form>
 
@@ -127,14 +135,18 @@ import Dock from '../../components/landing/Dock.astro';
  <p class="strip-k">Trusted by peptide suppliers, RUO labs and wellness founders</p>
  <div class="marquee">
   <div class="marquee-track">
-   <span class="logo-it"><img src="/assets/logos/frontier-biomed.webp" alt="Frontier Biomed" height="28" loading="lazy"></span>
-   <span class="logo-it"><img src="/assets/logos/hols.webp" alt="HOLS" height="24" loading="lazy"></span>
-   <span class="logo-it"><img src="/assets/logos/medivance.webp" alt="Medivance" height="26" loading="lazy"></span>
-   <span class="logo-it"><img src="/assets/logos/pba-mark.webp" alt="" height="30" loading="lazy"><span class="logo-cap">Peptide Broker Academy</span></span>
-   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/frontier-biomed.webp" alt="" height="28" loading="lazy"></span>
-   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/hols.webp" alt="" height="24" loading="lazy"></span>
-   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/medivance.webp" alt="" height="26" loading="lazy"></span>
-   <span class="logo-it" aria-hidden="true"><img src="/assets/logos/pba-mark.webp" alt="" height="30" loading="lazy"><span class="logo-cap">Peptide Broker Academy</span></span>
+   <div class="marquee-set">
+    <span class="logo-it"><img src="/assets/logos/frontier-biomed.webp" alt="Frontier Biomed" height="28" loading="lazy"></span>
+    <span class="logo-it"><img src="/assets/logos/hols.webp" alt="HOLS" height="24" loading="lazy"></span>
+    <span class="logo-it"><img src="/assets/logos/medivance.webp" alt="Medivance" height="26" loading="lazy"></span>
+    <span class="logo-it"><img src="/assets/logos/pba-mark.webp" alt="" height="30" loading="lazy"><span class="logo-cap">Peptide Broker Academy</span></span>
+   </div>
+   <div class="marquee-set" aria-hidden="true">
+    <span class="logo-it"><img src="/assets/logos/frontier-biomed.webp" alt="" height="28" loading="lazy"></span>
+    <span class="logo-it"><img src="/assets/logos/hols.webp" alt="" height="24" loading="lazy"></span>
+    <span class="logo-it"><img src="/assets/logos/medivance.webp" alt="" height="26" loading="lazy"></span>
+    <span class="logo-it"><img src="/assets/logos/pba-mark.webp" alt="" height="30" loading="lazy"><span class="logo-cap">Peptide Broker Academy</span></span>
+   </div>
   </div>
  </div>
 </section>
@@ -159,19 +171,19 @@ import Dock from '../../components/landing/Dock.astro';
     </div>
    </article>
    <article class="wall rv">
-    <div class="wall-top"><span class="wall-n">Wall 02</span><p class="wall-bad">"Your application was declined."</p></div>
+    <div class="wall-top"><span class="wall-n">Wall 02</span><p class="wall-bad">"This will take six months."</p></div>
     <div class="wall-fix">
      <p class="wall-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>How we fix it</p>
-     <h3>A checkout processors approve</h3>
-     <p>We write your policies, add the research-use confirmation and test a backup gateway before launch.</p>
+     <h3>A store that launches in weeks</h3>
+     <p>We design and build the brand, the pages and the checkout in one pass, so you are live in weeks, not quarters.</p>
     </div>
    </article>
    <article class="wall rv">
-    <div class="wall-top"><span class="wall-n">Wall 03</span><p class="wall-bad">"Your store has been shut down."</p></div>
+    <div class="wall-top"><span class="wall-n">Wall 03</span><p class="wall-bad">"The store is not really ours."</p></div>
     <div class="wall-fix">
      <p class="wall-k"><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>How we fix it</p>
-     <h3>A store nobody can take away</h3>
-     <p>We build on WooCommerce or custom code that you own, so your store never depends on someone else's rules.</p>
+     <h3>A store you fully own</h3>
+     <p>We design and build on WooCommerce or custom code, and the domain, store and code are in your name from day one.</p>
     </div>
    </article>
   </div>
@@ -202,7 +214,7 @@ import Dock from '../../components/landing/Dock.astro';
          <div class="vb-lt"><span><svg><use href="#logo"/></svg>YOUR BRAND</span><span>Lot 2409</span></div>
          <p class="vb-name">BPC-157</p>
          <p class="vb-dose">10 mg · Lyophilized powder</p>
-         <div class="vb-lb"><span class="vb-ruo">For research use only</span><span class="vb-bar"></span></div>
+         <div class="vb-lb"><span class="vb-tag">For research use only</span><span class="vb-bar"></span></div>
         </div>
         <div class="vb-kit">
          <div class="vb-sw"><span style="--c:#0B5B3A"><i></i>#0B5B3A</span><span style="--c:#0A1410"><i></i>#0A1410</span><span style="--c:#E8EAE3"><i></i>#E8EAE3</span></div>
@@ -212,8 +224,8 @@ import Dock from '../../components/landing/Dock.astro';
       </div>
      </li>
      <li class="fr-item">
-      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">02</span><span class="fr-t">A store built to pass review</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
-      <div class="fr-d"><p>We build fast product pages, a COA library and research-use copy, written to pass review and still sell.</p></div>
+      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">02</span><span class="fr-t">A store designed to sell</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+      <div class="fr-d"><p>We design fast product pages, a COA library and clear product copy, so the store looks finished and is easy to buy from.</p></div>
       <div class="fr-vis" aria-hidden="true">
        <div class="v-spec">
         <div class="vs-page">
@@ -221,19 +233,19 @@ import Dock from '../../components/landing/Dock.astro';
          <div class="vs-info">
           <p class="vs-t">BPC-157 · 10 mg</p>
           <p class="vs-p">$89.00</p>
-          <p class="vs-ruo">For research use only<b class="vs-pin p2">2</b></p>
+          <p class="vs-tag">For research use only<b class="vs-pin p2">2</b></p>
           <p class="vs-copy">Third-party tested. Lyophilized.<b class="vs-pin p3">3</b></p>
           <span class="vs-btn">Add to cart</span>
           <p class="vs-coa">View COA · Lot 2409</p>
          </div>
         </div>
-        <ol class="vs-notes"><li><b>1</b>COA for this exact lot</li><li><b>2</b>Research-use label on every product</li><li><b>3</b>Copy written to pass review</li></ol>
+        <ol class="vs-notes"><li><b>1</b>COA for this exact lot</li><li><b>2</b>Research-use label on every product</li><li><b>3</b>Copy written for the product</li></ol>
        </div>
       </div>
      </li>
      <li class="fr-item">
-      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">03</span><span class="fr-t">A checkout that gets you paid</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
-      <div class="fr-d"><p>We match you with providers that accept your category, prepare your application and set up a tested backup gateway.</p></div>
+      <button type="button" class="fr" aria-expanded="false"><span class="fr-n">03</span><span class="fr-t">A checkout designed with the store</span><span class="fr-i"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></button>
+      <div class="fr-d"><p>We design the checkout with the rest of the store and build a second path, so orders keep moving after launch.</p></div>
       <div class="fr-vis" aria-hidden="true">
        <div class="v-route">
         <svg viewBox="0 0 340 170" class="vr-svg">
@@ -251,7 +263,7 @@ import Dock from '../../components/landing/Dock.astro';
         <div class="vr-ticket">
          <p class="vk">Order #1042</p>
          <p class="vr-conf"><i><svg><use href="#i-check"/></svg></i>I confirm this order is for research use only.</p>
-         <p class="vr-res">Re-routed to Gateway B <b>Approved</b></p>
+         <p class="vr-res">Re-routed to Gateway B <b>Live</b></p>
         </div>
        </div>
       </div>
@@ -294,7 +306,7 @@ import Dock from '../../components/landing/Dock.astro';
     <figcaption><b>Senior designers and developers.</b>Every label, page and checkout is reviewed by hand.</figcaption>
    </figure>
    <article class="b-card rv"><span class="b-n">01</span><h3>We know your category</h3><p>Peptide and RUO brands are our everyday work. We know the rules before you explain them.</p></article>
-   <article class="b-card rv"><span class="b-n">02</span><h3>We build compliance in</h3><p>We write copy, policies and checkout for processor review before anything goes live.</p></article>
+   <article class="b-card rv"><span class="b-n">02</span><h3>We design it as one piece</h3><p>Brand, pages and checkout are designed together, then built in the same pass.</p></article>
    <article class="b-card rv"><span class="b-n">03</span><h3>We stay with you</h3><p>The senior people on your first call are the people who build your store.</p></article>
    <article class="b-card rv"><span class="b-n">04</span><h3>We put it in your name</h3><p>Domain, store, code and data belong to you from day one.</p></article>
   </div>
@@ -303,8 +315,8 @@ import Dock from '../../components/landing/Dock.astro';
    <div class="cmp-row cmp-head" role="row"><span role="columnheader">What you get</span><span role="columnheader">Typical web agency</span><span role="columnheader"><svg class="cmp-logo" aria-hidden="true"><use href="#logo"/></svg>Stealth Tech</span></div>
    <div class="cmp-row" role="row"><span role="rowheader">Peptide &amp; RUO know-how</span><span role="cell">Often new to it</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Our everyday work</span></div>
    <div class="cmp-row" role="row"><span role="rowheader">Platform</span><span role="cell">Shopify by default</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>WooCommerce or custom code you own</span></div>
-   <div class="cmp-row" role="row"><span role="rowheader">Product copy</span><span role="cell">General ecommerce copy</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Research-use copy written for review</span></div>
-   <div class="cmp-row" role="row"><span role="rowheader">Checkout</span><span role="cell">One payment gateway</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Application pack + tested backup</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Product copy</span><span role="cell">General ecommerce copy</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Written for your product</span></div>
+   <div class="cmp-row" role="row"><span role="rowheader">Checkout</span><span role="cell">One payment gateway</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>Designed with the store, plus a backup</span></div>
    <div class="cmp-row" role="row"><span role="rowheader">Price</span><span role="cell">Hourly estimates</span><span role="cell"><i><svg><use href="#i-check"/></svg></i>One fixed price, agreed up front</span></div>
   </div>
  </div>
@@ -377,7 +389,7 @@ import Dock from '../../components/landing/Dock.astro';
   <div class="tm" id="tm">
    <div class="tm-stack" aria-live="polite">
     <figure class="tm-slide is-on"><p class="tm-k"><b>Weeks</b>to a live store</p><blockquote>"Three developers went quiet the moment they heard RUO. These guys built the brand, the store and the checkout, and we were taking orders within weeks."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Founder</b>RUO peptide brand</span></figcaption></figure>
-    <figure class="tm-slide"><p class="tm-k"><b>Days</b>to processor approval</p><blockquote>"Our first store was on Shopify and got shut down. The rebuild went in with a clean application and a new processor approved us within days."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Operator</b>Peptide store</span></figcaption></figure>
+    <figure class="tm-slide"><p class="tm-k"><b>Weeks</b>from brief to launch</p><blockquote>"They designed the brand and built the store in one stretch. It looked finished, and we were taking orders a few weeks after the first call."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Operator</b>Peptide store</span></figcaption></figure>
     <figure class="tm-slide"><p class="tm-k"><b>One admin</b>for wholesale and affiliates</p><blockquote>"Wholesale pricing, affiliate payouts and subscriptions all live inside one admin. We stopped paying for apps that kept breaking."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Head of Ops</b>Research supplier</span></figcaption></figure>
     <figure class="tm-slide"><p class="tm-k"><b>1st look</b>buyers now trust</p><blockquote>"Buyers used to ask if we were legit. Now they ask when the next batch drops. The labels and COA pages did that."</blockquote><figcaption><span class="tm-av"><svg><use href="#logo"/></svg></span><span><b>Founder</b>Peptide brand</span></figcaption></figure>
    </div>
@@ -399,9 +411,9 @@ import Dock from '../../components/landing/Dock.astro';
   </div>
   <div class="faq-list">
    <div class="qa is-open"><button type="button" class="qa-q" aria-expanded="true"><span>Do you really work with peptide and RUO brands?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Yes. Peptide and RUO brands are our main specialty. We also build for hemp, botanical and kanna businesses.</p></div></div></div>
-   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Which platform will you build my store on?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>WooCommerce or custom code that you own. Shopify and Stripe restrict research peptides, so we choose platforms that keep your store safe.</p></div></div></div>
-   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>How fast can we launch?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Most store builds take 2 to 6 weeks. You get a written plan with a timeline within 48 hours of our first call. We also help you apply to your processor early, since approval can take longer than the build.</p></div></div></div>
-   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>What will it cost?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>One fixed price after the audit, so you know the number before we start. We give you a realistic range on the first call.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Which platform will you build my store on?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>WooCommerce or custom code that you own. We pick the one that fits the store, then design and build it in one pass.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>How fast can we launch?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Most store builds take 2 to 6 weeks. You get a written plan with a timeline within 48 hours of our first call, then design and development move together.</p></div></div></div>
+   <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>What will it cost?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Stores start from $2,500. You get one fixed price after a short look at the project, before any work starts.</p></div></div></div>
    <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>I already have a store. Can you make it better?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>Yes. We audit what you have, keep what works and move your products, customers, wholesale accounts and affiliates to the new build.</p></div></div></div>
    <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Who owns the store?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>You do. We set up the domain, store, code, content and data in your name from day one. Everything stays with you, always.</p></div></div></div>
    <div class="qa"><button type="button" class="qa-q" aria-expanded="false"><span>Do you sell or ship product?</span><i><svg aria-hidden="true"><use href="#i-plus"/></svg></i></button><div class="qa-a"><div><p>No. We are your design and technology team. Your product and your supply stay fully in your hands.</p></div></div></div>

@@ -42,7 +42,8 @@ export const NAMES: Record<string, string> = {
   'high-risk-payments': 'High-risk payment processing',
   'peptide-seo': 'Peptide SEO, email &amp; SMS',
   'hemp-marketing': 'Hemp &amp; botanical marketing',
-  'kanna-marketing': 'Kanna, clinics &amp; telehealth',
+  'kanna-marketing': 'Kanna',
+  'clinics-telehealth': 'Clinics &amp; telehealth',
   'peptide-platforms': 'Back office: wholesale, affiliates &amp; subscriptions',
   'peptide-marketing': 'Marketing add-ons: SEO, email &amp; ads',
 };
@@ -55,7 +56,8 @@ export const H2S: Record<string, [string, string, string]> = {
   'high-risk-payments': ['High-risk payment processing, handled', 'How we get peptide stores paid', 'High-risk payment questions'],
   'peptide-seo': ['What our peptide SEO covers', 'How peptide SEO compounds', 'Peptide SEO questions'],
   'hemp-marketing': ['Hemp and botanical marketing services', 'How we grow hemp brands', 'Hemp marketing questions'],
-  'kanna-marketing': ['Kanna, clinic and telehealth marketing', 'How we grow kanna brands', 'Kanna marketing questions'],
+  'kanna-marketing': ['Kanna marketing', 'How we grow kanna brands', 'Kanna marketing questions'],
+  'clinics-telehealth': ['Sites and stores for clinics', 'How a clinic site gets built', 'Clinics and telehealth questions'],
   'peptide-platforms': ['Back office for peptide stores', 'How we build your back office', 'Back office questions'],
   'peptide-marketing': ['Peptide marketing add-ons', 'How we add marketing', 'Marketing add-on questions'],
 };
@@ -259,13 +261,13 @@ export const PAGES: PageData[] = [
   {
     slug: 'kanna-marketing',
     kind: 'industry',
-    crumb: 'Kanna, clinics &amp; telehealth',
-    title: 'Kanna Marketing Agency for Brands &amp; Clinics | Stealth Tech',
-    desc: 'Kanna marketing for brands, clinics and telehealth: branding, compliant websites, SEO, content, email and eligible campaigns.',
-    eyebrow: 'Industry · Kanna, clinics &amp; telehealth',
-    h1: 'Kanna marketing for brands, <span class="acc-w">clinics and telehealth.</span>',
-    lead: 'Branding, compliant sites and growth for kanna brands. Clinics and telehealth get focused support: SEO, content, email and eligible campaigns.',
-    photo: { name: 'ind-kanna', alt: 'Kanna (Sceletium tortuosum) plant and ground kanna powder', caption: 'Kanna · Clinics &amp; telehealth' },
+    crumb: 'Kanna',
+    title: 'Kanna Marketing Agency | Stealth Tech',
+    desc: 'Kanna marketing for botanical brands: branding, websites, SEO, content, email and eligible campaigns.',
+    eyebrow: 'Industry · Kanna',
+    h1: 'Kanna marketing for <span class="acc-w">botanical brands.</span>',
+    lead: 'Branding, sites and growth for kanna brands. Clinics and telehealth have their own page.',
+    photo: { name: 'ind-kanna', alt: 'Kanna (Sceletium tortuosum) plant and ground kanna powder', caption: 'Kanna' },
     tiles: [
       ['Branding', 'A brand that feels premium and trustworthy in a new category.'],
       ['Compliant sites', 'Claim-free product and service pages that platforms and processors accept.'],
@@ -279,9 +281,39 @@ export const PAGES: PageData[] = [
     ],
     faq: [
       { q: 'What is kanna?', a: 'Kanna (Sceletium tortuosum) is a South African succulent sold as a botanical. Marketing it needs careful, claim-free language, which is where we start.' },
-      { q: 'Do you work with clinics and telehealth?', a: 'Yes: SEO, content, email and campaigns in categories the platforms allow.' },
+      { q: 'Do you work with clinics and telehealth?', a: 'Yes. That work has its own page: <a class="acc" href="/clinics-telehealth">Clinics &amp; telehealth</a>.' },
     ],
-    related: ['hemp-marketing', 'peptide-seo', 'peptide-websites'],
+    related: ['clinics-telehealth', 'hemp-marketing', 'peptide-websites'],
+  },
+  {
+    slug: 'clinics-telehealth',
+    kind: 'industry',
+    crumb: 'Clinics &amp; telehealth',
+    title: 'Online Stores for Clinics & Telehealth | Stealth Tech',
+    desc: 'We design and build sites and stores for clinics and telehealth brands. A finished look, a fast build and a site you fully own.',
+    eyebrow: 'Industry · Clinics &amp; telehealth',
+    h1: 'Professional sites for clinics <span class="acc-w">and telehealth.</span>',
+    lead: 'You have the practice. We design the brand and build the site around it, quickly, so it looks finished from the first visit.',
+    card: {
+      title: 'What you get',
+      items: ['A brand that looks finished', 'A site or store built in weeks', 'Booking or checkout designed with the site', 'Domain, code and content in your name'],
+    },
+    tiles: [
+      ['Brand', 'A look and a voice that feel calm and specific to your practice.'],
+      ['Site or store', 'Service pages, a clear offer and a path to book or buy, designed as one piece.'],
+      ['Speed', 'Most builds go live in weeks. You get a written plan and one fixed price first.'],
+      ['Ownership', 'The domain, the site and the code are set up in your name.'],
+    ],
+    steps: [
+      ['Strategy call', '30 minutes on what you offer and who it is for.'],
+      ['Written plan in 48 hours', 'Scope, timeline and one fixed price, before any work starts.'],
+      ['Design and launch', 'Brand and site built in one pass, then handed to you.'],
+    ],
+    faq: [
+      { q: 'Do you build booking sites and stores?', a: 'Yes. Clinics and telehealth brands can have a site, a store, or both, designed and built by the same team.' },
+      { q: 'Do we own what you build?', a: 'Yes. The domain, the site and the code are in your name from the start.' },
+    ],
+    related: ['peptide-websites', 'peptide-brand-launch', 'kanna-marketing'],
   },
   {
     slug: 'peptide-platforms',
@@ -349,8 +381,8 @@ export const PAGES: PageData[] = [
     body: `<div class="lg-sum"><p class="lg-k">In short</p><ul>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>We only collect what you type into the booking form, what you enter in the calendar, and anonymous statistics about how the site is used.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>We use it to reply to you and prepare your call. We never sell it and there are no advertising trackers on this site.</li>
-<li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>You can see, correct or delete your information at any time: email <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>.</li></ul></div>
-<h2>1. Who we are</h2><p>Stealth Tech is a design and development studio for peptide, RUO, botanical and kanna brands. This policy covers this website (stealthtech.agency) and the enquiries you send through it. For anything about your data, contact <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>.</p>
+<li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>You can see, correct or delete your information at any time: email <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>.</li></ul></div>
+<h2>1. Who we are</h2><p>Stealth Tech is a design and development studio for peptide, RUO, botanical and kanna brands. This policy covers this website (stealthtech.agency) and the enquiries you send through it. For anything about your data, contact <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>.</p>
 <h2>2. What we collect</h2><ul>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><b>Booking form</b>: your name, work email, phone or WhatsApp (optional), website (optional), country and region, budget range, launch timing, notes, and your answers about your brand and what you need.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg><b>Calendar booking</b>: the time you pick and the details you confirm in the scheduling calendar. Our scheduling provider handles this under its own privacy policy.</li>
@@ -367,10 +399,10 @@ export const PAGES: PageData[] = [
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Anonymous statistics: up to 26 months.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Server logs: a few weeks, as set by our host.</li></ul>
 <h2>7. Security</h2><p>The site runs on HTTPS only, sends strict security headers, and loads code only from our own domain and the few providers listed above. Access to enquiries is limited to the people who work on them.</p>
-<h2>8. Your rights</h2><p>Depending on where you live, you can ask to <b>see</b> the information we hold about you, <b>correct</b> it, <b>delete</b> it, <b>receive a copy</b>, <b>object</b> to or <b>restrict</b> how we use it, and <b>withdraw consent</b> at any time (this does not affect anything done before). Residents of California and other US states have similar rights; we do not sell or share personal information for cross-context advertising. Email <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a> and we will reply within 30 days. You can also complain to your local data protection authority.</p>
+<h2>8. Your rights</h2><p>Depending on where you live, you can ask to <b>see</b> the information we hold about you, <b>correct</b> it, <b>delete</b> it, <b>receive a copy</b>, <b>object</b> to or <b>restrict</b> how we use it, and <b>withdraw consent</b> at any time (this does not affect anything done before). Residents of California and other US states have similar rights; we do not sell or share personal information for cross-context advertising. Email <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a> and we will reply within 30 days. You can also complain to your local data protection authority.</p>
 <h2>9. Children</h2><p>This website is for businesses and is not meant for anyone under 18. We do not knowingly collect information from minors.</p>
 <h2>10. Changes</h2><p>If we change this policy, we update the date at the top of this page. Important changes will be easy to spot.</p>
-<h2>11. Contact</h2><p>Stealth Tech, <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>. Read the <a class="acc" href="/cookies">cookie policy</a> for the details of what is stored in your browser.</p>`,
+<h2>11. Contact</h2><p>Stealth Tech, <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>. Read the <a class="acc" href="/cookies">cookie policy</a> for the details of what is stored in your browser.</p>`,
   },
   {
     slug: 'cookies',
@@ -401,7 +433,7 @@ export const PAGES: PageData[] = [
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Choose <b>Decline</b> on the banner: nothing optional runs, and the site works exactly the same.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Changed your mind? Clear this site's data in your browser settings and the banner will ask again.</li>
 <li><svg class="mol-i" aria-hidden="true"><use href="#mol"/></svg>Most browsers can also block or delete storage for every site; see your browser's help pages.</li></ul>
-<h2>5. Contact</h2><p>Questions about this policy: <a class="acc" href="mailto:arpit@avishkarai.com">arpit@avishkarai.com</a>. See also our <a class="acc" href="/privacy">privacy policy</a>.</p>`,
+<h2>5. Contact</h2><p>Questions about this policy: <a class="acc" href="mailto:wassamrehman@gmail.com">wassamrehman@gmail.com</a>. See also our <a class="acc" href="/privacy">privacy policy</a>.</p>`,
   },
 ];
 

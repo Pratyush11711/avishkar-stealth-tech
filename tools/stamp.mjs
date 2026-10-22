@@ -13,7 +13,7 @@ import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import buildSW from './build-sw.mjs';
 
-const SITE = 'https://stealthtech.netlify.app';   // change to https://stealthtech.agency once the domain is live
+const SITE = 'https://stealthtech.agency';
 const root = resolve(process.argv[2] || join(dirname(fileURLToPath(import.meta.url)), '..'));
 const hash = b => createHash('sha256').update(b).digest('hex').slice(0, 10);
 const read = f => readFileSync(join(root, f), 'utf8');

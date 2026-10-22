@@ -22,6 +22,9 @@ export default defineConfig({
   // Matches vercel.json trailingSlash: false. The real page must be written into
   // route/index.html; see src/middleware.ts for why a slash redirect cannot run at build time.
   trailingSlash: 'never',
+  redirects: {
+    '/peptide-store-build/thank-you': '/thank-you',
+  },
   compressHTML: false,
   integrations: [swStamp],
   vite: {

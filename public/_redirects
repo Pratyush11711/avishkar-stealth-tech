@@ -1,3 +1,10 @@
+# One public domain. Ads and canonicals use https://stealthtech.agency only.
+https://stealthtech.netlify.app/*  https://stealthtech.agency/:splat  301!
+https://www.stealthtech.agency/*   https://stealthtech.agency/:splat  301!
+
+# Old thank-you address. The pixel page is /thank-you.
+/peptide-store-build/thank-you    /thank-you    301
+
 # Old flat HTML addresses from the static site
 /peptide-marketing-agency.html   /peptide-marketing-agency   301
 /peptide-brand-launch.html       /peptide-brand-launch       301

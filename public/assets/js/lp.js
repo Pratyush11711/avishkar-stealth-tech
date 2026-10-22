@@ -5,11 +5,11 @@
   'use strict';
 
   /* ---------- settings ---------- */
-  var LEAD_EMAIL = 'arpit@avishkarai.com';      // every lead is emailed here (FormSubmit) ...
+  var LEAD_EMAIL = 'wassamrehman@gmail.com';    // every lead is emailed here (FormSubmit) ...
   var LEAD_CC = 'arpitsharmawriting@gmail.com'; // ... with a copy here
   var FORM_ENDPOINT = '';                        // optional webhook (Zapier, Make, a CRM): POST JSON
   var HTTP = /^https?:$/.test(location.protocol);
-  var THANK_YOU = HTTP ? '/peptide-store-build/thank-you' : 'thank-you/index.html';
+  var THANK_YOU = HTTP ? '/thank-you' : '../thank-you/index.html';
 
   var doc = document, root = doc.documentElement, body = doc.body;
   var $ = function (s, c) { return (c || doc).querySelector(s); };
@@ -474,6 +474,41 @@
       if (same && history.length > 1) { e.preventDefault(); history.back(); }
     });
   });
+  /* logo strip: repeat the row until it is wider than the screen, then slide by exactly half.
+     The second half matches the first, so the restart is invisible and the row never runs out. */
+  var strip = $('.strip .marquee');
+  if (strip && !RM) {
+    var track = $('.marquee-track', strip), sets = $$('.marquee-set', track), half = sets[0], copy = sets[1];
+    if (half && copy) {
+      var seed = Array.prototype.slice.call(half.children);
+      function quiet(node) {
+        node.setAttribute('aria-hidden', 'true');
+        $$('img', node).forEach(function (img) { img.alt = ''; });
+      }
+      function fillStrip() {
+        var need = strip.clientWidth + 8, guard = 0;
+        while (half.scrollWidth < need && half.children.length < 32 && guard < 8) {
+          seed.forEach(function (logo) { var a = logo.cloneNode(true); quiet(a); half.appendChild(a); var b = logo.cloneNode(true); quiet(b); copy.appendChild(b); });
+          guard++;
+        }
+        if (half.scrollWidth) track.style.animationDuration = Math.max(16, Math.round(half.scrollWidth / 80)) + 's';
+      }
+      function whenLogos(fn) {
+        var imgs = seed.map(function (logo) { return $('img', logo); }).filter(Boolean).filter(function (img) { return !img.complete; });
+        if (!imgs.length) { fn(); return; }
+        var left = imgs.length, ran = false;
+        function once() { if (ran) return; ran = true; fn(); }
+        imgs.forEach(function (img) {
+          var done = function () { if (--left === 0) once(); };
+          img.addEventListener('load', done); img.addEventListener('error', done);
+        });
+        setTimeout(once, 2000);
+      }
+      whenLogos(fillStrip);
+      var refill;
+      addEventListener('resize', function () { clearTimeout(refill); refill = setTimeout(fillStrip, 200); });
+    }
+  }
   if (!form) return;
   var steps = $$('.lf-step', form), N = steps.length, idx = 0, started = false, busy = false;
   var nextB = $('#lfNext'), backB = $('#lfBack'), skipB = $('#lfSkip'), err = $('#lfErr'), segs = $$('.fc-prog li'), now = $('#stepNow');

@@ -1,0 +1,65 @@
+---
+import SvgSprite from '../components/landing/SvgSprite.astro';
+import PageLoader from '../components/landing/PageLoader.astro';
+
+const site = 'https://stealthtech.agency';
+const url = `${site}/thank-you`;
+const title = 'Thank you | Stealth Tech';
+const description = 'Your request is in. We will reply within one business day.';
+const image = `${site}/assets/og/thank-you.png`;
+const imageAlt = 'Stealth Tech. Your request is in good hands.';
+
+const themeBoot = `(function(){var d=document.documentElement,c=d.classList;c.add('js');
+try{var t=localStorage.getItem('st-theme-v2');if(t==='light'||t==='dark')d.setAttribute('data-theme',t)}catch(e){}
+try{var ss=sessionStorage,pl=+ss.getItem('st-pl')||0;ss.removeItem('st-pl');if(pl&&Date.now()-pl<5000){c.add('pl-in');window.__plAt=pl;d.style.setProperty('--pl-t',(pl-Date.now())+'ms')}}catch(e){}
+try{var vw=d.clientWidth;if(vw)d.style.setProperty('--plw',vw+'px')}catch(e){}
+c.add('no-sp');})();`;
+
+const gtagBoot = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MQP9BWN5ZZ');`;
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script is:inline set:html={themeBoot}></script>
+<meta name="theme-color" content="#F2F3EE">
+<meta name="color-scheme" content="light dark">
+<meta name="format-detection" content="telephone=no">
+<title>{title}</title>
+<meta name="description" content={description}>
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href={url}>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stealth Tech">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={url}>
+<meta property="og:image" content={image}>
+<meta property="og:image:secure_url" content={image}>
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={imageAlt}>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={title}>
+<meta name="twitter:description" content={description}>
+<meta name="twitter:image" content={image}>
+<meta name="twitter:image:alt" content={imageAlt}>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/css/fonts.css" as="style">
+<link rel="stylesheet" href="/assets/css/fonts.css">
+<link rel="stylesheet" href="/assets/css/lp.css">
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-MQP9BWN5ZZ"></script>
+<script is:inline set:html={gtagBoot}></script>
+<script is:inline src="/assets/js/thank-you.js" defer></script>
+</head>
+<body class="ty-page">
+<SvgSprite />
+<PageLoader />
+<slot />
+</body>
+</html>
