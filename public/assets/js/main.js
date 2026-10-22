@@ -629,7 +629,7 @@
       .set(intro, { opacity: 1 }, 1.95)
       .to(intro, TOUCH ? { yPercent: -50, opacity: 0, duration: 0.7, ease: 'power1.in' } : { yPercent: -50, opacity: 0, filter: 'blur(8px)', duration: 0.7, ease: 'power1.in' }, 3.7)
       // the moving line gets more scroll distance (and the section is taller) so it can be read while it passes
-      .fromTo(track, { x: function () { return innerWidth; } }, { x: function () { return -track.scrollWidth - innerWidth * 0.05; }, duration: 5.6 }, 3.9)
+      .fromTo(track, { x: function () { return root.clientWidth; } }, { x: function () { return -track.scrollWidth - root.clientWidth * 0.05; }, duration: 5.6 }, 3.9)
       .fromTo(panel, { clipPath: 'inset(50% 50% 50% 50% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 3, ease: 'power2.inOut' }, 6.3)
       .fromTo(img, { opacity: 0, scale: 0.82, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 1.4, ease: 'power2.out' }, 9.3)
       .fromTo(end, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, 9.7)
